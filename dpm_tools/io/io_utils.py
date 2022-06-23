@@ -1,11 +1,10 @@
 import glob
+import os
+
+import numpy as np
+
 from read_data import read_image
 from write_data import write_image
-import sys
-import os
-import tifffile as tiff
-from PIL import Image
-import numpy as np
 
 
 def _sort_files(directory: str, extension: str, starting_file: str, slices: int) -> list:
