@@ -44,8 +44,12 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
     return sorted_files
 
-
-def _combine_slices(filepath: str, filenames: str) -> np.ndarray:
+# TODO Add option to combine based on indices of desired slices
+def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
+    """
+    Combines individual slices in a stack.
+    To control which slices to include, supply a list of filenames
+    """
 
     # Read first slices and determine datatype
     first_slice = read_image(os.path.join(filepath, filenames[0]))
@@ -72,4 +76,23 @@ def _combine_slices(filepath: str, filenames: str) -> np.ndarray:
 
     write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
                 image=combined_stack, filetype='tiff')
+
+    return combined_stack
+
+
+def convert_filetype(filepath: str, convert_to: str) -> None:
+
+    conversion_list = ['raw', 'tiff', 'tif']
+    filepath = filepath.replace('\\', '/')
+    original_image = read_image(filepath)
+
+    filepath, filename = filepath.rsplit('/', 1)
+    basename, extension = filename.rsplit('.', 1)
+
+    assert extension in conversion_list, "Unsupported filetype, cannot convert"
+
+    filename = basename + convert_to.lower()
+    write_image(save_path=filepath, save_name=filename, image=original_image, filetype=convert_to)
+
+
 
