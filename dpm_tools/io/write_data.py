@@ -3,10 +3,15 @@ from tifffile import imwrite as tiffwrite
 import numpy as np
 
 
-def _write_tiff(save_path: str, save_filename: str, image_stack: np.ndarray) -> None:
+def _write_tiff(save_path: str, save_filename: str, image_stack: np.ndarray, compression_type: bool, tiffSize: bool) -> None:
     # TODO implement flags for bigtiff, compression
-    tiffwrite(os.path.join(save_path, save_filename), image_stack,
-              bigtiff=True, compression='zlib', photometric='minisblack')
+    
+    if(compression_type == True:
+        tiffwrite(os.path.join(save_path, save_filename), image_stack,
+                bigtiff=tiffSize, compression='zlib', photometric='minisblack')
+    else:
+        tiffwrite(os.path.join(save_path, save_filename), image_stack,
+                  bigtiff=tiffSize, photometric='minisblack')
 
 
 def _write_raw(save_path: str, save_filename: str, image_stack: np.ndarray) -> None:
