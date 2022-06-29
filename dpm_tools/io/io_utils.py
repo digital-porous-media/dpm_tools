@@ -1,10 +1,45 @@
 import glob
 import os
-
+import sys
+import tifffile as tiff
+from PIL import Image
+import exifread
 import numpy as np
 
 from read_data import read_image
 from write_data import write_image
+
+#Check if .tiff file is a 2D or 3D image
+def evaluate_dimensions(directory: str, starting_file: str):
+    #Exifread code from https://stackoverflow.com/questions/46477712/reading-tiff-image-metadata-in-python
+    path = directory+starting_file
+    f = open(path, 'rb')
+
+    # Return Exif tags
+    tags = exifread.process_file(f)
+    tags_list = list(tags.keys())
+
+    #Iterate through each image tag
+    i = 0
+    slices = 1
+    while(slices == 1 and i < len(tags_list)):
+        tag = tags_list[i]
+        
+        #Find image description tag
+        if "ImageDescription" in tag:
+            value = str(tags[tag])
+            description_parts = value.split("\n")
+
+            #Iterate through each part of the description
+            for part in description_parts:
+
+                #Find number of slices
+                if "slices" in part:
+                    find_slices = part.split("=")
+                    slices = int(find_slices[-1])
+        i += 1
+
+    return slices
 
 
 def _sort_files(directory: str, extension: str, starting_file: str, slices: int) -> list:
@@ -82,7 +117,7 @@ def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
 
 def convert_filetype(filepath: str, convert_to: str) -> None:
 
-    conversion_list = ['raw', 'tiff', 'tif']
+    conversion_list = ['raw', 'tiff', 'tif', 'nc']
     filepath = filepath.replace('\\', '/')
     original_image = read_image(filepath)
 
