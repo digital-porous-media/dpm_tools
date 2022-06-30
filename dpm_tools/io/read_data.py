@@ -29,47 +29,67 @@ def _read_raw(filepath: str, metadata: dict) -> np.ndarray:
     ny = metadata['ny']
     nx = metadata['nx']
 
+    # Assign data type based on input
+    if (signed.lower() == 'unsigned'): dt1 = 'u'
+    
+    elif (signed.lower() == 'signed'): dt1 = 'i'
+    
+    elif (signed.lower() == 'real'): dt1 = 'f'
 
-    if (bits == 8 and signed.lower() == 'unsigned'):
-        dt = 'u1'
+    dt2 = bits // 8
 
-    elif (bits == 16 and signed.lower() == 'unsigned'):
-        dt = 'u2'
-
-    elif (bits == 32 and signed.lower() == 'unsigned'):
-        dt = 'u4'
-
-    elif (bits == 8 and signed.lower() == 'signed'):
-        dt = 'i1'
-
-    elif (bits == 16 and signed.lower() == 'signed'):
-        dt = 'i2'
-
-    elif (bits == 32 and signed.lower() == 'signed'):
-        dt = 'i4'
-
-    elif (bits == 32 and signed.lower() == 'real'):
-        dt = 'f4'
-
-    elif (bits == 64 and signed.lower() == 'real'):
-        dt = 'f8'
-    else:
-        KeyError("Invalid datatype")
-
-    # Assign byte order based on input
-    if (byte_order.lower() == 'little'):
+    #Assign byte order based on input
+    if(byte_order.lower() == 'little'):
         bt = '<'
-    elif (byte_order.lower() == 'big'):
+    elif(byte_order.lower() == 'big'):
         bt = '>'
     else:
         bt = '|'
 
-    datatype = bt + dt
+    datatype = bt + dt1 + str(dt2)
 
     # Load the image into an array and reshape it
-    return np.fromfile(filepath, dtype=np.uint8).reshape([nz, ny, nx])
+    return np.fromfile(filepath, dtype=datatype).reshape([nz, ny, nx])
 
 
+def _read_netcdf(filepath: str) -> np.ndarray:
+
+    ds = nc.Dataset(filepath)
+
+    array_name = ""
+
+    #Search metadata variables for the image array name
+    for var in ds.variables.values():
+        str_var = str(var)
+        var_parts = str_var.split("\n")
+
+        #Find the shape variable
+        for part in var_parts:
+            if "current shape" in part:
+                find_numbers = part.split(" ")
+                dimension_count = 0
+
+                #Search for arrays with more than 1 dimension
+                for num_part in find_numbers:
+                    if(num_part.isalpha() == False and num_part not in string.punctuation):
+                        dimension_count += 1
+
+        #Extract the name from the correct array
+        if dimension_count > 1:
+            var_list1 = var_parts[1]
+            find_name = var_list1.split(" ")
+            i = 0
+
+            #Add the name to a string
+            while(find_name[1][i] not in string.punctuation):
+                array_name += find_name[1][i]
+                i += 1
+        
+    #Load the image into an array
+
+    image_array = ds[array_name][:]
+    
+    return image_array
 
 def read_image(read_path: str, **kwargs) -> np.ndarray:
     """
@@ -78,7 +98,8 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
     """
     filetypes = {'tiff': _read_tiff,
                  'tif': _read_tiff,
-                 'raw': _read_raw}
+                 'raw': _read_raw,
+                 'nc': _read_netcdf}
 
     filetype = read_path.rsplit('.', 1)[1]
 
