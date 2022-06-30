@@ -1,7 +1,9 @@
 import os
 from tifffile import imread as tiffread
 import numpy as np
-
+import sys
+import string
+import netCDF4 as nc
 
 def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     """
