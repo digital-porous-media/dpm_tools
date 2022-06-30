@@ -52,7 +52,7 @@ def _read_raw(filepath: str, metadata: dict) -> np.ndarray:
     return np.fromfile(filepath, dtype=datatype).reshape([nz, ny, nx])
 
 
-def _read_netcdf(filepath: str) -> np.ndarray:
+def _read_nc(filepath: str) -> np.ndarray:
 
     ds = nc.Dataset(filepath)
 
@@ -99,7 +99,7 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
     filetypes = {'tiff': _read_tiff,
                  'tif': _read_tiff,
                  'raw': _read_raw,
-                 'nc': _read_netcdf}
+                 'nc': _read_nc}
 
     filetype = read_path.rsplit('.', 1)[1]
 
