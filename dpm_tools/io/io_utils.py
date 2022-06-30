@@ -10,6 +10,33 @@ import pandas as pd
 from read_data import read_image
 from write_data import write_image
 
+
+def _find_files(directory: str, extension: str) -> None:
+    sizes = []
+    
+    path = directory+"/**/*"+extension
+
+    found = glob.glob(path, recursive=True)
+
+    count = 0
+
+    for obj in found:
+        count = count + 1
+        get_folder = obj.split("\\")
+        folder_name = ""
+        for fold in get_folder:
+            if(extension not in fold):
+                folder_name = folder_name + "\\" + fold
+        if(folder_name not in folders):
+        size = str(os.path.getsize(obj)) + " bytes"
+        sizes.append(size)
+
+    found_tuple = list(zip(found, sizes))
+
+    print("There are",count,"files with the",extension,"extension in the directory",directory)
+    files_df = pd.DataFrame(found_tuple, columns=['File','Size'])
+    print(files_df)
+
 def _find_tiff_files(directory: str) -> None:
     #Create lists for data columns
     found = []
