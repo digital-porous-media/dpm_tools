@@ -5,12 +5,65 @@ import tifffile as tiff
 from PIL import Image
 import exifread
 import numpy as np
+import pandas as pd
 
 from read_data import read_image
 from write_data import write_image
 
+def _find_tiff_files(directory: str) -> None:
+    #Create lists for data columns
+    found = []
+    files = []
+    sizes = []
+    folders = []
+    slices = []
+    width = []
+    height = []
+    dt = []
+    bt = []
+
+    #Find all .tiff files
+    extension = ".tiff"
+    path = directory+"/**/*"+extension
+    found.extend(glob.glob(path, recursive=True))
+
+    #Find all .tif files
+    extension = ".tif"
+    path = directory+"/**/*"+extension
+    found.extend(glob.glob(path, recursive=True))
+
+    #Iterate through each found file
+    for obj in found:
+        get_folder = obj.split("\\")
+        folder_name = ""
+        for fold in get_folder:
+            if(extension not in fold):
+                folder_name = folder_name + "\\" + fold
+            elif(extension in fold):
+                files.append(fold)
+                folders.append(folder_name)
+                image = read_image(os.path.join(directory, obj))
+
+                if(len(image.shape) == 2):
+                    slices.append(1)
+                    width.append(image.shape[0])
+                    height.append(image.shape[1])
+                else:
+                    slices.append(image.shape[0])
+                    width.append(image.shape[1])
+                    height.append(image.shape[2])
+                dt.append(image.dtype)
+                bt.append(image.dtype.byteorder)
+        size = str(os.path.getsize(obj)) + " bytes"
+        sizes.append(size)
+
+    found_tuple = list(zip(files, sizes, folders, slices, width, height, dt, bt))
+
+    files_df = pd.DataFrame(found_tuple, columns=['File', 'Size', 'Folder', 'Slices', 'Width', 'Height', 'Data Type', 'Byte Order'])
+    print(files_df)
+
 #Check if .tiff file is a 2D or 3D image
-def evaluate_dimensions(directory: str, starting_file: str):
+def _evaluate_dimensions(directory: str, starting_file: str) -> int:
     #Exifread code from https://stackoverflow.com/questions/46477712/reading-tiff-image-metadata-in-python
     path = directory+starting_file
     f = open(path, 'rb')
@@ -116,10 +169,10 @@ def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
     return combined_stack
 """
 
-def combineStacks(filepath, filenames, substack_name, compression_type):
+def _combine_slices(filepath, filenames, substack_name, compression_type):
 
     #Read first slices and determine datatype
-    firstSlice = tiff.imread(os.path.join(filepath, filenames[0]))
+    firstSlice = read_image(os.path.join(filepath, filenames[0]))
     datatype = firstSlice.dtype
 
     #Create new array for combined file
