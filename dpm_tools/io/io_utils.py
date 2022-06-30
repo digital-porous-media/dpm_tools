@@ -11,7 +11,7 @@ from read_data import read_image
 from write_data import write_image
 
 
-def _find_files(directory: str, extension: str) -> None:
+def _find_files(directory: str, extension: str) -> list:
     sizes = []
     
     path = directory+"/**/*"+extension
@@ -36,8 +36,11 @@ def _find_files(directory: str, extension: str) -> None:
     print("There are",count,"files with the",extension,"extension in the directory",directory)
     files_df = pd.DataFrame(found_tuple, columns=['File','Size'])
     print(files_df)
+    
+    return found_tuple
 
-def _find_tiff_files(directory: str) -> None:
+
+def _find_tiff_files(directory: str) -> list:
     #Create lists for data columns
     found = []
     files = []
@@ -88,6 +91,9 @@ def _find_tiff_files(directory: str) -> None:
 
     files_df = pd.DataFrame(found_tuple, columns=['File', 'Size', 'Folder', 'Slices', 'Width', 'Height', 'Data Type', 'Byte Order'])
     print(files_df)
+    
+    return found_tuple
+
 
 #Check if .tiff file is a 2D or 3D image
 def _evaluate_dimensions(directory: str, starting_file: str) -> int:
@@ -159,6 +165,7 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
     return sorted_files
 
+
 # TODO Add option to combine based on indices of desired slices
 """
 def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
@@ -196,7 +203,7 @@ def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
     return combined_stack
 """
 
-def _combine_slices(filepath, filenames, substack_name, compression_type):
+def _combine_slices(filepath, filenames, substack_name, compression_type) -> np.ndarray:
 
     #Read first slices and determine datatype
     firstSlice = read_image(os.path.join(filepath, filenames[0]))
