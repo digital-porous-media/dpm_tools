@@ -80,11 +80,12 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
     return sorted_files
 
 # TODO Add option to combine based on indices of desired slices
+"""
 def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
-    """
+    
     Combines individual slices in a stack.
     To control which slices to include, supply a list of filenames
-    """
+    
 
     # Read first slices and determine datatype
     first_slice = read_image(os.path.join(filepath, filenames[0]))
@@ -113,6 +114,37 @@ def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
                 image=combined_stack, filetype='tiff')
 
     return combined_stack
+"""
+
+def combineStacks(filepath, filenames, substack_name, compression_type):
+
+    #Read first slices and determine datatype
+    firstSlice = tiff.imread(os.path.join(filepath, filenames[0]))
+    datatype = firstSlice.dtype
+
+    #Create new array for combined file
+    combinedStack = np.zeros(
+        [len(filenames), firstSlice.shape[0], firstSlice.shape[1]], dtype=datatype
+    )
+
+    #Add first slice to array
+    combinedStack[0] = np.array(firstSlice)
+    
+    #Read each image and add to array
+    for count, file in enumerate(filenames[1:], 1):
+        next_file = read_image(os.path.join(filepath, file))
+        combined_stack[count] = np.array(next_file)
+    
+    
+    #Convert array to .tiff file and save it
+    print("Final shape of combined stack = ", combinedStack.shape)
+    print("-"*53)
+    if(combinedStack.nbytes >= 4294967296):
+        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = True)
+    else:
+        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
 
 
 def convert_filetype(filepath: str, convert_to: str) -> None:
