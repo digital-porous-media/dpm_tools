@@ -105,7 +105,7 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
 
     filetype = read_path.rsplit('.', 1)[1]
 
-    try:
-        return filetypes[filetype.lower()](read_path, kwargs)
-    except NotImplemented:
-        print('Cannot read supplied filetype yet')
+    # TODO Add Error catching, resolve catching classes that do not inherit from BaseException is not allowed
+    #assert filetype.lower() in filetypes, "Cannot read supplied filetype yet"
+
+    return filetypes[filetype.lower()](read_path, kwargs)

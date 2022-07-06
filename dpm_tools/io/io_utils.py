@@ -7,8 +7,8 @@ import exifread
 import numpy as np
 import pandas as pd
 
-from read_data import read_image
-from write_data import write_image
+from .read_data import read_image
+from .write_data import write_image
 
 
 def _find_files(directory: str, extension: str) -> list:
@@ -28,8 +28,8 @@ def _find_files(directory: str, extension: str) -> list:
             if(extension not in fold):
                 folder_name = folder_name + "\\" + fold
         if(folder_name not in folders):
-        size = str(os.path.getsize(obj)) + " bytes"
-        sizes.append(size)
+            size = str(os.path.getsize(obj)) + " bytes"
+            sizes.append(size)
 
     found_tuple = list(zip(found, sizes))
 
@@ -84,6 +84,7 @@ def _find_tiff_files(directory: str) -> list:
                     height.append(image.shape[2])
                 dt.append(image.dtype)
                 bt.append(image.dtype.byteorder)
+
         size = str(os.path.getsize(obj)) + " bytes"
         sizes.append(size)
 
@@ -203,19 +204,19 @@ def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
     return combined_stack
 """
 
-def _combine_slices(filepath, filenames, substack_name, compression_type) -> np.ndarray:
+def _combine_slices(filepath, filenames, substack_name, use_compression='zlib') -> np.ndarray:
 
     #Read first slices and determine datatype
-    firstSlice = read_image(os.path.join(filepath, filenames[0]))
-    datatype = firstSlice.dtype
+    first_slice = read_image(os.path.join(filepath, filenames[0]))
+    datatype = first_slice.dtype
 
     #Create new array for combined file
-    combinedStack = np.zeros(
-        [len(filenames), firstSlice.shape[0], firstSlice.shape[1]], dtype=datatype
+    combined_stack = np.zeros(
+        [len(filenames), first_slice.shape[0], first_slice.shape[1]], dtype=datatype
     )
 
     #Add first slice to array
-    combinedStack[0] = np.array(firstSlice)
+    combined_stack[0] = np.array(first_slice)
     
     #Read each image and add to array
     for count, file in enumerate(filenames[1:], 1):
@@ -224,9 +225,9 @@ def _combine_slices(filepath, filenames, substack_name, compression_type) -> np.
     
     
     #Convert array to .tiff file and save it
-    print("Final shape of combined stack = ", combinedStack.shape)
+    print("Final shape of combined stack = ", combined_stack.shape)
     print("-"*53)
-    if(combinedStack.nbytes >= 4294967296):
+    if(combined_stack.nbytes >= 4294967296):
         write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
                 image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = True)
     else:
@@ -234,18 +235,18 @@ def _combine_slices(filepath, filenames, substack_name, compression_type) -> np.
                 image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
 
 
-def convert_filetype(filepath: str, convert_to: str) -> None:
+def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
 
     conversion_list = ['raw', 'tiff', 'tif', 'nc']
     filepath = filepath.replace('\\', '/')
-    original_image = read_image(filepath)
+    original_image = read_image(read_path=filepath, metadata=kwargs)
 
     filepath, filename = filepath.rsplit('/', 1)
     basename, extension = filename.rsplit('.', 1)
 
     assert extension in conversion_list, "Unsupported filetype, cannot convert"
 
-    filename = basename + convert_to.lower()
+    filename = basename + "." + convert_to.lower()
     write_image(save_path=filepath, save_name=filename, image=original_image, filetype=convert_to)
 
 

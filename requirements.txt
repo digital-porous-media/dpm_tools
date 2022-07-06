@@ -1,0 +1,6 @@
+numpy == 1.21.5
+matplotlib >= 3.5.0
+exifread == 3.0.0
+tifffile == 2021.7.2
+netcdf4 == 1.6.0
+
