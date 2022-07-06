@@ -1,4 +1,4 @@
-# DPM_Tools
+# Digital Porous Media (DPM) Tools
 A set of tools to process and analyze digital porous media
 
 TODO:
