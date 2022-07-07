@@ -1,4 +1,5 @@
 from .plot_2d import hist
+from .plot_2d import plot_slice
 from .plot_2d import thumbnail
 
 from ._vis_utils import _make_dir

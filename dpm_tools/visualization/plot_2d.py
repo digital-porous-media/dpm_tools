@@ -5,10 +5,9 @@ from ._vis_utils import _make_dir, _write_hist_csv
 from ..__init__ import timer
 
 @timer
-def hist(data: np.ndarray,
+def hist(data,
          nbins: int = 256,
          write_csv: bool = False,
-         save_path: str = None,
          **kwargs):
     """
     Generate a histogram
@@ -26,7 +25,7 @@ def hist(data: np.ndarray,
     # Make the histogram
     fig = plt.figure(figsize=kwargs['fig_size'])
     kwargs.pop('fig_size', None)  # Remove fig_size argument from kwargs
-    freq, bins, _ = plt.hist(x=data.ravel(), bins=nbins, density=True, **kwargs)
+    freq, bins, _ = plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs)
     plt.xlabel('Gray value')
     plt.ylabel('Probability')
     plt.tight_layout()
@@ -44,7 +43,30 @@ def hist(data: np.ndarray,
 
     return fig
 
+@timer
+def plot_slice(data, slice_z: int = None, slice_axis: int = -1, **kwargs):
 
+    if 'origin' not in kwargs:
+        kwargs['origin'] = 'lower'
+
+    if 'interpolation' not in kwargs:
+        kwargs['interpolation'] = 'none'
+
+    if slice_z is None:
+        slice_z = data.image.shape[slice_axis] // 2
+
+    show_slice = data.image.take(indices=slice_z, axis=slice_axis)
+
+
+    fig = plt.figure(dpi=400)
+    plt.imshow(show_slice, **kwargs)
+    plt.axis('off')
+    plt.colorbar()
+    plt.show()
+
+    return fig
+
+@timer
 def thumbnail():
     a = 1
 
