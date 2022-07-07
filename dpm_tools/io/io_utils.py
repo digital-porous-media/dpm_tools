@@ -27,9 +27,8 @@ def _find_files(directory: str, extension: str) -> list:
         for fold in get_folder:
             if(extension not in fold):
                 folder_name = folder_name + "\\" + fold
-        if(folder_name not in folders):
-            size = str(os.path.getsize(obj)) + " bytes"
-            sizes.append(size)
+        size = str(os.path.getsize(obj)) + " bytes"
+        sizes.append(size)
 
     found_tuple = list(zip(found, sizes))
 
