@@ -1,3 +1,5 @@
+import sys
+sys.path.append('C:\\Users\\Frieda\\AppData\\Local\\Programs\\Python\\Python310\\dpm_tools') #Add custom filepath here
 from dpm_tools.io import read_image
 from dpm_tools.visualization import hist
 
