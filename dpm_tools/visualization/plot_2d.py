@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ._vis_utils import _make_dir, _write_hist_csv
+from ..__init__ import timer
 
-
-# @timer
+@timer
 def hist(data: np.ndarray,
          nbins: int = 256,
          write_csv: bool = False,
