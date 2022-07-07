@@ -83,7 +83,6 @@ def _find_tiff_files(directory: str) -> list:
                     height.append(image.shape[2])
                 dt.append(image.dtype)
                 bt.append(image.dtype.byteorder)
-
         size = str(os.path.getsize(obj)) + " bytes"
         sizes.append(size)
 
