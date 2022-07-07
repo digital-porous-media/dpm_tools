@@ -71,7 +71,7 @@ def _find_tiff_files(directory: str) -> list:
             elif(extension in fold):
                 files.append(fold)
                 folders.append(folder_name)
-                image = read_image(os.path.join(directory, obj))
+                image = tiff.imread(obj)
 
                 if(len(image.shape) == 2):
                     slices.append(1)
