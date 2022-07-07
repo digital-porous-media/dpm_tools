@@ -9,13 +9,14 @@ def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     """
     A utility function to read in TIFF files
     full_path = True if the entire path to the file is provided in filepath (including the file itself)
-    If full_path is false, a filename must be provided as a keyword argument.
+    If full_path is False, a filename must be provided as a keyword argument.
     """
     if not full_path:
         try:
             filepath = os.path.join(filepath, kwargs['filename'])
         except FileNotFoundError:
             print('Please provide a filename')
+
     return tiffread(filepath)
 
 
@@ -108,4 +109,4 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
     # TODO Add Error catching, resolve catching classes that do not inherit from BaseException is not allowed
     #assert filetype.lower() in filetypes, "Cannot read supplied filetype yet"
 
-    return filetypes[filetype.lower()](read_path, kwargs)
+    return filetypes[filetype.lower()](read_path, **kwargs)

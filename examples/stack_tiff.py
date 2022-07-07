@@ -1,4 +1,6 @@
-from dpm_tools.io import convert_filetype
+from dpm_tools.io import read_image
+from dpm_tools.visualization import hist
+
 
 
 image_info = {
@@ -9,5 +11,6 @@ image_info = {
     'ny': 110,
     'nz': 110,
 }
-convert_filetype(filepath='../data/3_fractures.tif', convert_to='raw')#, metadata_dict=image_info)
-
+# convert_filetype(filepath='../data/3_fractures.tif', convert_to='raw')#, metadata_dict=image_info)
+img = read_image(read_path='../data/35_1.tiff')
+my_hist = hist(img, write_csv=True)
