@@ -29,3 +29,9 @@ class TestDPMTools(unittest.TestCase):
     actual_2D = dpm.io_utils._find_files("C:\\Users\Frieda\Downloads\io_test","12.8_bar.tif")
     expected_2D = 1094
     self.assertEqual(actual_2D, expected_2D)
+    
+test = TestDPMTools()
+    
+test.test_find_files()
+test.test_find_tiff_files()
+test.test_evaluate_dimensions()
