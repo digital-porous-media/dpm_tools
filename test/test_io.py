@@ -1,6 +1,8 @@
+import sys
+sys.path.append('C:\\Users\\Frieda\\AppData\\Local\\Programs\\Python\\Python310\\dpm_tools-master') #Add custom filepath here
 import unittest
 from numpy.testing import assert_allclose
-import dpm_tools as dpm
+import dpm_tools.io as dpm
 
 class TestDPMTools(unittest.TestCase):
   def test_find_files(self):
