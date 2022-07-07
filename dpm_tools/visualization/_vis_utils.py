@@ -1,6 +1,9 @@
 import os
 import csv
 import numpy as np
+from matplotlib import pyplot as plt
+import matplotlib.animation as anim
+
 
 def _make_dir(dir_name: str) -> str:
     """
@@ -34,7 +37,7 @@ def _scale_image(image_data: np.ndarray, scale_to: type = np.uint8) -> np.ndarra
     Default converts to uint8
     Allows thumbnails and animated gif to show properly
     """
-    assert image_data.dtype.type is not scale_to, f"Image data is already of type {scale_to.__name__}"
+    # assert image_data.dtype.type is not scale_to, f"Image data is already of type {scale_to.__name__}"
 
     if 'int' in scale_to.__name__:
         dtype_info = np.iinfo(scale_to)
@@ -52,3 +55,23 @@ def _scale_image(image_data: np.ndarray, scale_to: type = np.uint8) -> np.ndarra
 
     return np.floor(image_data * scale_grad + scale_min).astype(scale_to)
 
+
+# Draw and save GIF
+class AnimatedGif:
+    def __init__(self):
+        self.fig = plt.figure()
+        self.images = []
+
+    def add(self, image, h, w, dpi=96):
+        self.fig.set_size_inches(h/dpi, w/dpi)
+        ax1 = plt.Axes(self.fig, [0., 0., 1., 1.])
+        ax1.set_axis_off()
+        self.fig.add_axes(ax1)
+        plt.set_cmap('Greys')
+        image = _scale_image(image)
+        plt_im = ax1.imshow(image, vmin=0, vmax=255)
+        self.images.append([plt_im])
+
+    def save(self, filename):
+        animation = anim.ArtistAnimation(self.fig, self.images)
+        animation.save(filename, writer='imagemagick', fps=30)

@@ -20,11 +20,13 @@ def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     return tiffread(filepath)
 
 
-def _read_raw(filepath: str, metadata: dict) -> np.ndarray:
+def _read_raw(filepath: str, **kwargs) -> np.ndarray:
     """
     A utility function to read in RAW files
     Must provide image size as nz, ny, nx, number of bits, signed/unsigned and endianness in kwargs
     """
+    assert 'meta' in kwargs, "Image metadata dictionary is required"
+    metadata = kwargs['meta']
     bits = metadata['bits']
     signed = metadata['signed']
     byte_order = metadata['byte_order']
@@ -55,7 +57,7 @@ def _read_raw(filepath: str, metadata: dict) -> np.ndarray:
     return np.fromfile(filepath, dtype=datatype).reshape([nz, ny, nx])
 
 
-def _read_nc(filepath: str) -> np.ndarray:
+def _read_nc(filepath: str, **kwargs) -> np.ndarray:
 
     ds = nc.Dataset(filepath)
 
@@ -123,10 +125,14 @@ class Image:
 
     def __post_init__(self):
         self.filepath = os.path.join(self.basepath, self.filename)
-        self.namebase, self.ext = self.filename.rsplit('.', 1)
-        self.image = read_image(self.filepath, kwargs=self.meta)
+        self.basename, self.ext = self.filename.rsplit('.', 1)
+        self.image = read_image(self.filepath, meta=self.meta)
+
+        # Add 3rd axis if image is 2D
         if self.image.ndim == 2:
             self.image = self.image[np.newaxis, :, :]
+
+        self.nz, self.nx, self.ny = self.image.shape
 
 
         # TODO add functionality for coordinate data
