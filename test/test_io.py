@@ -29,7 +29,7 @@ class TestDPMTools(unittest.TestCase):
     #self.assertEqual(actual, expected)
     
   def test_evaluate_dimensions(self):
-    actual_2D = dpm.io_utils._find_files("C:\\Users\Frieda\Downloads\io_test","12.8_bar.tif")
+    actual_2D = dpm.io_utils._evaluate_dimensions("C:\\Users\Frieda\Downloads\io_test","12.8_bar.tif")
     expected_2D = 1094
     self.assertEqual(actual_2D, expected_2D)
     
