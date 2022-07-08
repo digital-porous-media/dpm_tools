@@ -97,7 +97,7 @@ def _find_tiff_files(directory: str) -> list:
 #Check if .tiff file is a 2D or 3D image
 def _evaluate_dimensions(directory: str, starting_file: str) -> int:
     #Exifread code from https://stackoverflow.com/questions/46477712/reading-tiff-image-metadata-in-python
-    path = directory+starting_file
+    path = directory+"\\"+starting_file
     f = open(path, 'rb')
 
     # Return Exif tags
