@@ -6,6 +6,10 @@ import dpm_tools.io as dpm
 import tifffile as tiff
 import numpy as np
 import pandas as pd
+import glob
+import os
+from PIL import Image
+import exifread
 
 class TestDPMTools(unittest.TestCase):
   def test_find_files(self):
