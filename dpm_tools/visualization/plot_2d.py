@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 import numpy as np
+from itertools import repeat
 from tqdm import tqdm
 
-from ._vis_utils import _make_dir, _write_hist_csv, _scale_image, AnimatedGif
+from ._vis_utils import _make_dir, _write_hist_csv, _scale_image
 from ..__init__ import timer
 
 
@@ -94,56 +95,26 @@ def make_gif(data,  dpi: int = 96, **kwargs):
     """
     Function to make and save a gif
     """
-
-    sl1 = data.image[0, :, :]
-    images = []
-    animated_gif = AnimatedGif()
-    animated_gif.add(sl1, h=data.nx, w=data.ny)
-    slices = data.nz
-    print("Animation created for slice 1/" + str(slices))
-
-    if slices < 20:
-        slicesave = 1
-    elif slices < 100:
-        slicesave = 5
-    elif slices < 250:
-        slicesave = 12
+    # Save every ~n_slices/20 slice in gif
+    if data.nz <= 20:
+        slice_save = 1
     else:
-        slicesave = 20
+        slice_save = int(np.round(data.nz / 50))
+    print(slice_save)
+    images = list(repeat([], data.nz // slice_save + 1))
 
-    for i in range(1, slices, slicesave):
-        sl = data.image[i, :, :]
-        animated_gif.add(sl, h=data.nx, w=data.ny)
-        print("Animation created for slice " + str(i + 1) + "/" + str(slices))
+    fig = plt.figure()
+    fig.set_size_inches(data.nx / dpi, data.ny / dpi)
+    ax1 = plt.Axes(fig, [0., 0., 1., 1.])
+    ax1.set_axis_off()
+    fig.add_axes(ax1)
+    plt.set_cmap('Greys')
 
+    gif_slices = _scale_image(data.image[::slice_save])
+    images = [[ax1.imshow(slices, vmin=0, vmax=255, **kwargs)] for slices in tqdm(gif_slices)]
 
-    animated_gif.save(f'{data.basepath}/{data.basename}.gif')
+    animation = anim.ArtistAnimation(fig, images)
 
-    #
-    # # Save every ~n_slices/20 slice in gif
-    # if data.nz <= 20:
-    #     slice_save = 1
-    # else:
-    #     slice_save = int(np.round(data.nz / 20))
-    #
-    # images = [None]*20
-    #
-    # fig = plt.figure()
-    #
-    #
-    # for i, j in enumerate(range(0, data.nz, slice_save)):
-    #     fig.set_size_inches(data.nx / dpi, data.ny / dpi)
-    #     ax1 = plt.Axes(fig, [0., 0., 1., 1.])
-    #     ax1.set_axis_off()
-    #     fig.add_axes(ax1)
-    #     plt.set_cmap('Greys')
-    #     image_slice = _scale_image(data.image.take(indices=j, axis=0))
-    #     images[i] = ax1.imshow(image_slice, vmin=0, vmax=255, **kwargs)
-    #     plt.show()
-
-    # animation = anim.ArtistAnimation(fig, images)
-    # animation.save(f"{data.basepath}/{data.basename}.gif", writer='imagemagick', fps=60)
+    animation.save(f"{data.basepath}/{data.basename}.gif", writer='imagemagick', fps=7)
 
     return images
-
-

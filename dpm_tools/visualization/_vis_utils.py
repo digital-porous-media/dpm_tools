@@ -54,24 +54,3 @@ def _scale_image(image_data: np.ndarray, scale_to: type = np.uint8) -> np.ndarra
     scale_min = -scale_grad * image_min
 
     return np.floor(image_data * scale_grad + scale_min).astype(scale_to)
-
-
-# Draw and save GIF
-class AnimatedGif:
-    def __init__(self):
-        self.fig = plt.figure()
-        self.images = []
-
-    def add(self, image, h, w, dpi=96):
-        self.fig.set_size_inches(h/dpi, w/dpi)
-        ax1 = plt.Axes(self.fig, [0., 0., 1., 1.])
-        ax1.set_axis_off()
-        self.fig.add_axes(ax1)
-        plt.set_cmap('Greys')
-        image = _scale_image(image)
-        plt_im = ax1.imshow(image, vmin=0, vmax=255)
-        self.images.append([plt_im])
-
-    def save(self, filename):
-        animation = anim.ArtistAnimation(self.fig, self.images)
-        animation.save(filename, writer='imagemagick', fps=30)
