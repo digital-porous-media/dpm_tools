@@ -3,6 +3,7 @@ sys.path.append('C:\\Users\\Frieda\\AppData\\Local\\Programs\\Python\\Python310\
 import unittest
 from numpy.testing import assert_allclose
 import dpm_tools.io as dpm
+import tifffile as tiff
 
 class TestDPMTools(unittest.TestCase):
   def test_find_files(self):
@@ -24,9 +25,9 @@ class TestDPMTools(unittest.TestCase):
     
   def test_find_tiff_files(self):
     actual = dpm.io_utils._find_tiff_files("C:\\Users\Frieda\Downloads\io_test")
-    print(actual)
-    #expected = [('combined_test.tiff', '16400736 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 4, 1024, 1001, dtype('float32'), '='), ('Initial_1_00000.tiff', '4100464 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1, 1024, 1001, dtype('float32'), '='), ('Initial_1_00001.tiff', '4100464 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1, 1024, 1001, dtype('float32'), '='), ('12.8_bar.tif', '1894867213 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1094, 1316, 1316, dtype('uint8'), '|'), ('5_bar.tif', '1894867226 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1094, 1316, 1316, dtype('uint8'), '|'), ('RLFeSO4_8bit_C1.tif', '763019050 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 566, 1164, 1158, dtype('uint8'), '|')]
-    #self.assertEqual(actual, expected)
+    #print(actual)
+    expected = [('combined_test.tiff', '16400736 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 4, 1024, 1001, dtype('float32'), '='), ('Initial_1_00000.tiff', '4100464 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1, 1024, 1001, dtype('float32'), '='), ('Initial_1_00001.tiff', '4100464 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1, 1024, 1001, dtype('float32'), '='), ('12.8_bar.tif', '1894867213 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1094, 1316, 1316, dtype('uint8'), '|'), ('5_bar.tif', '1894867226 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 1094, 1316, 1316, dtype('uint8'), '|'), ('RLFeSO4_8bit_C1.tif', '763019050 bytes', '\\C:\\Users\\Frieda\\Downloads\\io_test', 566, 1164, 1158, dtype('uint8'), '|')]
+    self.assertEqual(actual, expected)
     
   def test_evaluate_dimensions(self):
     actual_2D = dpm.io_utils._evaluate_dimensions("C:\\Users\Frieda\Downloads\io_test","12.8_bar.tif")
