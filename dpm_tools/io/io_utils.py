@@ -22,11 +22,6 @@ def _find_files(directory: str, extension: str) -> list:
 
     for obj in found:
         count = count + 1
-        get_folder = obj.split("\\")
-        folder_name = ""
-        for fold in get_folder:
-            if(extension not in fold):
-                folder_name = folder_name + "\\" + fold
         size = str(os.path.getsize(obj)) + " bytes"
         sizes.append(size)
 
