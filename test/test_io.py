@@ -1,5 +1,5 @@
 import sys
-sys.path.append('C:\\Users\\Frieda\\AppData\\Local\\Programs\\Python\\Python310\\dpm_tools') #Add custom filepath here
+sys.path.append('..') #Add custom filepath here
 import unittest
 from numpy.testing import assert_allclose
 import dpm_tools.io as dpm
