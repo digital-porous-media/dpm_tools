@@ -4,6 +4,8 @@ import unittest
 from numpy.testing import assert_allclose
 import dpm_tools.io as dpm
 import tifffile as tiff
+import numpy as np
+import pandas as pd
 
 class TestDPMTools(unittest.TestCase):
   def test_find_files(self):
