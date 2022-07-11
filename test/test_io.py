@@ -32,6 +32,11 @@ class TestDPMTools(unittest.TestCase):
     expected_2D = 100
     self.assertEqual(actual_2D, expected_2D)
     
+  def test_sort_files(self):
+    actual = dpm.io_utils._sort_files("..\data")
+    #expected = 100
+    #self.assertEqual(actual, expected)
+    
 test = TestDPMTools()
     
 test.test_find_files()
