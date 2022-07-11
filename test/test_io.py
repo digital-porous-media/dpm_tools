@@ -24,10 +24,8 @@ class TestDPMTools(unittest.TestCase):
     
   def test_find_tiff_files(self):
     actual = str(dpm.io_utils._find_tiff_files("..\data"))
-    #expected = "[('35_1.tiff', '1975838 bytes', '\\..\\data', 1, 1008, 980, dtype('uint16'), '='), ('combined_test.tiff', '16400736 bytes', '\\..\\data', 4, 1024, 1001, dtype('float32'), '='), ('Initial_1_00000.tiff', '4100464 bytes', '\\..\\data', 1, 1024, 1001, dtype('float32'), '='), ('Initial_1_00001.tiff', '4100464 bytes', '\\..\\data', 1, 1024, 1001, dtype('float32'), '='), ('3_fractures.tif', '1022300 bytes', '\\..\\data', 100, 100, 100, dtype('uint8'), '|')]"
-    print(actual)
-    #print(expected)
-    #self.assertEqual(actual, expected)
+    expected = "[('35_1.tiff', '1975838 bytes', '\\\\..\\\\data', 1, 1008, 980, dtype('uint16'), '='), ('combined_test.tiff', '16400736 bytes', '\\\\..\\\\data', 4, 1024, 1001, dtype('float32'), '='), ('Initial_1_00000.tiff', '4100464 bytes', '\\\\..\\\\data', 1, 1024, 1001, dtype('float32'), '='), ('Initial_1_00001.tiff', '4100464 bytes', '\\\\..\\\\data', 1, 1024, 1001, dtype('float32'), '='), ('3_fractures.tif', '1022300 bytes', '\\\\..\\\\data', 100, 100, 100, dtype('uint8'), '|')]"
+    self.assertEqual(actual, expected)
     
   def test_evaluate_dimensions(self):
     actual_2D = dpm.io_utils._evaluate_dimensions("..\data","3_fractures.tif")
