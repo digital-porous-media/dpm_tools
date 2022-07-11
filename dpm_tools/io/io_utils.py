@@ -29,8 +29,7 @@ def _find_files(directory: str, extension: str) -> list:
 
     print("There are",count,"files with the",extension,"extension in the directory",directory)
     files_df = pd.DataFrame(found_tuple, columns=['File','Size'])
-    #print(files_df)
-    print(found_tuple)
+    print(files_df)
     
     return found_tuple
 
@@ -85,8 +84,7 @@ def _find_tiff_files(directory: str) -> list:
     found_tuple = list(zip(files, sizes, folders, slices, width, height, dt, bt))
 
     files_df = pd.DataFrame(found_tuple, columns=['File', 'Size', 'Folder', 'Slices', 'Width', 'Height', 'Data Type', 'Byte Order'])
-    #print(files_df)
-    print(found_tuple)
+    print(files_df)
     
     return found_tuple
 
@@ -120,7 +118,6 @@ def _evaluate_dimensions(directory: str, starting_file: str) -> int:
                     find_slices = part.split("=")
                     slices = int(find_slices[-1])
         i += 1
-    print(slices)
 
     return slices
 
