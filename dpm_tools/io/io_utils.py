@@ -148,7 +148,7 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
     # Append full path names to sorted list using sorted file names
     for i in sorting_list:
-
+        print(i)
         # Start appending names to list using user-provided range
         if i in starting_file:
             sorted_files.append(unsorted_files[i])
