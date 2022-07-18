@@ -22,14 +22,8 @@ def _find_files(directory: str, extension: str) -> list:
 
     for obj in found:
         count = count + 1
-        get_folder = obj.split("\\")
-        folder_name = ""
-        for fold in get_folder:
-            if(extension not in fold):
-                folder_name = folder_name + "\\" + fold
-        if(folder_name not in folders):
-            size = str(os.path.getsize(obj)) + " bytes"
-            sizes.append(size)
+        size = str(os.path.getsize(obj)) + " bytes"
+        sizes.append(size)
 
     found_tuple = list(zip(found, sizes))
 
@@ -72,7 +66,7 @@ def _find_tiff_files(directory: str) -> list:
             elif(extension in fold):
                 files.append(fold)
                 folders.append(folder_name)
-                image = read_image(os.path.join(directory, obj))
+                image = tiff.imread(obj)
 
                 if(len(image.shape) == 2):
                     slices.append(1)
@@ -84,7 +78,6 @@ def _find_tiff_files(directory: str) -> list:
                     height.append(image.shape[2])
                 dt.append(image.dtype)
                 bt.append(image.dtype.byteorder)
-
         size = str(os.path.getsize(obj)) + " bytes"
         sizes.append(size)
 
@@ -99,7 +92,7 @@ def _find_tiff_files(directory: str) -> list:
 #Check if .tiff file is a 2D or 3D image
 def _evaluate_dimensions(directory: str, starting_file: str) -> int:
     #Exifread code from https://stackoverflow.com/questions/46477712/reading-tiff-image-metadata-in-python
-    path = directory+starting_file
+    path = directory+"\\"+starting_file
     f = open(path, 'rb')
 
     # Return Exif tags
@@ -155,7 +148,7 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
     # Append full path names to sorted list using sorted file names
     for i in sorting_list:
-
+        print(i)
         # Start appending names to list using user-provided range
         if i in starting_file:
             sorted_files.append(unsorted_files[i])
@@ -163,6 +156,7 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
         elif count < slices:
             sorted_files.append(unsorted_files[i])
             count = count + 1
+    print(sorted_files)
 
     return sorted_files
 
