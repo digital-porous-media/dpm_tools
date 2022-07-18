@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 from dpm_tools.io import Image, convert_filetype
 from dpm_tools.visualization import hist, plot_slice, make_thumbnail, make_gif
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
+=======
+import sys
+sys.path.append('C:\\Users\\Frieda\\AppData\\Local\\Programs\\Python\\Python310\\dpm_tools') #Add custom filepath here
+from dpm_tools.io import read_image
+from dpm_tools.visualization import hist
+
+>>>>>>> 4650681bc03980fcfcc355b78030206e8770cea3
 
 
 image_info = {
