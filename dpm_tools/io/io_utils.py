@@ -233,7 +233,7 @@ def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
 
     conversion_list = ['raw', 'tiff', 'tif', 'nc']
     filepath = filepath.replace('\\', '/')
-    original_image = read_image(read_path=filepath, metadata=kwargs)
+    original_image = read_image(read_path=filepath, **kwargs)
 
     filepath, filename = filepath.rsplit('/', 1)
     basename, extension = filename.rsplit('.', 1)
