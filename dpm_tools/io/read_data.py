@@ -1,9 +1,9 @@
 import os
 from tifffile import imread as tiffread
 import numpy as np
-import sys
 import string
 import netCDF4 as nc
+from dataclasses import dataclass, field
 
 def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     """
@@ -20,11 +20,13 @@ def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     return tiffread(filepath)
 
 
-def _read_raw(filepath: str, metadata: dict) -> np.ndarray:
+def _read_raw(filepath: str, **kwargs) -> np.ndarray:
     """
     A utility function to read in RAW files
     Must provide image size as nz, ny, nx, number of bits, signed/unsigned and endianness in kwargs
     """
+    assert 'meta' in kwargs, "Image metadata dictionary is required"
+    metadata = kwargs['meta']
     bits = metadata['bits']
     signed = metadata['signed']
     byte_order = metadata['byte_order']
@@ -55,7 +57,7 @@ def _read_raw(filepath: str, metadata: dict) -> np.ndarray:
     return np.fromfile(filepath, dtype=datatype).reshape([nz, ny, nx])
 
 
-def _read_nc(filepath: str) -> np.ndarray:
+def _read_nc(filepath: str, **kwargs) -> np.ndarray:
 
     ds = nc.Dataset(filepath)
 
@@ -94,6 +96,7 @@ def _read_nc(filepath: str) -> np.ndarray:
     
     return image_array
 
+
 def read_image(read_path: str, **kwargs) -> np.ndarray:
     """
     A general use function for reading in an image of any filetype
@@ -107,6 +110,29 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
     filetype = read_path.rsplit('.', 1)[1]
 
     # TODO Add Error catching, resolve catching classes that do not inherit from BaseException is not allowed
-    #assert filetype.lower() in filetypes, "Cannot read supplied filetype yet"
+    # assert filetype.lower() in filetypes, "Cannot read supplied filetype yet"
 
     return filetypes[filetype.lower()](read_path, **kwargs)
+
+
+@dataclass()
+class Image:
+    basepath: str
+    filename: str
+    meta: field(default_factory=dict) = None
+    filepath: str = field(init=False)
+    image: np.ndarray = field(init=False)
+
+    def __post_init__(self):
+        self.filepath = os.path.join(self.basepath, self.filename)
+        self.basename, self.ext = self.filename.rsplit('.', 1)
+        self.image = read_image(self.filepath, meta=self.meta)
+
+        # Add 3rd axis if image is 2D
+        if self.image.ndim == 2:
+            self.image = self.image[np.newaxis, :, :]
+
+        self.nz, self.nx, self.ny = self.image.shape
+
+
+        # TODO add functionality for coordinate data

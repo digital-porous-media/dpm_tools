@@ -1,5 +1,7 @@
 from .plot_2d import hist
-from .plot_2d import thumbnail
+from .plot_2d import plot_slice
+from .plot_2d import make_thumbnail
+from .plot_2d import make_gif
 
 from ._vis_utils import _make_dir
 from ._vis_utils import _write_hist_csv

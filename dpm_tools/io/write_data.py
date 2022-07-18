@@ -3,7 +3,7 @@ from tifffile import imwrite as tiffwrite
 import numpy as np
 
 
-def _write_tiff(save_path: str, save_filename: str, image_stack: np.ndarray, compression_type: bool, tiffSize: bool, *args, **kwargs) -> None:
+def _write_tiff(save_path: str, save_filename: str, image_stack: np.ndarray, compression_type: bool, tiffSize: bool = False, *args, **kwargs) -> None:
     # TODO implement flags for bigtiff, compression
     
     if compression_type:
