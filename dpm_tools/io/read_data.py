@@ -3,6 +3,7 @@ from tifffile import imread as tiffread
 import numpy as np
 import string
 import netCDF4 as nc
+from hdf5storage import loadmat
 from dataclasses import dataclass, field
 
 def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
@@ -97,6 +98,24 @@ def _read_nc(filepath: str, **kwargs) -> np.ndarray:
     return image_array
 
 
+def _read_mat(filepath: str, data_keys: str = None, **kwargs):
+    data = loadmat(filepath)
+    if data_keys is None:
+        image = [data[k] for k in [*data.keys()]]
+
+    else:
+        try:
+            image = data[data_keys]
+        except KeyError:
+            print("Key could not be found in this file")
+            image = []
+
+    return image
+
+def _not_implemented():
+    raise NotImplementedError("No support for this datafile type... yet")
+
+
 def read_image(read_path: str, **kwargs) -> np.ndarray:
     """
     A general use function for reading in an image of any filetype
@@ -105,14 +124,12 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
     filetypes = {'tiff': _read_tiff,
                  'tif': _read_tiff,
                  'raw': _read_raw,
-                 'nc': _read_nc}
+                 'nc': _read_nc,
+                 'mat': _read_mat}
 
     filetype = read_path.rsplit('.', 1)[1]
 
-    # TODO Add Error catching, resolve catching classes that do not inherit from BaseException is not allowed
-    # assert filetype.lower() in filetypes, "Cannot read supplied filetype yet"
-
-    return filetypes[filetype.lower()](read_path, **kwargs)
+    return filetypes.get(filetype.lower(), _not_implemented)(read_path, **kwargs)
 
 
 @dataclass()
