@@ -5,6 +5,7 @@ import string
 import netCDF4 as nc
 from hdf5storage import loadmat
 from dataclasses import dataclass, field
+from .io_utils import _not_implemented
 
 def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     """
@@ -112,8 +113,7 @@ def _read_mat(filepath: str, data_keys: str = None, **kwargs):
 
     return image
 
-def _not_implemented():
-    raise NotImplementedError("No support for this datafile type... yet")
+
 
 
 def read_image(read_path: str, **kwargs) -> np.ndarray:

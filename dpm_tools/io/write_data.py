@@ -1,9 +1,10 @@
 import os
 from tifffile import imwrite as tiffwrite
 import numpy as np
+from io_utils import _not_implemented
 
 
-def _write_tiff(save_path: str, save_filename: str, image_stack: np.ndarray, compression_type: bool, tiffSize: bool = False, *args, **kwargs) -> None:
+def _write_tiff(save_path: str, save_filename: str, image_stack: np.ndarray, compression_type: bool = True, tiffSize: bool = False, *args, **kwargs) -> None:
     # TODO implement flags for bigtiff, compression
     
     if compression_type:
@@ -30,7 +31,8 @@ def write_image(save_path: str, save_name: str, image: np.ndarray, filetype: str
 
     # TODO Add error catching in filetype
     # try:
-    filetypes[filetype.lower()](save_path, save_name, image, filetype)
+    filetypes.get(filetype.lower(), _not_implemented)(save_path, save_name, image, **kwargs)
+    # filetypes[filetype.lower()](save_path, save_name, image, **kwargs)
 
     # except NotImplemented:
     #     print('Save filetype has not been implemented yet')
