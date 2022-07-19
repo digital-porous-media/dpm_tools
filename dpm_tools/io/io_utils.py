@@ -162,7 +162,7 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
 
 # TODO Add option to combine based on indices of desired slices
-"""
+
 def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
     
     Combines individual slices in a stack.
@@ -227,6 +227,7 @@ def _combine_slices(filepath, filenames, substack_name, use_compression='zlib') 
     else:
         write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
                 image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
+"""
 
 
 def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
