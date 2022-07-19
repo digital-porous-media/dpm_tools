@@ -14,10 +14,13 @@ if __name__ == '__main__':
 
     img = Image(basepath='../data/', filename='multiphase_ketton.raw', meta=image_info)
 
-    # plot_slice(img)
-    # my_fig = plot_orthogonal_slices(img, fig_kwargs={'cmap': 'binary_r'})
+    plot_slice(img)
 
-    my_fig = plot_contours(img, show_isosurface=[2.5], mesh_kwargs={'color': (77, 195, 255), 'opacity': 0.5})
+    my_fig = plot_orthogonal_slices(img, fig_kwargs={'cmap': 'binary_r'})
+    my_fig.show()
+
+    my_fig = plot_contours(img, show_isosurface=[2.5], mesh_kwargs={'color': (77, 195, 255), 'opacity': 0.5,
+                                                                    'smooth_shading': True})
 
     my_fig = plot_contours(img, fig= my_fig, show_isosurface=[1.5],
                            mesh_kwargs={'color': (0, 255, 0), 'opacity': 0.9})
