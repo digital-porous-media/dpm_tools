@@ -191,9 +191,16 @@ def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
     print("-" * 53)
     # Check if bigtiff is needed
     # is_bigtiff = False if combined_stack.nbytes < 4294967296 else True
+    
+    if(combined_stack.nbytes >= 4294967296):
+        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = True)
+    else:
+        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
 
-    write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-                image=combined_stack, filetype='tiff')
+    #write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+    #            image=combined_stack, filetype='tiff')
 
     return combined_stack
 """
