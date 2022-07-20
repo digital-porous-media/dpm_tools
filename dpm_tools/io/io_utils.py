@@ -165,8 +165,8 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
 def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
     
-    Combines individual slices in a stack.
-    To control which slices to include, supply a list of filenames
+    #Combines individual slices in a stack.
+    #To control which slices to include, supply a list of filenames
     
 
     # Read first slices and determine datatype
