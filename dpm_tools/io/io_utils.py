@@ -163,7 +163,7 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
 # TODO Add option to combine based on indices of desired slices
 
-def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
+def _combine_slices(filepath: str, filenames: list, use_compression='zlib') -> np.ndarray:
     
     #Combines individual slices in a stack.
     #To control which slices to include, supply a list of filenames
