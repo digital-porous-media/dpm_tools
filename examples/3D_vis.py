@@ -29,7 +29,8 @@ if __name__ == '__main__':
     #
     # #
     # my_fig.show()
-    file_data = loadmat('C:/Users/bchan/Documents/DPM_Tools/data/10_01_256_elec.mat')
+    #file_data = loadmat('C:/Users/bchan/Documents/DPM_Tools/data/10_01_256_elec.mat')
+    file_data = loadmat('C:/Users/Frieda/AppData/Local/Programs/Python/Python310/DPM_Tools/data/10_01_256_elec.mat')
     # a, b, c = img['phi'].shape
     binary_img = file_data['phi'] != 0
     img = Vector(image=binary_img, scalar=file_data['phi'], vector=[file_data['Ix'], file_data['Iy'], file_data['Iz']])
