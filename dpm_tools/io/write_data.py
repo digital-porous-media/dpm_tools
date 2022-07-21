@@ -1,7 +1,6 @@
 import os
 from tifffile import imwrite as tiffwrite
 import numpy as np
-from io_utils import _not_implemented
 
 
 def _write_tiff(save_path: str, save_filename: str, image_stack: np.ndarray, compression_type: bool = True, tiffSize: bool = False, *args, **kwargs) -> None:

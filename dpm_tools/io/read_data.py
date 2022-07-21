@@ -5,7 +5,7 @@ import string
 import netCDF4 as nc
 from hdf5storage import loadmat
 from dataclasses import dataclass, field
-from .io_utils import _not_implemented
+from collections.abc import Iterable
 
 def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     """
@@ -114,6 +114,8 @@ def _read_mat(filepath: str, data_keys: str = None, **kwargs):
     return image
 
 
+def _not_implemented():
+    raise NotImplementedError("No support for this datafile type... yet")
 
 
 def read_image(read_path: str, **kwargs) -> np.ndarray:
@@ -132,8 +134,8 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
     return filetypes.get(filetype.lower(), _not_implemented)(read_path, **kwargs)
 
 
-@dataclass()
-class Image:
+@dataclass
+class ImageFromFile:
     basepath: str
     filename: str
     meta: field(default_factory=dict) = None
@@ -151,5 +153,36 @@ class Image:
 
         self.nz, self.nx, self.ny = self.image.shape
 
-
+        # TODO add multiple fields (ex. velocity field)
         # TODO add functionality for coordinate data
+
+
+@dataclass
+class Image:
+    image: np.ndarray
+
+    def __post_init__(self):
+        if self.image.ndim == 2:
+            self.image = self.image[np.newaxis, :, :]
+        self.nz, self.nx, self.ny = self.image.shape
+
+
+# TODO combine VectorImage and Image classes
+@dataclass
+class Vector(Image):
+    scalar: np.ndarray
+    vector: list = None
+
+    def __post_init__(self):
+
+        if self.scalar.ndim == 2:
+            self.scalar = self.scalar[np.newaxis, :, :]
+
+        self.nz, self.nx, self.ny = self.scalar.shape
+
+        self.scalar = self.scalar.ravel()
+
+
+        self.magnitude = np.sqrt(self.vector[0]**2 + self.vector[1]**2 + self.vector[2]**2)
+
+

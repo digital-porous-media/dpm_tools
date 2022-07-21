@@ -229,8 +229,7 @@ def _combine_slices(filepath, filenames, substack_name, use_compression='zlib') 
                 image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize=False)
 
 
-def _not_implemented():
-    raise NotImplementedError("No support for this datafile type... yet")
+
 
 
 def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
