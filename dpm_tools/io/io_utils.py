@@ -162,11 +162,11 @@ def _sort_files(directory: str, extension: str, starting_file: str, slices: int)
 
 
 # TODO Add option to combine based on indices of desired slices
-"""
-def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
+
+def _combine_slices(filepath: str, filenames: list, use_compression='zlib') -> np.ndarray:
     
-    Combines individual slices in a stack.
-    To control which slices to include, supply a list of filenames
+    #Combines individual slices in a stack.
+    #To control which slices to include, supply a list of filenames
     
 
     # Read first slices and determine datatype
@@ -191,9 +191,16 @@ def _combine_slices(filepath: str, filenames: list) -> np.ndarray:
     print("-" * 53)
     # Check if bigtiff is needed
     # is_bigtiff = False if combined_stack.nbytes < 4294967296 else True
+    
+    if(combined_stack.nbytes >= 4294967296):
+        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = True)
+    else:
+        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
 
-    write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-                image=combined_stack, filetype='tiff')
+    #write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+    #            image=combined_stack, filetype='tiff')
 
     return combined_stack
 """
@@ -226,10 +233,15 @@ def _combine_slices(filepath, filenames, substack_name, use_compression='zlib') 
                 image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize=True)
     else:
         write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+<<<<<<< HEAD
                 image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize=False)
 
 
 
+=======
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
+"""
+>>>>>>> 427a54fb8a015ad3be7b636ec357e470d36c2351
 
 
 def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
