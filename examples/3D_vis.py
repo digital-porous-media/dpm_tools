@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..\..\dpm_tools') #Add custom filepath here if needed
 from dpm_tools.io import ImageFromFile, Vector
 from dpm_tools.visualization import plot_orthogonal_slices, plot_contours, bounding_box, plot_streamlines
 from dpm_tools.visualization import plot_slice, plot_glyph
