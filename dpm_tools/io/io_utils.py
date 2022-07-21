@@ -230,11 +230,18 @@ def _combine_slices(filepath, filenames, substack_name, use_compression='zlib') 
     print("-"*53)
     if(combined_stack.nbytes >= 4294967296):
         write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = True)
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize=True)
     else:
         write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+<<<<<<< HEAD
+                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize=False)
+
+
+
+=======
                 image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
 """
+>>>>>>> 427a54fb8a015ad3be7b636ec357e470d36c2351
 
 
 def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
