@@ -53,8 +53,6 @@ def plot_contours(data, fig: pv.Plotter = None, show_isosurface: list = None, me
     Input: Wrapped image as PyVista object
     Output: Contour at specified isosurface
     """
-    if show_isosurface is None:
-        show_isosurface = [0.5]
 
     if mesh_kwargs is None:
         mesh_kwargs = {'opacity': 0.15,
@@ -71,11 +69,14 @@ def plot_contours(data, fig: pv.Plotter = None, show_isosurface: list = None, me
 
     if fig is None:
         fig = _initialize_plotter()
-
+    
     pv_image_obj = _wrap_array(data.image)
 
-    contours = pv_image_obj.contour(isosurfaces=show_isosurface)
+    if show_isosurface is None:
+        show_isosurface = [np.mean(_initialize_plotter().add_mesh(pv_image_obj.contour()).mapper.scalar_range)]
 
+    contours = pv_image_obj.contour(isosurfaces=show_isosurface)
+    
     fig.add_mesh(contours, **mesh_kwargs)
 
     return fig
