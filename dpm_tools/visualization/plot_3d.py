@@ -73,8 +73,9 @@ def plot_contours(data, fig: pv.Plotter = None, show_isosurface: list = None, me
     pv_image_obj = _wrap_array(data.image)
 
     if show_isosurface is None:
-        show_isosurface = [np.mean(_initialize_plotter().add_mesh(pv_image_obj.contour()).mapper.scalar_range)]
-
+        # show_isosurface = [np.mean(_initialize_plotter().add_mesh(pv_image_obj.contour()).mapper.scalar_range)]
+        show_isosurface = [(np.amax(data.image)+np.amin(data.image))/2]
+    print(show_isosurface)
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
     
     fig.add_mesh(contours, **mesh_kwargs)
