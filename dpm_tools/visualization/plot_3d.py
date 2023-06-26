@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
-from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap
+from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap, _initialize_kwargs
 from ..__init__ import timer
 import warnings
 
@@ -23,10 +23,8 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
 
     if show_slices is None:
         show_slices = [data.nx // 2, data.ny // 2, data.nz // 2]
-    if plotter_kwargs is None:
-        plotter_kwargs = {}
-    if mesh_kwargs is None:
-        mesh_kwargs = {}
+
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     # Test to make sure user only supplied 3 lengths
     assert len(show_slices) == 3, "Please only specify x-, y-, and z-slices to show"
@@ -68,14 +66,7 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
         fig: PyVista plotter object with added orthogonal slice mesh.
     """
 
-    if mesh_kwargs is None:
-        mesh_kwargs = {'opacity': 0.15,
-                       'smooth_shading': True,
-                       'diffuse': 0.75,
-                       'color': (77 / 255, 195 / 255, 255 / 255),
-                       'ambient': 0.15}
-    if plotter_kwargs is None:
-        plotter_kwargs = {}
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
@@ -106,16 +97,10 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
         Pyvista plotter object with wall contours around entire image
     """
 
-    if plotter_kwargs is None:
-        plotter_kwargs = {}
-
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
-    if mesh_kwargs is None:
-        mesh_kwargs = {'opacity': 0.2,
-                       'color': (1, 1, 1),
-                       'alpha': 0.2}
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     wall_bin = data.image.copy()
     wall_bin[1:-1, 1:-1, 1:-1] = 255
@@ -127,7 +112,7 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
 
 @timer
 def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, glyph_space: int = 1,
-               glyph_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs:dict = None) -> pv.Plotter:
+               glyph_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
     """
     Plot glyphs to the Plotter such as arrows, spheres, etc. for vector fields
 
@@ -151,19 +136,14 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
                         'tolerance': 0.05,
                         'geom': glyph}
 
-        if vector_data.vector is not None:
-            glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
+    if vector_data.vector is not None:
+        glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
 
-
-    if mesh_kwargs is None:
-        mesh_kwargs = {}
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     x, y, z = np.mgrid[:vector_data.nx:glyph_space,
                        :vector_data.ny:glyph_space,
                        :vector_data.nz:glyph_space]
-
-    if plotter_kwargs is None:
-        plotter_kwargs = {}
 
     # Initialize a new plotter object
     if fig is None:
@@ -202,8 +182,7 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
         Pyvista plotter object with glyph object
     """
 
-    if plotter_kwargs is None:
-        plotter_kwargs = {}
+    plotter_kwargs, _ = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     # Initialize a new plotter object if none are provided
     if fig is None:
