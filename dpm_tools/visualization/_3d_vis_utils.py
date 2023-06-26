@@ -13,7 +13,7 @@ def _initialize_plotter(bg: str = 'w', *args, **kwargs):
     plotter_obj = pv.Plotter(*args, **kwargs)
 
     # Set background colors
-    plotter_obj.set_background(color=bg, top='lightblue', **kwargs)
+    plotter_obj.set_background(color=bg, **kwargs)
 
     # Set font colors and sizes
     pv.global_theme.font.color = 'black'
