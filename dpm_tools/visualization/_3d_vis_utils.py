@@ -53,5 +53,21 @@ def _show_3d(plotter_obj, filepath="", take_screenshot=False, interactive=False,
         cpos = plotter_obj.show(interactive=True, return_cpos=True)
         print(cpos)
 
+def _initialize_kwargs(plotter_kwargs: dict, mesh_kwargs: dict, ):
+    """
+    Utility function to initialize kwargs for PyVista plotting
+    """
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+
+    if mesh_kwargs is None:
+        mesh_kwargs = {'opacity': 0.15,
+                       'smooth_shading': True,
+                       'diffuse': 0.75,
+                       'color': (77 / 255, 195 / 255, 255 / 255),
+                       'ambient': 0.15}
+
+    return plotter_kwargs, mesh_kwargs
+
 
 
