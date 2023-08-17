@@ -12,12 +12,14 @@ from ..__init__ import timer
 
 @timer
 def hist(data,
+         data2: np.array = None,
          nbins: int = 256,
          write_csv: bool = False,
          **kwargs):
     """
     Generate a histogram
     If save_fig is True, a save path should be supplied to kwargs under key "filepath"
+    Use data2 for adding a second distribution and plotting them together
     """
 
     # # Make line between bars black
@@ -31,11 +33,21 @@ def hist(data,
     # Make the histogram
     fig = plt.figure(figsize=kwargs['fig_size'])
     kwargs.pop('fig_size', None)  # Remove fig_size argument from kwargs
-    freq, bins, _ = plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs)
-    plt.xlabel('Gray value')
-    plt.ylabel('Probability')
-    plt.tight_layout()
-    plt.show()
+
+    if  data2 is not None:
+        plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs, label='data1')
+        plt.hist(x=data2.image.ravel(), bins=nbins, density=True, **kwargs, label = 'data2')
+        plt.legend()
+        plt.xlabel('Gray value')
+        plt.ylabel('Probability')
+        plt.tight_layout()
+        plt.show()
+    else:
+        freq, bins, _ = plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs)
+        plt.xlabel('Gray value')
+        plt.ylabel('Probability')
+        plt.tight_layout()
+        plt.show()
 
     # # Create a figures directory if save path is not specified
     # if save_path is None:
@@ -58,6 +70,9 @@ def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
     if 'interpolation' not in kwargs:
         kwargs['interpolation'] = 'none'
 
+    if 'cmap' not in kwargs:
+        kwargs['cmap'] = 'viridis'
+        
     if slice_num is None:
         slice_num = data.image.shape[slice_axis] // 2
 
