@@ -53,7 +53,7 @@ def _show_3d(plotter_obj, filepath="", take_screenshot=False, interactive=False,
         cpos = plotter_obj.show(interactive=True, return_cpos=True)
         print(cpos)
 
-def _initialize_kwargs(plotter_kwargs: dict, mesh_kwargs: dict, ):
+def _initialize_kwargs(plotter_kwargs: dict = None, mesh_kwargs: dict = None):
     """
     Utility function to initialize kwargs for PyVista plotting
     """

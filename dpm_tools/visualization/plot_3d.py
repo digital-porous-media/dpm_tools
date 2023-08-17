@@ -23,8 +23,14 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
 
     if show_slices is None:
         show_slices = [data.nx // 2, data.ny // 2, data.nz // 2]
-
-    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+        
+    #plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    
+    # Overriding the above line because it prevents orthogonal slices from showing for some reason.
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+    if mesh_kwargs is None:
+        mesh_kwargs = {}
 
     # Test to make sure user only supplied 3 lengths
     assert len(show_slices) == 3, "Please only specify x-, y-, and z-slices to show"
@@ -66,8 +72,20 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
         fig: PyVista plotter object with added orthogonal slice mesh.
     """
 
-    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    if mesh_kwargs is None:
+        mesh_kwargs = {'opacity': 0.15,
+                       'smooth_shading': True,
+                       'diffuse': 0.75,
+                       'color': (77 / 255, 195 / 255, 255 / 255),
+                       'ambient': 0.15}
 
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+        # display_kwargs = {'filename': data.basename,
+        #                   'take_screenshot': False,
+        #                   'interactive': False}
+        
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
     
@@ -75,7 +93,9 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
 
     if show_isosurface is None:
         show_isosurface = [(np.amax(data.image)+np.amin(data.image))/2]
-        warnings.warn(f"No isosurfaces specified. Using isosurfaces {show_isosurface}")
+        warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.'+
+              f'Using the midpoint of the isosurface array instead ({np.amin(data.image)},{np.amax(data.image)}).\n',
+              stacklevel=2)
 
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
     
@@ -96,12 +116,19 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
     Returns:
         Pyvista plotter object with wall contours around entire image
     """
-
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+        
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
-    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    #plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
+    if mesh_kwargs is None:
+        mesh_kwargs = {'opacity': 0.2,
+                       'color': (1, 1, 1)}
+    
+    
     wall_bin = data.image.copy()
     wall_bin[1:-1, 1:-1, 1:-1] = 255
     vtk_wall = _wrap_array(wall_bin)
@@ -128,39 +155,68 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
         Pyvista plotter object with glyph object
     """
     if glyph is None:
-        glyph = pv.Arrow(scale=100)
-
+        glyph = pv.Arrow()
+        
+    array = vector_data.magnitude[::glyph_space, ::glyph_space, ::glyph_space].ravel()/np.max(vector_data.magnitude)
+    array2 = np.sqrt(array)
+    scale_factor = 20
     if glyph_kwargs is None:
-        glyph_kwargs = {'scale': vector_data.magnitude[::glyph_space, ::glyph_space, ::glyph_space].ravel()/np.max(vector_data.magnitude),
+        glyph_kwargs = {'scale': array2,
                         'orient': True,
                         'tolerance': 0.05,
-                        'geom': glyph}
+                        'geom': glyph,
+                        'factor': scale_factor}
 
     if vector_data.vector is not None:
         glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
 
-    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     x, y, z = np.mgrid[:vector_data.nx:glyph_space,
                        :vector_data.ny:glyph_space,
                        :vector_data.nz:glyph_space]
 
+    # Pseudo mesh for scale bar of the figure #####################################
+    glyph_kwargs2 = {'scale': array,
+                    'orient': True,
+                    'tolerance': 0.05,
+                    'geom': glyph,
+                    'factor': scale_factor}
+    glyph_kwargs2['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
+    
+    fig2 = _initialize_plotter()
+    mesh2 = pv.StructuredGrid(z, y, x)
+    mesh2['scalars'] = array
+    mesh2['vectors'] = np.column_stack((glyph_kwargs2['orient'][0].ravel(),
+                                       glyph_kwargs2['orient'][1].ravel(),
+                                       glyph_kwargs2['orient'][2].ravel()))
+    [glyph_kwargs2.pop(pop_key) for pop_key in ['scale', 'orient']]
+    glyphs2 = mesh2.glyph(orient='vectors', scale='scalars', **glyph_kwargs2)
+    fig2.add_mesh(glyphs2)
+    ###############################################################################
+
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+    if mesh_kwargs is None:
+        mesh_kwargs = {}
+        
     # Initialize a new plotter object
     if fig is None:
-        fig = _initialize_plotter()
-
+        fig = _initialize_plotter(**plotter_kwargs)
+        
     # Create a structured grid mesh
     mesh = pv.StructuredGrid(z, y, x)
-    mesh['scalars'] = glyph_kwargs['scale']
+    mesh['scalars'] = array2
     mesh['vectors'] = np.column_stack((glyph_kwargs['orient'][0].ravel(),
                                        glyph_kwargs['orient'][1].ravel(),
                                        glyph_kwargs['orient'][2].ravel()))
     [glyph_kwargs.pop(pop_key) for pop_key in ['scale', 'orient']]
     glyphs = mesh.glyph(orient='vectors', scale='scalars', **glyph_kwargs)
-    sargs = dict(height=0.5, width=0.08, vertical=True, position_x=0.10, position_y=0.25,
-                 font_family='arial', title_font_size=45, label_font_size=36, fmt="%.2e",
+    sargs = dict(mapper=fig2.mapper, height=0.5, width=0.08, vertical=True, position_x=0.10, position_y=0.25,
+                 font_family='arial', title_font_size=20, label_font_size=16, fmt="%.2f",
                  title="Magnitude")
     fig.add_mesh(glyphs, scalar_bar_args=sargs, **mesh_kwargs)
+
 
     return fig
 
@@ -182,8 +238,13 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
         Pyvista plotter object with glyph object
     """
 
-    plotter_kwargs, _ = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
-
+    # plotter_kwargs, _ = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+    if mesh_kwargs is None:
+        mesh_kwargs = {}
+    
+    
     # Initialize a new plotter object if none are provided
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)

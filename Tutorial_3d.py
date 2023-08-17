@@ -10,8 +10,8 @@ import numpy as np
 
 from dpm_tools.io import Image, Vector, ImageFromFile, read_image
 from dpm_tools.visualization.plot_2d import hist, plot_slice, make_gif
-from dpm_tools.visualization.plot_3d import (plot_orthogonal_slices, plot_contours, 
-                                             plot_streamlines, plot_glyph, bounding_box)
+from dpm_tools.visualization.plot_3d import orthogonal_slices, plot_isosurface, plot_streamlines
+from dpm_tools.visualization.plot_3d import plot_glyph, bounding_box
 
 # *************************************************************************** #
 # Fundamentals ************************************************************** #
@@ -45,12 +45,13 @@ img_ketton = Image(sample_ketton)
 plot_slice(img_ketton,slice_num=50)
 
 ## Function call to plot the orthogonal slices.
-fig_orthogonal = plot_orthogonal_slices(img_ketton)
+fig_orthogonal = orthogonal_slices(img_ketton)
 fig_orthogonal.show()
 
 ## Function call to plot the contours. If the 'show_isosurfaces' is not given,
 ## the middle value of the isosurface range will be used as default.
-fig_contours = plot_contours(img_ketton) # For isosurfaces say the default is used as the mid of the range
+
+fig_contours = plot_isosurface(img_ketton)
 fig_contours.show()
 
 # *************************************************************************** #
@@ -90,16 +91,19 @@ vec = Vector(image=v, scalar=v, vector=[vx,vy,vz])
 plot_slice(vec,slice_num=50) # fixed the color and put them in the same colormap
 
 
-fig_orthogonal_velocity = plot_orthogonal_slices(vec)
+fig_orthogonal_velocity = orthogonal_slices(vec)
 fig_orthogonal_velocity.show()
 
 
 ## Plotting glyph
-fig_glyph = plot_glyph(vec, glyph_space=1) # Scaled the arrows
+fig_glyph = plot_glyph(vec)
+plot_isosurface(vec, fig=fig_glyph)
+bounding_box(vec, fig=fig_glyph)
 fig_glyph.show()
 
 ## Plotting the streamlines with a bounding box
 fig_streamlines = plot_streamlines(vec)
+plot_isosurface(vec, fig=fig_streamlines, show_isosurface=3)
 
 ## Adding a bounding box to the streamlines
 bounding_box(vec, fig=fig_streamlines)
@@ -174,7 +178,7 @@ bentheimer_ss_vector = Vector(image=bentheimer_ss_scalar, scalar=bentheimer_ss_s
 plot_slice(bentheimer_ss_vector,slice_num=50) # fixed the color and put them in the same colormap
 
 
-fig_orthogonal_velocity = plot_orthogonal_slices(bentheimer_ss_vector)
+fig_orthogonal_velocity = orthogonal_slices(bentheimer_ss_vector)
 fig_orthogonal_velocity.show()
 
 
@@ -187,7 +191,7 @@ fig_streamlines = plot_streamlines(bentheimer_ss_vector)
 
 ## Adding a bounding box to the streamlines
 bounding_box(bentheimer_ss_vector, fig=fig_streamlines)
-plot_contours(bentheimer_ss_vector, fig=fig_streamlines,
+plot_isosurface(bentheimer_ss_vector, fig=fig_streamlines,
                            mesh_kwargs={'color': (255, 255, 255), 'opacity': 0.15})
 fig_streamlines.show()
 
@@ -263,14 +267,14 @@ estaillades_carbonate_vector = Vector(image=estaillades_carbonate_scalar,
 plot_slice(estaillades_carbonate_vector,slice_num=50) # fixed the color and put them in the same colormap
 
 
-fig_orthogonal_velocity = plot_orthogonal_slices(estaillades_carbonate_vector)
+fig_orthogonal_velocity = orthogonal_slices(estaillades_carbonate_vector)
 fig_orthogonal_velocity.show()
 
 
 ## Plotting glyph
 fig_glyph = plot_glyph(estaillades_carbonate_vector, glyph_space=1) # Scaled the arrows
 bounding_box(estaillades_carbonate_vector, fig=fig_glyph)
-plot_contours(estaillades_carbonate_vector, fig=fig_glyph,
+plot_isosurface(estaillades_carbonate_vector, fig=fig_glyph,
                            mesh_kwargs={'color': (255, 255, 255), 'opacity': 0.15})
 fig_glyph.show()
 
@@ -279,7 +283,7 @@ fig_streamlines = plot_streamlines(estaillades_carbonate_vector)
 
 ## Adding a bounding box to the streamlines
 bounding_box(estaillades_carbonate_vector, fig=fig_streamlines)
-plot_contours(estaillades_carbonate_vector, fig=fig_streamlines,
+plot_isosurface(estaillades_carbonate_vector, fig=fig_streamlines,
                            mesh_kwargs={'color': (255, 255, 255), 'opacity': 0.15})
 fig_streamlines.show()
 
