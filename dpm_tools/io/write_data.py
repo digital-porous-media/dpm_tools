@@ -30,9 +30,9 @@ def write_image(save_path: str, save_name: str, image: np.ndarray, filetype: str
 
     # TODO Add error catching in filetype
     # try:
-    filetypes.get(filetype.lower(), _not_implemented)(save_path, save_name, image, **kwargs)
-    # filetypes[filetype.lower()](save_path, save_name, image, **kwargs)
-    #filetypes[filetype.lower()](save_path, save_name, image)
+    # filetypes.get(filetype.lower())(save_path, save_name, image, **kwargs)
+    filetypes[filetype.lower()](save_path, save_name, image, **kwargs)
+    # filetypes[filetype.lower()](save_path, save_name, image)
 
     # except NotImplemented:
     #     print('Save filetype has not been implemented yet')
