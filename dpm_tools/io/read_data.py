@@ -170,10 +170,11 @@ class Image:
 # TODO combine VectorImage and Image classes
 @dataclass
 class Vector(Image):
-    scalar: np.ndarray
+    scalar: np.ndarray = None
     vector: list = None
 
     def __post_init__(self):
+        assert self.scalar is not None and self.vector is not None, "Provide either scalar or vector data"
 
         if self.scalar.ndim == 2:
             self.scalar = self.scalar[np.newaxis, :, :]
