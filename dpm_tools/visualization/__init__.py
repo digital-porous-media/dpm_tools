@@ -3,8 +3,8 @@ from .plot_2d import plot_slice
 from .plot_2d import make_thumbnail
 from .plot_2d import make_gif
 
-from .plot_3d import plot_orthogonal_slices
-from .plot_3d import plot_contours
+from .plot_3d import orthogonal_slices
+from .plot_3d import plot_isosurface
 from .plot_3d import bounding_box
 from .plot_3d import plot_glyph
 from .plot_3d import plot_streamlines

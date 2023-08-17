@@ -1,25 +1,30 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pyvista as pv
-from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap
+from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap, _initialize_kwargs
 from ..__init__ import timer
+import warnings
 
 
 @timer
-def plot_orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
-                           fig_kwargs: dict = None) -> pv.Plotter:
+def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
+                      mesh_kwargs: dict = None) -> pv.Plotter:
     """
-    Input: NumPy array of image, x-, y-, and z-slices to plot
-    Output: PyVista plot of orthogonal slices
+    Plots 3 orthogonal slices of a 3D image.
+    Parameters:
+        data: A dataclass containing 3D image data
+        fig: Pyvista plotter object
+        show_slices: List of slices in x, y, z to show. Default is middle slice in each direction.
+        plotter_kwargs: Additional keyword arguments to pass to the plotter.
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+    Returns:
+        fig: PyVista plotter object with added orthogonal slice mesh.
     """
 
     if show_slices is None:
         show_slices = [data.nx // 2, data.ny // 2, data.nz // 2]
 
-    if plotter_kwargs is None:
-        plotter_kwargs = {}
-    if fig_kwargs is None:
-        fig_kwargs = {}
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     # Test to make sure user only supplied 3 lengths
     assert len(show_slices) == 3, "Please only specify x-, y-, and z-slices to show"
@@ -41,41 +46,37 @@ def plot_orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = Non
     slices = pv_image_obj.slice_orthogonal(x=x_slice, y=y_slice, z=z_slice)
 
     # Add the slices as meshes to the PyVista plotter object
-    fig.add_mesh(slices, **fig_kwargs)
+    fig.add_mesh(slices, **mesh_kwargs)
 
     return fig
 
 
 @timer
-def plot_contours(data, fig: pv.Plotter = None, show_isosurface: list = None, mesh_kwargs: dict = None,
-                  display_kwargs: dict = None) -> pv.Plotter:
+def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, mesh_kwargs: dict = None,
+                    plotter_kwargs: dict = None) -> pv.Plotter:
     """
-    Input: Wrapped image as PyVista object
-    Output: Contour at specified isosurface
+    Plots 3D isosurfaces
+    Parameters:
+        data: A dataclass containing 3D labeled image data
+        fig: Pyvista plotter object
+        show_isosurface: List of isosurfaces to show. Default is single isosurface at average between maximum and minimum label values.
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+        plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.
+    Returns:
+        fig: PyVista plotter object with added orthogonal slice mesh.
     """
 
-    if mesh_kwargs is None:
-        mesh_kwargs = {'opacity': 0.15,
-                       'smooth_shading': True,
-                       'diffuse': 0.75,
-                       'color': (77 / 255, 195 / 255, 255 / 255),
-                       'ambient': 0.15}
-
-    if display_kwargs is None:
-        display_kwargs = {}
-        # display_kwargs = {'filename': data.basename,
-        #                   'take_screenshot': False,
-        #                   'interactive': False}
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     if fig is None:
-        fig = _initialize_plotter()
+        fig = _initialize_plotter(**plotter_kwargs)
     
     pv_image_obj = _wrap_array(data.image)
 
     if show_isosurface is None:
-        # show_isosurface = [np.mean(_initialize_plotter().add_mesh(pv_image_obj.contour()).mapper.scalar_range)]
         show_isosurface = [(np.amax(data.image)+np.amin(data.image))/2]
-    print(show_isosurface)
+        warnings.warn(f"No isosurfaces specified. Using isosurfaces {show_isosurface}")
+
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
     
     fig.add_mesh(contours, **mesh_kwargs)
@@ -84,16 +85,22 @@ def plot_contours(data, fig: pv.Plotter = None, show_isosurface: list = None, me
 
 
 @timer
-def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None) -> pv.Plotter:
+def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
     """
-    Returns wall contours around entire image
-    """
-    if fig is None:
-        fig = _initialize_plotter()
+    Add a bounding box mesh to the Plotter. Assumes the isosurface is at 255.
 
-    if mesh_kwargs is None:
-        mesh_kwargs = {'opacity': 0.2,
-                       'color': (1, 1, 1)}
+    Parameters:
+        data: A dataclass containing 3D labeled image data
+        fig: Pyvista plotter object
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+    Returns:
+        Pyvista plotter object with wall contours around entire image
+    """
+
+    if fig is None:
+        fig = _initialize_plotter(**plotter_kwargs)
+
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     wall_bin = data.image.copy()
     wall_bin[1:-1, 1:-1, 1:-1] = 255
@@ -105,9 +112,20 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None) -> pv.P
 
 @timer
 def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, glyph_space: int = 1,
-               glyph_kwargs: dict = None, mesh_kwargs: dict = None) -> pv.Plotter:
+               glyph_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
     """
-    Plot glyph images such as spheres, vector fields, etc.
+    Plot glyphs to the Plotter such as arrows, spheres, etc. for vector fields
+
+    Parameters:
+        vector_data: A dataclass containing 3D vector data in 3 component directions
+        fig: Pyvista plotter object
+        glyph: PyVista polydata object to add to the plotter. Defaults to arrow glyph
+        glyph_space: Spacing between glyphs. Defaults to 1
+        glyph_kwargs: Additional keyword arguments to customize the glyph
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+        plotter_kwargs: Additional keyword arguments to pass to the plotter.
+    Returns:
+        Pyvista plotter object with glyph object
     """
     if glyph is None:
         glyph = pv.Arrow(scale=100)
@@ -118,12 +136,10 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
                         'tolerance': 0.05,
                         'geom': glyph}
 
-        if vector_data.vector is not None:
-            glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
+    if vector_data.vector is not None:
+        glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
 
-
-    if mesh_kwargs is None:
-        mesh_kwargs = {}
+    plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     x, y, z = np.mgrid[:vector_data.nx:glyph_space,
                        :vector_data.ny:glyph_space,
@@ -151,14 +167,26 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
 
 @timer
 def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = None,
-               streamline_kwargs: dict = None, mesh_kwargs: dict = None) -> pv.Plotter:
+               streamline_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
+    """
+    Plot streamlines to the Plotter object
 
+    Parameters:
+        vector_data: A dataclass containing 3D vector data in 3 component directions
+        fig: Pyvista plotter object
+        tube_radius: Radius of streamline tube. Defaults to 0.75/224 * vector_data.nz
+        streamline_kwargs: PyVista keyword arguments to customize the streamline
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+        plotter_kwargs: Additional keyword arguments to pass to the plotter.
+    Returns:
+        Pyvista plotter object with glyph object
+    """
 
+    plotter_kwargs, _ = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
-
-    # Initialize a new plotter object
+    # Initialize a new plotter object if none are provided
     if fig is None:
-        fig = _initialize_plotter()
+        fig = _initialize_plotter(**plotter_kwargs)
 
     mesh = pv.UniformGrid(dims=(vector_data.nz, vector_data.ny, vector_data.nx),
                           spacing=(1.0, 1.0, 1.0),
