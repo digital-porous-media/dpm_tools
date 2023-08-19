@@ -8,7 +8,7 @@ import warnings
 
 @timer
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
-                      mesh_kwargs: dict = None) -> pv.Plotter:
+                      mesh_kwargs: dict = None, slider = False) -> pv.Plotter:
     """
     Plots 3 orthogonal slices of a 3D image.
     Parameters:
@@ -44,16 +44,39 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     # Initialize plotter object
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-
+    
+    # Swapping axes for pyvista compatibility
+    ax_swap_arr = np.swapaxes(data.image, 0,2)
+    
     # Wrap NumPy array to pyvista object
-    pv_image_obj = _wrap_array(data.image)
-
-    # Extract 3 orthogonal slices
-    slices = pv_image_obj.slice_orthogonal(x=x_slice, y=y_slice, z=z_slice)
-
-    # Add the slices as meshes to the PyVista plotter object
-    fig.add_mesh(slices, **mesh_kwargs)
-
+    pv_image_obj = _wrap_array(ax_swap_arr)
+    
+    # Adding the slider
+    if slider is True:
+        def slices_slider(value):
+            z_slider = int(value)
+            pv_image_obj = _wrap_array(ax_swap_arr)
+            slices = pv_image_obj.slice_orthogonal(x=50, y=50, z=z_slider,contour=True)
+            fig.add_mesh(slices,name='timestep_mesh')
+            return
+        fig.add_slider_widget(slices_slider, [1, data.nz-1], title='Z-slice',fmt="%0.f")
+    
+    else:
+    
+        # Extract 3 orthogonal slices
+        slices = pv_image_obj.slice_orthogonal(x=x_slice, y=y_slice, z=z_slice)
+    
+        # Add the slices as meshes to the PyVista plotter object
+        fig.add_mesh(slices, **mesh_kwargs)
+        
+    _ = fig.add_axes(
+        line_width=5,
+        cone_radius=0.6,
+        shaft_length=0.7,
+        tip_length=0.3,
+        ambient=0.5,
+        label_size=(0.4, 0.16),
+    )
     return fig
 
 
@@ -177,7 +200,7 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
                        :vector_data.nz:glyph_space]
 
     # Pseudo mesh for scale bar of the figure #####################################
-    glyph_kwargs2 = {'scale': array,
+    glyph_kwargs2 = {'scale': array*np.max(vector_data.magnitude),
                     'orient': True,
                     'tolerance': 0.05,
                     'geom': glyph,
@@ -186,7 +209,7 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
     
     fig2 = _initialize_plotter()
     mesh2 = pv.StructuredGrid(z, y, x)
-    mesh2['scalars'] = array
+    mesh2['scalars'] = array*np.max(vector_data.magnitude)
     mesh2['vectors'] = np.column_stack((glyph_kwargs2['orient'][0].ravel(),
                                        glyph_kwargs2['orient'][1].ravel(),
                                        glyph_kwargs2['orient'][2].ravel()))
@@ -213,7 +236,7 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
     [glyph_kwargs.pop(pop_key) for pop_key in ['scale', 'orient']]
     glyphs = mesh.glyph(orient='vectors', scale='scalars', **glyph_kwargs)
     sargs = dict(mapper=fig2.mapper, height=0.5, width=0.08, vertical=True, position_x=0.10, position_y=0.25,
-                 font_family='arial', title_font_size=20, label_font_size=16, fmt="%.2f",
+                 font_family='arial', title_font_size=20, label_font_size=16, fmt="%.2e",
                  title="Magnitude")
     fig.add_mesh(glyphs, scalar_bar_args=sargs, **mesh_kwargs)
 

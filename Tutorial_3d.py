@@ -42,11 +42,12 @@ sample_ketton = read_image("./Ketton_segmented_oil_blob.raw", meta=metadata)
 img_ketton = Image(sample_ketton)
 
 ## Since this image has 225 slices, the slice number can be indicated in the function.
-plot_slice(img_ketton,slice_num=50)
+plot_slice(img_ketton,slice_num=112)
 
 ## Function call to plot the orthogonal slices.
-fig_orthogonal = orthogonal_slices(img_ketton)
+fig_orthogonal = orthogonal_slices(img_ketton,slider=True)
 fig_orthogonal.show()
+
 
 ## Function call to plot the contours. If the 'show_isosurfaces' is not given,
 ## the middle value of the isosurface range will be used as default.
@@ -91,7 +92,7 @@ vec = Vector(image=v, scalar=v, vector=[vx,vy,vz])
 plot_slice(vec,slice_num=50) # fixed the color and put them in the same colormap
 
 
-fig_orthogonal_velocity = orthogonal_slices(vec)
+fig_orthogonal_velocity = orthogonal_slices(vec,slider=True)
 fig_orthogonal_velocity.show()
 
 
