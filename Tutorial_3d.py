@@ -179,7 +179,7 @@ bentheimer_ss_vector = Vector(image=bentheimer_ss_scalar, scalar=bentheimer_ss_s
 plot_slice(bentheimer_ss_vector,slice_num=50) # fixed the color and put them in the same colormap
 
 
-fig_orthogonal_velocity = orthogonal_slices(bentheimer_ss_vector)
+fig_orthogonal_velocity = orthogonal_slices(bentheimer_ss_vector,slider=True)
 fig_orthogonal_velocity.show()
 
 
@@ -268,7 +268,7 @@ estaillades_carbonate_vector = Vector(image=estaillades_carbonate_scalar,
 plot_slice(estaillades_carbonate_vector,slice_num=50) # fixed the color and put them in the same colormap
 
 
-fig_orthogonal_velocity = orthogonal_slices(estaillades_carbonate_vector)
+fig_orthogonal_velocity = orthogonal_slices(estaillades_carbonate_vector, slider=True)
 fig_orthogonal_velocity.show()
 
 
