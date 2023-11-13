@@ -34,7 +34,7 @@ def hist(data,
     fig = plt.figure(figsize=kwargs['fig_size'])
     kwargs.pop('fig_size', None)  # Remove fig_size argument from kwargs
 
-    if  data2 is not None:
+    if data2 is not None:
         plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs, label='data1')
         plt.hist(x=data2.image.ravel(), bins=nbins, density=True, **kwargs, label = 'data2')
         plt.legend()

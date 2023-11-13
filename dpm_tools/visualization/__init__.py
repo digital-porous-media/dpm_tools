@@ -8,6 +8,7 @@ from .plot_3d import plot_isosurface
 from .plot_3d import bounding_box
 from .plot_3d import plot_glyph
 from .plot_3d import plot_streamlines
+from .plot_3d import plot_scalar_volume
 
 from ._vis_utils import _make_dir
 from ._vis_utils import _write_hist_csv

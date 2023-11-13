@@ -46,7 +46,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         fig = _initialize_plotter(**plotter_kwargs)
     
     # Swapping axes for pyvista compatibility
-    ax_swap_arr = np.swapaxes(data.image, 0,2)
+    ax_swap_arr = np.swapaxes(data.image, 0, 2)
     
     # Wrap NumPy array to pyvista object
     pv_image_obj = _wrap_array(ax_swap_arr)
@@ -300,4 +300,55 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
     fig.add_mesh(stream.tube(radius=tube_radius), **mesh_kwargs)
 
     return fig
+
+@timer
+def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
+                       plotter_kwargs: dict = None) -> pv.Plotter:
+    """
+    Plot voxelized surface to the Plotter object
+
+    Parameters:
+        data: A dataclass containing 3D labeled image data
+        fig: Pyvista plotter object
+        show_isosurface: PyVista keyword arguments to customize the isosurface
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+        plotter_kwargs: Additional keyword arguments to pass to the plotter.
+
+    Returns:
+        Pyvista plotter object with voxelized surface
+    """
+
+    if mesh_kwargs is None:
+        mesh_kwargs = {}
+
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+        # display_kwargs = {'filename': data.basename,
+        #                   'take_screenshot': False,
+        #                   'interactive': False}
+
+    if fig is None:
+        fig = _initialize_plotter(**plotter_kwargs)
+
+    # Create a bounded volume
+    # wall_bin = 255 * np.ones((data.image.shape[0]+2, data.image.shape[1]+2, data.image.shape[2]+2))
+    # wall_bin[1:-1, 1:-1, 1:-1] = data.image.copy()
+
+    # pv_image_obj = _wrap_array(data.scalar)
+
+    mesh = pv.UniformGrid(dims=(data.nz, data.ny, data.nx),
+                          spacing=(1.0, 1.0, 1.0),
+                          origin=(0.0, 0.0, 0.0))
+
+    # data.scalar = data.scalar.reshape(data.nz, data.ny, data.nx)
+    # data.scalar = np.swapaxes(data.scalar, 0, 2)
+    data.scalar[data.scalar == 0.0] = np.nan
+
+    fig.add_volume(mesh, scalars=data.scalar.flatten(order="F"), opacity='foreground', **mesh_kwargs)
+
+
+    return fig
+
+
+
 
