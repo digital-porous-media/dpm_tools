@@ -109,3 +109,9 @@ def constriction_factor(thickness_map: np.ndarray, power: float = None) -> np.nd
 
     return constriction_map
 
+if __name__ == '__main__':
+    sim = np.fromfile('D:/pore_features/sp_micromodel/sim/elecpot.raw')
+    plt.imshow(sim[2])
+    plt.show()
+    # bin = np.fromfile('D:/pore_features/sp_micromodel/sim/segmented.raw')
+

@@ -14,9 +14,9 @@ def _get_trend(data, inlet_value: float = 2, outlet_value: float = 1, grid_shift
 
     tmp = np.linspace(inlet_value, outlet_value, data.nz)
 
-
-    for tmp_slice, i in enumerate(tmp):
-        linear[:, :, tmp_slice] = np.ones((data.nx, data.ny)) * i
+    linear = np.broadcast_to(tmp, data.image.shape)
+    #for tmp_slice, i in enumerate(tmp):
+    #    linear[:, :, tmp_slice] = np.ones((data.nx, data.ny)) * i
 
     mask = (data.img != 0)
 
