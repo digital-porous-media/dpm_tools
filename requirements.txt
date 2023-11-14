@@ -1,13 +1,12 @@
-numpy == 1.21.5
+numpy >= 1.21.5
 matplotlib >= 3.5.0
 pyvista >= 0.42.3
 pandas~=1.4.2
 
 exifread == 3.0.0
-tifffile == 2021.7.2
-netcdf4 == 1.6.0
+tifffile >= 2021.7.2
+netcdf4 >= 1.6.0
 hdf5storage == 0.1.18
 
 pillow~=9.0.1
-dataclasses~=0.8
 tqdm~=4.64.0
