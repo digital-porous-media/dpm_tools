@@ -53,14 +53,64 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     
     # Adding the slider
     if slider is True:
-        def slices_slider(value):
-            z_slider = int(value)
-            pv_image_obj = _wrap_array(ax_swap_arr)
-            slices = pv_image_obj.slice_orthogonal(x=50, y=50, z=z_slider,contour=True)
-            fig.add_mesh(slices,name='timestep_mesh')
-            return
-        fig.add_slider_widget(slices_slider, [1, data.nz-1], title='Z-slice',fmt="%0.f")
-    
+        class MyCustomRoutine:
+            def __init__(self, mesh):
+                self.output = mesh  # Expected PyVista mesh type
+                # default parameters
+                self.kwargs = {
+                    'z': 1,
+                    'x': 1,
+                    'y': 1,
+                }
+        
+            def __call__(self, param, value):
+                self.kwargs[param] = int(value)
+                self.update()
+        
+            def update(self):
+                # This is where you call your simulation
+                pv_image_obj = _wrap_array(ax_swap_arr)
+                result = pv_image_obj.slice_orthogonal(**self.kwargs,contour=True)
+                fig.add_mesh(result,name='timestep_mesh', **mesh_kwargs, show_scalar_bar=False)
+                self.output.copy_from(result)
+                return
+        
+        starting_mesh = pv_image_obj.slice_orthogonal(x=int(50), y=int(50), z=int(50),contour=True)
+        engine = MyCustomRoutine(starting_mesh)
+        fig.add_mesh(starting_mesh,name='timestep_mesh', **mesh_kwargs, show_scalar_bar=False)
+        _ = fig.add_scalar_bar(position_x=0.9, position_y= 0.2, height=0.5, vertical=True)
+        fig.add_slider_widget(callback=lambda value: engine('z', int(value)),
+                              rng = [1, data.nz-1],
+                              value=50,
+                              pointa=(0.025, 0.1),
+                              pointb=(0.31, 0.1),
+                              title='Z-slice',
+                              fmt="%0.f",
+                              style='modern')
+        fig.add_slider_widget(callback=lambda value: engine('x', int(value)),
+                              rng = [1, data.nx-1],
+                              value=50,
+                              pointa=(0.35, 0.1),
+                              pointb=(0.64, 0.1),
+                              title='X-slice',
+                              fmt="%0.f",
+                              style='modern')
+        fig.add_slider_widget(callback=lambda value: engine('y', int(value)),
+                              rng = [1, data.ny-1],
+                              value=50,
+                              pointa=(0.67, 0.1),
+                              pointb=(0.98, 0.1),
+                              title='Y-slice',
+                              fmt="%0.f",
+                              style='modern')
+        # Only one slider case:
+        # def slices_slider(value):
+        #     z_slider = int(value)
+        #     pv_image_obj = _wrap_array(ax_swap_arr)
+        #     slices = pv_image_obj.slice_orthogonal(x=50, y=50, z=z_slider,contour=True)
+        #     fig.add_mesh(slices,name='timestep_mesh')
+        #     return
+        # fig.add_slider_widget(slices_slider, [1, data.nz-1], title='Z-slice',fmt="%0.f")
     else:
     
         # Extract 3 orthogonal slices
@@ -69,7 +119,9 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         # Add the slices as meshes to the PyVista plotter object
         fig.add_mesh(slices, **mesh_kwargs)
         
+        
     _ = fig.add_axes(
+        viewport = (0, 0.8, 0.2, 1),
         line_width=5,
         cone_radius=0.6,
         shaft_length=0.7,
@@ -97,7 +149,7 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
 
     # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
     if mesh_kwargs is None:
-        mesh_kwargs = {'opacity': 0.15,
+        mesh_kwargs = {'opacity': 0.45,
                        'smooth_shading': True,
                        'diffuse': 0.75,
                        'color': (77 / 255, 195 / 255, 255 / 255),
