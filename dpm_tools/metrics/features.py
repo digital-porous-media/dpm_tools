@@ -4,8 +4,7 @@ from edt import edt as edist
 from typing import Tuple, Literal
 
 def slicewise_edt(data) -> np.ndarray:
-    """
-    Compute the Euclidean distance transform map of each slice individually and stacks them into a single 3D array.
+    """ Compute the Euclidean distance transform map of each slice individually and stacks them into a single 3D array.
     :param data: Image dataclass
     :return: Euclidean distance transform map of each slice
     :rtype: numpy.ndarray

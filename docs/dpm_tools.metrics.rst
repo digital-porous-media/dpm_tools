@@ -7,7 +7,7 @@ Submodules
 dpm\_tools.morphology.features module
 -------------------------------------
 
-.. automodule:: dpm_tools.morphology.features
+.. automodule:: dpm_tools.metrics.features
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ dpm\_tools.morphology.features module
 Module contents
 ---------------
 
-.. automodule:: dpm_tools.morphology
+.. automodule:: dpm_tools.metrics
    :members:
    :undoc-members:
    :show-inheritance:

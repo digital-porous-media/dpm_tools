@@ -1,7 +1,7 @@
-dpm\_tools.morphology.features
-==============================
+dpm\_tools.metrics.features
+===========================
 
-.. automodule:: dpm_tools.morphology.features
+.. automodule:: dpm_tools.metrics.features
 
    
    
