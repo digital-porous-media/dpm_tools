@@ -1,7 +1,7 @@
-﻿dpm\_tools.morphology
-=====================
+﻿dpm\_tools.metrics
+==================
 
-.. automodule:: dpm_tools.morphology
+.. automodule:: dpm_tools.metrics
 
    
    
@@ -27,5 +27,5 @@
    :toctree:
    :recursive:
 
-   dpm_tools.morphology.features
+   dpm_tools.metrics.features
 

@@ -8,7 +8,7 @@ Subpackages
    :maxdepth: 4
 
    dpm_tools.io
-   dpm_tools.morphology
+   dpm_tools.metrics
    dpm_tools.visualization
 
 Module contents

@@ -1,6 +1,6 @@
 from time import perf_counter_ns
 
-from . import morphology
+from . import metrics
 from . import io
 from . import visualization
 
