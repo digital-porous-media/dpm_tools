@@ -1,30 +1,27 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pyvista as pv
-from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap, _initialize_kwargs
-from ..__init__ import timer
+from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap
 import warnings
 
 
-@timer
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
                       mesh_kwargs: dict = None, slider = False) -> pv.Plotter:
     """
     Plots 3 orthogonal slices of a 3D image.
+
     Parameters:
         data: A dataclass containing 3D image data
         fig: Pyvista plotter object
         show_slices: List of slices in x, y, z to show. Default is middle slice in each direction.
         plotter_kwargs: Additional keyword arguments to pass to the plotter.
         mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+
     Returns:
         fig: PyVista plotter object with added orthogonal slice mesh.
     """
 
     if show_slices is None:
         show_slices = [data.nx // 2, data.ny // 2, data.nz // 2]
-        
-    #plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
     
     # Overriding the above line because it prevents orthogonal slices from showing for some reason.
     if plotter_kwargs is None:
@@ -132,11 +129,11 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     return fig
 
 
-@timer
 def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, mesh_kwargs: dict = None,
                     plotter_kwargs: dict = None) -> pv.Plotter:
     """
     Plots 3D isosurfaces
+
     Parameters:
         data: A dataclass containing 3D labeled image data
         fig: Pyvista plotter object
@@ -179,7 +176,6 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
     return fig
 
 
-@timer
 def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
     """
     Add a bounding box mesh to the Plotter. Assumes the isosurface is at 255.
@@ -212,7 +208,6 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
 
     return fig
 
-@timer
 def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, glyph_space: int = 1,
                glyph_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
     """
@@ -296,7 +291,6 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
     return fig
 
 
-@timer
 def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = None,
                streamline_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
     """
@@ -353,7 +347,6 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
 
     return fig
 
-@timer
 def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
                        plotter_kwargs: dict = None) -> pv.Plotter:
     """

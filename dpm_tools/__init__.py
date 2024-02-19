@@ -1,6 +1,8 @@
-# import io
-# import visualization
 from time import perf_counter_ns
+
+from . import morphology
+from . import io
+from . import visualization
 
 def _get_version():
     from .__version__ import __version__

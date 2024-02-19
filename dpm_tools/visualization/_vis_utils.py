@@ -1,13 +1,15 @@
 import os
 import csv
 import numpy as np
-from matplotlib import pyplot as plt
-import matplotlib.animation as anim
+import pathlib
 
 
-def _make_dir(dir_name: str) -> str:
+def _make_dir(dir_name: pathlib.Path) -> pathlib.Path:
     """
     A utility function to create a directory of name <dir_name> if it does not already exist
+    :param dir_name: The name of the directory to be created
+    :return: The path to the directory
+    :rtype: pathlib.Path
     """
     if not os.path.isdir(dir_name):
         print('Creating new directory...')
@@ -18,9 +20,13 @@ def _make_dir(dir_name: str) -> str:
     return dir_name
 
 
-def _write_hist_csv(freq: list, bins: np.ndarray, filename: str) -> None:
+def _write_hist_csv(freq: list, bins: np.ndarray, filename: pathlib.Path) -> None:
     """
     A utility function to write out the histogram to a csv file
+    :param freq: List of frequencies to write to the csv file.
+    :param bins: Bin edges of the histogram
+    :param filename: The path to the csv file
+    :return: None
     """
     with open(filename + '.csv', 'w', newline='') as csvfile:
         histwriter = csv.writer(csvfile, delimiter=',')
@@ -36,7 +42,12 @@ def _scale_image(image_data: np.ndarray, scale_to: type = np.uint8) -> np.ndarra
     A utility function to scale the data to a different datatype range
     Default converts to uint8
     Allows thumbnails and animated gif to show properly
+    :param image_data: The 3D image to be scaled
+    :param scale_to: The datatype to scale the image to
+    :return: A copy of the image scaled to the specified datatype
+    :rtype: np.ndarray
     """
+
     # assert image_data.dtype.type is not scale_to, f"Image data is already of type {scale_to.__name__}"
 
     if 'int' in scale_to.__name__:

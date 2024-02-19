@@ -18,7 +18,7 @@ from dpm_tools.visualization.plot_3d import plot_glyph, bounding_box
 # *************************************************************************** #
 
 ## Reading an image by passing the directory to the function read_image:
-image = read_image('./data/35_1.tiff')
+image = read_image('../data/35_1.tiff')
 
 ## Converting the image to "Image" class
 img_sample = Image(image)
@@ -75,9 +75,9 @@ make_gif(new_format)
 # *************************************************************************** #
 
 ## Importing the velocity data
-vx = np.load('data/3d_spherepack_project175/vx_rsz_100.npy')
-vy = np.load('data/3d_spherepack_project175/vy_rsz_100.npy')
-vz = np.load('data/3d_spherepack_project175/vz_rsz_100.npy')
+vx = np.load('../data/3d_spherepack_project175/vx_rsz_100.npy')
+vy = np.load('../data/3d_spherepack_project175/vy_rsz_100.npy')
+vz = np.load('../data/3d_spherepack_project175/vz_rsz_100.npy')
 
 ## Getting the magnitude
 v = np.sqrt(vx**2 + vy**2 + vz**2)
