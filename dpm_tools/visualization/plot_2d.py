@@ -5,12 +5,10 @@ from itertools import repeat
 from tqdm import tqdm
 
 from ._vis_utils import _make_dir, _write_hist_csv, _scale_image
-from ..__init__ import timer
 
 
 # TODO Add fig save decorator
 
-@timer
 def hist(data,
          data2: np.array = None,
          nbins: int = 256,
@@ -18,6 +16,13 @@ def hist(data,
          **kwargs):
     """
     Generate a histogram
+
+    Parameters:
+    ___
+    :data: The data to plot histogram for.
+    :param data2: The data to plot histogram for.
+    :param nbins: The number of bins for the histogram.
+
     If save_fig is True, a save path should be supplied to kwargs under key "filepath"
     Use data2 for adding a second distribution and plotting them together
     """
@@ -61,7 +66,6 @@ def hist(data,
 
     return fig
 
-@timer
 def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
 
     if 'origin' not in kwargs:
@@ -87,7 +91,6 @@ def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
 
     return fig
 
-@timer
 def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slice_axis: int = 0, **kwargs):
     if thumb_slice is None:
         thumb_slice = int(np.floor(data.image.shape[slice_axis] / 2))
@@ -105,7 +108,6 @@ def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slic
     return fig
 
 
-@timer
 def make_gif(data,  dpi: int = 96, **kwargs):
     """
     Function to make and save a gif

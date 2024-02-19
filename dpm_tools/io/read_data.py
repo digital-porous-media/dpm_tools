@@ -7,6 +7,12 @@ from hdf5storage import loadmat
 from dataclasses import dataclass, field
 from collections.abc import Iterable
 
+# __all__ = [
+#     'read_image',
+#     'ImageFromFile',
+#     'Image',
+#     'Vector'
+# ]
 def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     """
     A utility function to read in TIFF files
