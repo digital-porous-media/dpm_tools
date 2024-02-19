@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
-# sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -48,32 +48,34 @@ modindex_common_prefix = ['dpm_tools']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'karma_sphinx_theme'
+html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
 html_domain_indices = True
 html_use_index = True
 html_split_index = False
+html_show_sourcelink = False
+html_show_sphinx = True
 #
-# html_theme_options = {
-#     "icon_links": [
-#         {
-#             "name": "GitHub",
-#             "url": "https://github.com/digital-porous-media/dpm_tools",
-#             "icon": "fab fa-github-square",
-#         },
-#     ],
-#     "external_links": [
-#         {
-#             "name": "Issue Tracker", "url": "https://github.com/digital-porous-media/dpm_tools/issues"
-#         },
-#         {
-#             "name": "Get Help", "url": "https://github.com/digital-porous-media/dpm_tools/discussions"
-#         },
-#     ],
-#     "navigation_with_keys": False,
-#     "show_prev_next": False,
-#     "icon_links_label": "Quick Links",
-#     "use_edit_page_button": False,
-#     "search_bar_position": "sidebar",
-#     "navbar_align": "left",
-# }
+html_theme_options = {
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/digital-porous-media/dpm_tools",
+            "icon": "fab fa-github-square",
+        },
+    ],
+    "external_links": [
+        {
+            "name": "Issue Tracker", "url": "https://github.com/digital-porous-media/dpm_tools/issues"
+        },
+        {
+            "name": "Get Help", "url": "https://github.com/digital-porous-media/dpm_tools/discussions"
+        },
+    ],
+    "navigation_with_keys": False,
+    "show_prev_next": False,
+    "icon_links_label": "Quick Links",
+    "use_edit_page_button": False,
+    "search_bar_position": "sidebar",
+    "navbar_align": "left",
+}
