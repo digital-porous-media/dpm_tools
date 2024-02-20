@@ -9,9 +9,9 @@ Created on Tue Jun 13 23:12:09 2023
 import numpy as np
 
 from dpm_tools.io import Image, Vector, ImageFromFile, read_image
-from dpm_tools.visualization.plot_2d import hist, plot_slice, make_gif
-from dpm_tools.visualization.plot_3d import orthogonal_slices, plot_isosurface, plot_streamlines
-from dpm_tools.visualization.plot_3d import plot_glyph, bounding_box
+from dpm_tools.visualization._plot_2d import hist, plot_slice, make_gif
+from dpm_tools.visualization._plot_3d import orthogonal_slices, plot_isosurface, plot_streamlines
+from dpm_tools.visualization._plot_3d import plot_glyph, bounding_box
 
 # *************************************************************************** #
 # Fundamentals ************************************************************** #

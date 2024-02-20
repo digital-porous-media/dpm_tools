@@ -4,10 +4,13 @@ from edt import edt as edist
 from typing import Tuple, Literal
 
 def slicewise_edt(data) -> np.ndarray:
-    """ Compute the Euclidean distance transform map of each slice individually and stacks them into a single 3D array.
-    :param data: Image dataclass
-    :return: Euclidean distance transform map of each slice
-    :rtype: numpy.ndarray
+    """
+    Compute the Euclidean distance transform map of each slice individually and stacks them into a single 3D array.
+
+    Parameters:
+        data: An image dataclass containing the binary image
+    Returns:
+        numpy.ndarray: Euclidean distance transform map of each slice
     """
     edt = np.zeros_like(data.image, dtype=np.float32)
     for s in range(data.image.shape[2]):
@@ -19,9 +22,12 @@ def slicewise_edt(data) -> np.ndarray:
 def edt(data) -> np.ndarray:
     """
     Compute the 3D Euclidean distance transform map of the entire image.
-    :param data: Image dataclass
-    :return: Euclidean distance transform map of the entire image
-    :rtype: numpy.ndarray
+
+    Parameters:
+        data: An image dataclass containing the binary image
+
+    Returns:
+        numpy.ndarray: 3D Euclidean distance transform map of the entire image
     """
     return edist(data.image)
 
@@ -29,9 +35,12 @@ def edt(data) -> np.ndarray:
 def slicewise_mis(data, **kwargs) -> np.ndarray:
     """
     Compute the slice-wise maximum inscribed sphere (maximum inscribed disk) using PoreSpy.
-    :param data: Image dataclass
-    :return: Maximum inscribed sphere computed on each slice (maximum inscribed disk)
-    :rtype: numpy.ndarray
+
+    Parameters:
+        data: An image dataclass containing the binary image
+
+    Returns:
+        numpy.ndarray: Maximum inscribed sphere computed on each slice (maximum inscribed disk)
     """
     # ? why do we pad this?
     input_image = np.pad(array=data.image.copy(), pad_width=((0, 0), (0, 0), (0, 1)), constant_values=1)
@@ -48,9 +57,12 @@ def chords(data) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Compute the ellipse area based on the chord lengths in slices orthogonal to direction of flow
     Assumes img = 1 for pore space, 0 for grain space
-    :param data: Image dataclass
-    :return: length of chords in x, y, and ellipse areas
-    :rtype: Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+    Parameters:
+        data: An image dataclass containing the binary image
+
+    Returns:
+        Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: length of chords in x, y, and ellipse areas
     """
     ellipse_area = np.zeros_like(data.image, dtype=np.float32)
     sz_x = np.zeros_like(ellipse_area)
@@ -70,17 +82,20 @@ def chords(data) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     return sz_x, sz_y, ellipse_area
 
 
-def tof(data, boundary: Literal['l', 'r'] = 'l', detrend: bool = True) -> np.ndarray:
+def time_of_flight(data, boundary: Literal['l', 'r'] = 'l', detrend: bool = True) -> np.ndarray:
     """
     Compute time of flight map (solution to Eikonal equation) from specified boundary (inlet or outlet)
     Assumes img = 1 in pore space, 0 for grain space
     Assumes flow is in z direction (orthogonal to axis 2)
-    :param data: Image dataclass
-    :param boundary: Left ('l') or right ('r') boundaries corresponding to the inlet or outlet
-    :param detrend: If ``detrend`` is True, then subtract the solution assuming no solid matrix is present in the image.
-    The solid matrix is still masked.
-    :return: Time of flight map from specified boundary
-    :rtype: numpy.ndarray
+
+    Parameters:
+        data: An image dataclass containing the binary image
+        boundary: Left ('l') or right ('r') boundaries corresponding to the inlet or outlet
+        detrend: If ``detrend`` is True, then subtract the solution assuming no solid matrix is present in the image.
+        The solid matrix is still masked.
+
+    Returns:
+        numpy.ndarray: Time of flight map from specified boundary
     """
     inlet = np.zeros_like(data.image)
     if boundary[0].lower() == 'l':
@@ -107,10 +122,13 @@ def constriction_factor(thickness_map: np.ndarray, power: float = 1.0) -> np.nda
     Compute the slice-wise constriction factor from the input thickness map.
     Constriction factor is defined as thickness[x, y, z] / thickness[x, y, z+1]
     Padded with reflected values at outlet
-    :param thickness_map: Any 3D thickness map. Examples could be slice-wise EDT, MIS, etc.
-    :param power: Power to raise the thickness map
-    :return: Slice-wise constriction factor
-    :rtype: numpy.ndarray
+
+    Parameters:
+        thickness_map: Any 3D thickness map. Examples could be slice-wise EDT, MIS, etc.
+        power: Power to raise the thickness map
+
+    Returns:
+        numpy.ndarray: Slice-wise constriction factor
     """
     thickness_map = np.pad(thickness_map.copy(), ((0, 0), (0, 0), (0, 1)), 'reflect')
 
