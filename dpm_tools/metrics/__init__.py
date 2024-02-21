@@ -17,7 +17,7 @@ Pore scale characterization metrics
     constriction_factor
 """
 
-from ._features import *
+from ._maps import *
 
 from ._feature_utils import *
 

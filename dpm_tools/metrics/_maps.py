@@ -24,12 +24,30 @@ def edt(data) -> np.ndarray:
     Compute the 3D Euclidean distance transform map of the entire image.
 
     Parameters:
-        data: An image dataclass containing the binary image
+        data: An image dataclass containing the binary image where the phase of interest is 1.
 
     Returns:
         numpy.ndarray: 3D Euclidean distance transform map of the entire image
     """
     return edist(data.image)
+
+def sdt(data) -> np.ndarray:
+    """
+    Signed distance transform where positive values are into the pore space and negative values are into the grain space.
+
+    Parameters:
+        data: An image dataclass containing the binary image. Assumes img = 1 for pore space, 0 for grain space.
+
+    Returns:
+        numpy.ndarray: Signed distance transform of the entire image
+    """
+    pores = edist(data.image)
+    image_tmp = -1 * data.image.copy() + 1
+    grain = -1 * edist(image_tmp)
+    signed_distance = grain + pores
+
+    return signed_distance
+
 
 
 def slicewise_mis(data, **kwargs) -> np.ndarray:
@@ -143,3 +161,5 @@ def constriction_factor(thickness_map: np.ndarray, power: float = 1.0) -> np.nda
     constriction_map[np.isnan(constriction_map)] = 0
 
     return constriction_map
+
+
