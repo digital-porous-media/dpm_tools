@@ -2,7 +2,7 @@
 A set of tools to process and analyze digital porous media
 
 Docs:
-[https://github.com/digital-porous-media/dpm_tools/settings/pages](https://digital-porous-media.github.io/dpm_tools/html/)
+[https://digital-porous-media.github.io/dpm_tools/html/](https://digital-porous-media.github.io/dpm_tools/html/)
 
 TODO:
 - Reading and Writing in data files
