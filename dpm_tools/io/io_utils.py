@@ -27,8 +27,8 @@ def _find_files(directory: str, extension: str) -> list:
 
     found_tuple = list(zip(found, sizes))
 
-    print("There are",count,"files with the",extension,"extension in the directory",directory)
-    files_df = pd.DataFrame(found_tuple, columns=['File','Size'])
+    print(f"There are {count} files with the {extension} extension in the directory {directory}")
+    files_df = pd.DataFrame(found_tuple, columns=['File', 'Size'])
     print(files_df)
     
     return found_tuple
