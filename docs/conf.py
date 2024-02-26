@@ -21,6 +21,7 @@ author = 'Digital Porous Media Team'
 
 extensions = [
     'sphinx.ext.autodoc',
+    'phinx_autodoc_typehints'
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
     'sphinx.ext.ifconfig',
