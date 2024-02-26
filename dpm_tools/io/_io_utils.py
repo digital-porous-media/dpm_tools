@@ -7,8 +7,8 @@ import exifread
 import numpy as np
 import pandas as pd
 
-from .read_data import read_image
-from .write_data import write_image
+from ._read_data import read_image
+from ._write_data import write_image
 
 
 def _find_files(directory: str, extension: str) -> list:

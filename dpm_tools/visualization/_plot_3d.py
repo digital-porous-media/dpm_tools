@@ -17,7 +17,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
 
     Returns:
-        fig: PyVista plotter object with added orthogonal slice mesh.
+        pv.Plotter: PyVista plotter object with added orthogonal slice mesh.
     """
 
     if show_slices is None:
@@ -141,7 +141,7 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
         mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
         plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.
     Returns:
-        fig: PyVista plotter object with added orthogonal slice mesh.
+        pv.Plotter: PyVista plotter object with added orthogonal slice mesh.
     """
 
     # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
@@ -185,7 +185,7 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
         fig: Pyvista plotter object
         mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
     Returns:
-        Pyvista plotter object with wall contours around entire image
+        pv.Plotter: Pyvista plotter object with wall contours around entire image added as a mesh
     """
     if plotter_kwargs is None:
         plotter_kwargs = {}
@@ -222,7 +222,7 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
         mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
         plotter_kwargs: Additional keyword arguments to pass to the plotter.
     Returns:
-        Pyvista plotter object with glyph object
+        pv.Plotter: Plotter object with glyphs added as a mesh
     """
     if glyph is None:
         glyph = pv.Arrow()
@@ -304,7 +304,7 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
         mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
         plotter_kwargs: Additional keyword arguments to pass to the plotter.
     Returns:
-        Pyvista plotter object with glyph object
+        pv.Plotter: Plotter object with streamlines added as a mesh
     """
 
     # plotter_kwargs, _ = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
@@ -360,7 +360,7 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
         plotter_kwargs: Additional keyword arguments to pass to the plotter.
 
     Returns:
-        Pyvista plotter object with voxelized surface
+        pv.Plotter: Plotter object with voxelized surface added as a volume
     """
 
     if mesh_kwargs is None:
