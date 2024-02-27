@@ -252,4 +252,9 @@ def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
     write_image(save_path=filepath, save_name=filename, image=original_image, filetype=convert_to)
 
 
+def _get_dpm_parquet() -> pd.DataFrame:
+    return pd.read_parquet("https://digital-porous-media.github.io/dpm_data/sample_data_getter.parquet")
+
+
+
 

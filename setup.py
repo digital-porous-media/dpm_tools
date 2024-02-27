@@ -53,6 +53,7 @@ setup(
         'matplotlib',
         'pyvista[all]',
         'pandas',
+        'pyarrow',
         'tifffile',
         'exifread',
         'netcdf4',

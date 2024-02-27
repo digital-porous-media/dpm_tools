@@ -6,6 +6,10 @@ import netCDF4 as nc
 from hdf5storage import loadmat
 from dataclasses import dataclass, field
 from collections.abc import Iterable
+from ._io_utils import _get_dpm_parquet
+import pandas as pd
+import pathlib
+import requests
 
 # __all__ = [
 #     'read_image',
@@ -138,6 +142,17 @@ def read_image(read_path: str, **kwargs) -> np.ndarray:
     filetype = read_path.rsplit('.', 1)[1]
 
     return filetypes.get(filetype.lower(), _not_implemented)(read_path, **kwargs)
+
+def get_portal_project(project_num) -> pd.DataFrame:
+    df = _get_dpm_parquet()
+    project_df = df[df['project_num'] == project_num]
+    return project_df
+
+def download_portal_images(project_df: pd.DataFrame, save_path: pathlib.Path) -> None:
+    for i in range(len(project_df)):
+        sample_row = project_df.iloc[i]
+        response = requests.get(sample_row['url'], stream=True)
+
 
 
 @dataclass
