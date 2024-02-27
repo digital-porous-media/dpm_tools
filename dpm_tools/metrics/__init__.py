@@ -9,8 +9,11 @@ Pore scale characterization metrics
     :template: base_tmpl.rst
    :toctree:
 
-    slicewise_edt
+
     edt
+    sdt
+    mis
+    slicewise_edt
     slicewise_mis
     chords
     time_of_flight
@@ -20,4 +23,8 @@ Pore scale characterization metrics
 from ._maps import *
 
 from ._feature_utils import *
+
+from ._scalars import *
+
+# from ._curves import *
 

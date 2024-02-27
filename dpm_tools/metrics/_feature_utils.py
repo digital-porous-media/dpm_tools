@@ -30,3 +30,27 @@ def _set_linear_trend(data, inlet_value: float = 2, outlet_value: float = 1, gri
     linear = linear * mask
 
     return linear
+
+
+def _extract_shape(domain):
+    if domain.ndim == 3:
+        where_tube = np.where(domain)
+        z_start = where_tube[0].min()
+        z_end = where_tube[0].max()
+        y_start = where_tube[1].min()
+        y_end = where_tube[1].max()
+        x_start = where_tube[2].min()
+        x_end = where_tube[2].max()
+        domain_seg = domain[z_start:z_end+1, y_start:y_end+1, x_start:x_end+1].copy()
+        # IMPORTANT: if you have "domain_seg = domain[y_start:yEnd+1,x_start:x_end+1]"
+        #            then "domain_seg" is only a view of domain, and later on you have
+        #            any changes on your "domain_seg", the "domain" will also be changed
+        #            correspondingly, which might introduce unexpected conflicts and errors
+    else: # domain.ndim == 2
+        where_tube = np.where(domain)
+        y_start = where_tube[0].min()
+        y_end = where_tube[0].max()
+        x_start = where_tube[1].min()
+        x_end = where_tube[1].max()
+        domain_seg = domain[y_start:y_end+1, x_start:x_end+1].copy()
+    return domain_seg

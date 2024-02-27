@@ -2,6 +2,10 @@ import numpy as np
 import porespy as ps
 from edt import edt as edist
 from typing import Tuple, Literal
+from ._feature_utils import _extract_shape
+import scipy.ndimage.morphology as morphology
+import scipy.ndimage.measurements as measurements
+import cc3d
 
 def slicewise_edt(data) -> np.ndarray:
     """
@@ -48,6 +52,18 @@ def sdt(data) -> np.ndarray:
 
     return signed_distance
 
+def mis(data, **kwargs) -> np.ndarray:
+    """
+    Compute Maximum Inscribed Sphere of the entire image using PoreSpy.
+
+    Parameters:
+        data: An image dataclass containing the binary image
+
+    Returns:
+        numpy.ndarray: Maximum inscribed sphere of the full 3D image
+    """
+    input_image = np.pad(array=data.image.copy(), pad_width=((0, 0), (0, 0), (0, 1)), constant_values=1)
+    return ps.filters.local_thickness(input_image, **kwargs)
 
 
 def slicewise_mis(data, **kwargs) -> np.ndarray:
@@ -162,4 +178,154 @@ def constriction_factor(thickness_map: np.ndarray, power: float = 1.0) -> np.nda
 
     return constriction_map
 
+
+def morphological_drainage_3d(data, R_critical) -> Tuple[np.ndarray, float]:
+    from time import perf_counter_ns
+    from skimage.morphology import ball
+    import porespy as ps
+
+    # The method for this function follows Hilper & Miller AWR(2001)
+    # 1. Perform erosion for the pore space with radius of R_critical
+    # 2. Label the eroded pore space, and leave only the pore space that is still
+    #    connected with the non-wetting phase reservoir
+    # 3. Perform the dilation for the labelled pore space with radius of R_critical
+    # **************************************************************************
+    # Input: seg_image: a well shaped segmented image with size (lz,ly,lx)
+    #        seg_image has values as : NW phase -> 1
+    #                                   W phase -> 2
+    #                               solid phase -> 0
+    # **************************************************************************
+    # data.image = edist(data.image)
+    # if data.image.ndim == 2:
+    #
+    #     seg_image = data.image > 0.0
+    #     pore_vol = 1.0 * seg_image.sum()
+    #     radius = R_critical
+    #
+    #
+    #     # Step 1.1: Create structuring element
+    #     domain_size = int(np.rint(radius * 2) + 2)
+    #     grid = np.indices((domain_size, domain_size))
+    #     mk_circle = (grid[0] - domain_size / 2) ** 2 + (grid[1] - domain_size / 2) ** 2 <= radius ** 2
+    #     circle = np.zeros((domain_size, domain_size), dtype=np.uint8)
+    #     circle[mk_circle] = 1
+    #     circle = _extract_shape(circle).astype(bool)
+    #
+    #     # Step 1.2: Perform erosion on the pore space
+    #     # NOTE: the dtype of 'seg_im_ero' is 'bool'
+    #     seg_im_ero = morphology.binary_erosion(seg_image, structure=circle, border_value=1)
+    #     # NOTE: 'border_value' for erosion should be 'True'
+    #
+    #     # Step 2: Label the eroded pore space
+    #     # NOTE: Assume the NW phase reservoir is at the first layer of the domain
+    #     #       i.e. at seg_image[0,:] - adjust it if this does not suit your need
+    #     # For erosion, assume that diagonals are not considered
+    #     # For erosion, assume that diagonals are not considered
+    #     seg_im_ero_label_temp, num_features = measurements.label(seg_im_ero,
+    #                                                              structure=morphology.generate_binary_structure(2,
+    #                                                                                                             1))
+    #     # seg_im_ero_label_temp,num_features = measurements.label(seg_im_ero,structure=morphology.generate_binary_structure(2,2))
+    #     # NOTE: Here I assume the inlet is at the first layer of the array's axis=2 (i.e. domain[0,:,:])\
+    #     #       You can always change to any other layers as the inlet for this drainage.
+    #     label_check = seg_im_ero_label_temp[0, seg_im_ero_label_temp[0, :] != 0]
+    #     label_check = np.unique(label_check)
+
+        # NOTE the following lines are only for you to check things
+    #     # ******************** For check *******************************#
+    #     # It assign the labelled array as: NW -> 1, W -> 2, Solid -> 0
+    #     # seg_im_ero_label_show = seg_im_ero_label.copy()
+    #     # seg_im_ero_label_show[seg_im_ero_label_show !=1] = 2
+    #     # seg_im_ero_label_show[np.logical_not(seg_image_2d)]=0
+    #     # ******************** End: for check **************************#
+    #
+    #     seg_im_ero_label = np.zeros_like(seg_im_ero_label_temp, dtype=bool)
+    #     for labels in label_check:
+    #         seg_im_ero_label = np.logical_or(seg_im_ero_label, seg_im_ero_label_temp == labels)
+    #     seg_im_ero_label = seg_im_ero_label.astype(np.uint8)
+    #
+    #     # Step 3: perform dilation on the labelled pore space
+    #     seg_im_ero_label_dil = morphology.binary_dilation(seg_im_ero_label, structure=circle, border_value=0)
+    #     # NOTE: 'border_value' for dilation should be 'False'
+    #     # NOTE: the dtype of 'seg_im_ero_label_dil' is 'bool'
+    #     seg_im_ero_label_dil = seg_im_ero_label_dil.astype(np.uint8)
+    #     seg_im_ero_label_dil[np.logical_not(seg_im_ero_label_dil)] = 2
+    #     seg_im_ero_label_dil[np.logical_not(seg_image)] = 0
+    #
+    #     Sw = (seg_im_ero_label_dil == 2).sum() / pore_vol
+    # else:  # 3D porous medium
+
+    seg_image = data.image > 0.0
+    pore_vol = 1.0 * seg_image.sum()
+    radius = R_critical
+    tic = perf_counter_ns()
+    # Step 1.1: Create structuring element
+    domain_size = int(np.rint(radius * 2) + 2)
+    grid = np.indices((domain_size, domain_size, domain_size))
+    mk_circle = (grid[0] - domain_size / 2) ** 2 + (grid[1] - domain_size / 2) ** 2 + (
+                grid[2] - domain_size / 2) ** 2 <= radius ** 2
+    circle = np.zeros((domain_size, domain_size, domain_size), dtype=np.uint8)
+    circle[mk_circle] = 1
+    circle = _extract_shape(circle).astype(bool)
+    toc = perf_counter_ns()
+    print(f'Time to create structuring element: {(toc - tic)*1e-9} s')
+
+    # Step 1.2: Perform erosion on the pore space
+    # NOTE: the dtype of 'seg_im_ero' is 'bool'
+    tic = perf_counter_ns()
+    seg_im_ero = morphology.binary_erosion(seg_image, structure=circle, border_value=1)
+    # seg_im_ero = ps.filters.fftmorphology(seg_image, strel=ball(radius), mode='erosion')
+    # NOTE: 'border_value' for erosion should be 'True'
+
+    toc = perf_counter_ns()
+    print(f'Time to perform erosion: {(toc - tic)*1e-9} s')
+
+    # Step 2: Label the eroded pore space
+    # NOTE: Assume the NW phase reservoir is at the first layer of the domain
+    #       i.e. at seg_image[0,:] - adjust it if this does not suit your need
+    # For erosion, assume that diagonals are not considered
+    seg_im_ero_label_temp, num_features = measurements.label(seg_im_ero,
+                                                             structure=morphology.generate_binary_structure(3,
+                                                                                                            1))
+    tic = perf_counter_ns()
+    # seg_im_ero_label_temp, num_features = cc3d.connected_components(seg_im_ero, connectivity=6, return_N=True)
+    # seg_im_ero_label_temp,num_features = measurements.label(seg_im_ero,structure=morphology.generate_binary_structure(3,3))
+    # NOTE: Here I assume the inlet is at the first layer of the array's axis=2 (i.e. domain[0,:,:])
+    #       You can always change to any other layers as the inlet for this drainage.
+    label_check = seg_im_ero_label_temp[0, seg_im_ero_label_temp[0, :] != 0]
+    label_check = np.unique(label_check)
+    toc = perf_counter_ns()
+    print(f'Time to label the eroded pore space: {(toc - tic)*1e-9} s')
+
+    # NOTE the following lines are only for your to check things
+    # ******************** For check *******************************#
+    # It assign the labelled array as: NW -> 1, W -> 2, Solid -> 0
+    # seg_im_ero_label_show = seg_im_ero_label.copy()
+    # seg_im_ero_label_show[seg_im_ero_label_show !=1] = 2
+    # seg_im_ero_label_show[np.logical_not(seg_image_2d)]=0
+    # ******************** End: for check **************************#
+    tic = perf_counter_ns()
+    seg_im_ero_label = np.zeros_like(seg_im_ero_label_temp, dtype=bool)
+    for labels in label_check:
+        seg_im_ero_label = np.logical_or(seg_im_ero_label, seg_im_ero_label_temp == labels)
+    seg_im_ero_label = seg_im_ero_label.astype(np.uint8)
+    toc = perf_counter_ns()
+    print(f'Time to check the labels: {(toc - tic)*1e-9} s')
+    # Step 3: perform dilation on the labelled pore space
+    tic = perf_counter_ns()
+    seg_im_ero_label_dil = morphology.binary_dilation(seg_im_ero_label, structure=circle, border_value=0)
+    # seg_im_ero_label_dil = ps.filters.fftmorphology(seg_im_ero_label, strel=ball(radius), mode='dilation')
+    # NOTE: 'border_value' for dilation should be 'False'
+    # NOTE: the dtype of 'seg_im_ero_label_dil' is 'bool'
+    seg_im_ero_label_dil = seg_im_ero_label_dil.astype(np.uint8)
+    seg_im_ero_label_dil[np.logical_not(seg_im_ero_label_dil)] = 2
+    seg_im_ero_label_dil[np.logical_not(seg_image)] = 0
+    toc = perf_counter_ns()
+    print(f'Time to perform dilation: {(toc - tic)*1e-9} s')
+
+    tic = perf_counter_ns()
+    Sw = (seg_im_ero_label_dil == 2).sum() / pore_vol
+    toc = perf_counter_ns()
+    print(f'Time to calculate the saturation: {(toc - tic)*1e-9} s')
+    # end if
+    return seg_im_ero_label_dil, Sw
 
