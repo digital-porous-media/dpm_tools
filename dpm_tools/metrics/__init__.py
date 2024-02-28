@@ -18,6 +18,8 @@ Pore scale characterization metrics
     chords
     time_of_flight
     constriction_factor
+    minkowski_2d
+    minkowski_3d
     morph_drain
     _morph_drain_config
     heterogeneity_curve
