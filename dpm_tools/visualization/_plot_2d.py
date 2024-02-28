@@ -3,8 +3,10 @@ import matplotlib.animation as anim
 import numpy as np
 from itertools import repeat
 from tqdm import tqdm
+from typing import Any
 
 from ._vis_utils import _make_dir, _write_hist_csv, _scale_image
+from ..metrics._feature_utils import _sigmoid
 
 
 # TODO Add fig save decorator
@@ -41,7 +43,7 @@ def hist(data,
 
     if data2 is not None:
         plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs, label='data1')
-        plt.hist(x=data2.image.ravel(), bins=nbins, density=True, **kwargs, label = 'data2')
+        plt.hist(x=data2.image.ravel(), bins=nbins, density=True, **kwargs, label='data2')
         plt.legend()
         plt.xlabel('Gray value')
         plt.ylabel('Probability')
@@ -66,8 +68,8 @@ def hist(data,
 
     return fig
 
-def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
 
+def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
     if 'origin' not in kwargs:
         kwargs['origin'] = 'lower'
 
@@ -76,12 +78,11 @@ def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
 
     if 'cmap' not in kwargs:
         kwargs['cmap'] = 'viridis'
-        
+
     if slice_num is None:
         slice_num = data.image.shape[slice_axis] // 2
 
     show_slice = data.image.take(indices=slice_num, axis=slice_axis)
-
 
     fig = plt.figure(dpi=400)
     plt.imshow(show_slice, **kwargs)
@@ -90,6 +91,7 @@ def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
     plt.show()
 
     return fig
+
 
 def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slice_axis: int = 0, **kwargs):
     if thumb_slice is None:
@@ -108,7 +110,7 @@ def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slic
     return fig
 
 
-def make_gif(data,  dpi: int = 96, **kwargs):
+def make_gif(data, dpi: int = 96, **kwargs):
     """
     Function to make and save a gif
     """
@@ -135,3 +137,42 @@ def make_gif(data,  dpi: int = 96, **kwargs):
     animation.save(f"{data.basepath}/{data.basename}.gif", writer='imagemagick', fps=7)
 
     return images
+
+
+def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_radii: bool = True) -> None:
+    """
+    Plot the results of the porosity variance heterogeneity analysis with colored heterogeneous/homogenous zones.
+
+    Parameters:
+        radii: The window sizes used to calculate the porosity variance.
+        variances: The porosity variances for each window size.
+        relative_radii: If True, the plotted radii are relative to the first window size. Otherwise, the absolute radii are shown.
+
+    Returns:
+        plt.figure: The heterogeneity curve
+    """
+    plt.figure()
+    if relative_radii:
+        plt.plot(variances, 'b-', markersize=6, label='Heterogeneity Curve')
+        plt.xlabel("Relative Radius")
+    else:
+        plt.plot(radii, variances, 'b-', markersize=6, label='Heterogeneity Curve')
+        plt.xlabel("Absolute Radius")
+
+    x = np.linspace(-2, 17, len(variances))
+    x2 = np.linspace(-2, 6, len(variances))
+
+    bound = (0.023 * (1 - _sigmoid(x)))
+    bnd = bound[bound <= 0.0025]
+    bound[bound <= 0.0025] = np.linspace(0.0025, 0.001, len(bnd))
+
+    plt.fill_between(range(len(variances)), bound, facecolor='g', alpha=0.3, label='Homogeneity Zone')
+
+    plt.fill_between(range(len(variances)), bound, ((0.035 * (1 - _sigmoid(x2)))) + 0.007, facecolor='r', alpha=0.3,
+                     label='Heterogeneity Zone')
+
+    plt.ylabel("Porosity Variance")
+
+    plt.legend()
+
+    return
