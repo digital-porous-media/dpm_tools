@@ -18,11 +18,11 @@ def minkowski_2d(image: np.ndarray, **kwargs) -> Tuple[float, float, float]:
         Tuple[float, float, float]: Area, perimeter, radius of curvature
     """
 
-    minkowski = mk.functionals(image.astype(bool), **kwargs)
-    minkowski[1] *= 2 * np.pi
-    minkowski[2] *= np.pi
+    area, perim, curv = mk.functionals(image.astype(bool), **kwargs)
+    perim *= 2 * np.pi
+    curv *= np.pi
 
-    return minkowski
+    return area, perim, curv
 
 
 def minkowski_3d(image: np.ndarray, **kwargs) -> Tuple[float, float, float, float]:
@@ -37,12 +37,12 @@ def minkowski_3d(image: np.ndarray, **kwargs) -> Tuple[float, float, float, floa
         Tuple[float, float, float, float]: Volume, surface area, mean curvature, Euler characteristic
     """
 
-    minkowski = mk.functionals(image.astype(bool), **kwargs)
-    minkowski[1] *= 8
-    minkowski[2] *= 2 * np.pi ** 2
-    minkowski[3] *= 4 * np.pi / 3
+    vol, sa, curv, ec = mk.functionals(image.astype(bool), **kwargs)
+    sa *= 8
+    curv *= 2 * np.pi ** 2
+    ec *= 4 * np.pi / 3
 
-    return minkowski
+    return vol, sa, curv, ec
 
 
 # TODO: Minkowski Tensors
