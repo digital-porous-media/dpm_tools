@@ -149,7 +149,7 @@ def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_
         relative_radii: If True, the plotted radii are relative to the first window size. Otherwise, the absolute radii are shown.
 
     Returns:
-        plt.figure: The heterogeneity curve
+        None
     """
     plt.figure()
     if relative_radii:
