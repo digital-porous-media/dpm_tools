@@ -396,4 +396,57 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
 
 
+def plot_medial_axis(data, fig: pv.Plotter = None, , show_isosurface: list = None,
+                    mesh_kwargs: dict = None, plotter_kwargs: dict = None, notebook = False) -> pv.Plotter:
+    """
+    Plots 3D isosurfaces
+
+    Parameters:
+        data: A dataclass containing 3D labeled image data
+        fig: Pyvista plotter object
+        show_isosurface: List of isosurfaces to show. Default is single isosurface at average between maximum and minimum label values.
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+        plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.
+    Returns:
+        pv.Plotter: PyVista plotter object with added orthogonal slice mesh.
+    """
+
+    # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    if mesh_kwargs is None:
+        mesh_kwargs = {'opacity': 0.45,
+                       'smooth_shading': True,
+                       'diffuse': 0.75,
+                       'color': (77 / 255, 195 / 255, 255 / 255),
+                       'ambient': 0.15}
+
+    if plotter_kwargs is None:
+        plotter_kwargs['notebook'] = notebook
+    
+    plotter_kwargs['notebook'] = notebook
+        
+    if fig is None:
+        fig = _initialize_plotter(**plotter_kwargs)
+    
+    medial_axis = skimage.morphology.skeletonize(data.image) 
+    pv_image_obj = _wrap_array(medial_axis)
+
+    contours_ma = pv_bead_pack_medial_axis.contour(isosurfaces=[0.5])
+    fig.add_mesh(contours_ma, style='wireframe', color='r', line_width=2, name='medial_axis')
+
+
+    pv_image_obj_sample = _wrap_array(data.image)
+
+    contours_sample = pv_image_obj.contour(isosurfaces=show_isosurface)
+    fig.add_mesh(contours_sample, **mesh_kwargs)
+    
+    def my_plane_func(normal, origin):
+    sliced = contours_sample.slice(normal=normal, origin=origin)
+    fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
+                name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
+
+
+    fig.add_plane_widget(my_plane_func, normal='z',origin=[0, 0, sandstone_medial_axis.shape[2]])
+
+
+    return fig
 
