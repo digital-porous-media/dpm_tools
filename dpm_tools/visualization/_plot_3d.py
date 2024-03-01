@@ -399,12 +399,13 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
                     mesh_kwargs: dict = None, plotter_kwargs: dict = None, notebook = False) -> pv.Plotter:
     """
-    Plots 3D isosurfaces
+    Plots an interactive visual with a medial axis and a 3D isosurface of given data.
 
     Parameters:
         data: A dataclass containing 3D labeled image data
         fig: Pyvista plotter object
         show_isosurface: List of isosurfaces to show. Default is single isosurface at average between maximum and minimum label values.
+        notebook: True for rendring in Jupyter notebook. Defaults to False.
         mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
         plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.
     Returns:
