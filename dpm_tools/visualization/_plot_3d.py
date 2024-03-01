@@ -396,7 +396,7 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
 
 
-def plot_medial_axis(data, fig: pv.Plotter = None, , show_isosurface: list = None,
+def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
                     mesh_kwargs: dict = None, plotter_kwargs: dict = None, notebook = False) -> pv.Plotter:
     """
     Plots 3D isosurfaces
