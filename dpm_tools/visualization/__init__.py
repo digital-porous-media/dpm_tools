@@ -22,6 +22,7 @@ This submodule contains functions for 2D and 3D visualization. 3D visualizations
     plot_glyph
     plot_streamlines
     plot_scalar_volume
+    plot_medial_axis
 """
 
 from ._plot_2d import *
