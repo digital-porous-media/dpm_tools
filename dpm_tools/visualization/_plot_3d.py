@@ -431,23 +431,21 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
     medial_axis = skimage.morphology.skeletonize(data.image) 
     pv_image_obj = _wrap_array(medial_axis)
 
-    contours_ma = pv_bead_pack_medial_axis.contour(isosurfaces=[0.5])
+    contours_ma = medial_axis.contour(isosurfaces=[0.5])
     fig.add_mesh(contours_ma, style='wireframe', color='r', line_width=2, name='medial_axis')
 
 
     pv_image_obj_sample = _wrap_array(data.image)
 
-    contours_sample = pv_image_obj.contour(isosurfaces=show_isosurface)
+    contours_sample = pv_image_obj_sample.contour(isosurfaces=show_isosurface)
     fig.add_mesh(contours_sample, **mesh_kwargs)
     
     def my_plane_func(normal, origin):
-    sliced = contours_sample.slice(normal=normal, origin=origin)
-    fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
-                name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
+        sliced = contours_sample.slice(normal=normal, origin=origin)
+        fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
+                    name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
 
+        fig.add_plane_widget(my_plane_func, normal='z', origin=[0, 0, medial_axis.shape[2]])
 
-    fig.add_plane_widget(my_plane_func, normal='z',origin=[0, 0, sandstone_medial_axis.shape[2]])
-
-
-    return fig
+        return fig
 
