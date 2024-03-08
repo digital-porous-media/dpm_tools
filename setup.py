@@ -58,7 +58,8 @@ setup(
         'porespy',
         'edt',
         'connected-components-3d',
-        'quantimpy==0.4.6'
+        'quantimpy==0.4.6',
+        'pyarrow'
     ],
     author='Digital Porous Media Team',
     author_email='bcchang@utexas.edu',
