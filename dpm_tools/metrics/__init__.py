@@ -9,15 +9,27 @@ Pore scale characterization metrics
     :template: base_tmpl.rst
    :toctree:
 
-    slicewise_edt
+
     edt
+    sdt
+    mis
+    slicewise_edt
     slicewise_mis
     chords
     time_of_flight
     constriction_factor
+    minkowski_2d
+    minkowski_3d
+    morph_drain
+    _morph_drain_config
+    heterogeneity_curve
 """
 
-from ._features import *
+from ._maps import *
 
 from ._feature_utils import *
+
+from ._scalars import *
+
+# from ._curves import *
 
