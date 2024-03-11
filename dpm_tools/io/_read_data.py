@@ -33,7 +33,8 @@ def _read_raw(filepath: str, **kwargs) -> np.ndarray:
     A utility function to read in RAW files
     Must provide image size as nz, ny, nx, number of bits, signed/unsigned and endianness in kwargs
     """
-    assert 'meta' in kwargs, "Image metadata dictionary is required"
+    assert 'meta' in kwargs, "Image metadata dictionary is required to contain " \
+                             "keywords 'nz', 'ny', 'nx', 'bits','signed' and 'byte_order'"
     metadata = kwargs['meta']
     bits = metadata['bits']
     signed = metadata['signed']
@@ -52,9 +53,9 @@ def _read_raw(filepath: str, **kwargs) -> np.ndarray:
     dt2 = bits // 8
 
     #Assign byte order based on input
-    if(byte_order.lower() == 'little'):
+    if(byte_order.lower()[:3] == 'lit'):
         bt = '<'
-    elif(byte_order.lower() == 'big'):
+    elif(byte_order.lower()[:3] == 'big'):
         bt = '>'
     else:
         bt = '|'
