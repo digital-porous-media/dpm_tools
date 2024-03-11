@@ -38,9 +38,7 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
-        'Programming Language :: Python :: 3.12'
+        'Programming Language :: Python :: 3.10'
     ],
     packages=[
         'dpm_tools',
@@ -60,13 +58,11 @@ setup(
         'porespy',
         'edt',
         'connected-components-3d',
-        'quantimpy'
+        'quantimpy==0.4.6',
+        'pyarrow'
     ],
     author='Digital Porous Media Team',
     author_email='bcchang@utexas.edu',
     download_url='https://github.com/digital-porous-media/dpm_tools',
     url='digital-porous-media.github.io/dpm_tools/html',
-
-
-
 )

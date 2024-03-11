@@ -15,12 +15,14 @@ This submodule contains functions for 2D and 3D visualization. 3D visualizations
     plot_slice
     make_thumbnail
     make_gif
+    plot_heterogeneity_curve
     orthogonal_slices
     plot_isosurface
     bounding_box
     plot_glyph
     plot_streamlines
     plot_scalar_volume
+    plot_medial_axis
 """
 
 from ._plot_2d import *
