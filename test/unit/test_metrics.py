@@ -7,7 +7,7 @@ from skimage.morphology import ball, cube
 import porespy as ps
 
 
-class MetricsTest:
+class TestMetrics:
     def setup_class(self):
         self.ball = ball(10)
         np.random.seed(12573)
