@@ -3,6 +3,17 @@ import porespy as ps
 from edt import edt as edist
 from typing import Tuple, Literal
 
+__all__ = [
+    "slicewise_edt",
+    "edt",
+    "sdt",
+    "mis",
+    "slicewise_mis",
+    "chords",
+    "time_of_flight",
+    "constriction_factor",
+]
+
 def slicewise_edt(image: np.ndarray) -> np.ndarray:
     """
     Compute the Euclidean distance transform map of each slice individually and stacks them into a single 3D array.
@@ -79,7 +90,7 @@ def slicewise_mis(image, **kwargs) -> np.ndarray:
 
     # Calculate slice-wise local thickness from PoreSpy
     thickness = np.zeros_like(input_image)
-    for img_slice in range(data.nz + 1):
+    for img_slice in range(image.shape[0] + 1):
         thickness[:, :, img_slice] = ps.filters.local_thickness(input_image[:, :, img_slice], **kwargs)
 
     return thickness
@@ -99,17 +110,18 @@ def chords(image) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     ellipse_area = np.zeros_like(image, dtype=np.float32)
     sz_x = np.zeros_like(ellipse_area)
     sz_y = np.zeros_like(ellipse_area)
-    for i in range(data.nz):
+    for i in range(image.shape[0]):
         # Calculate the chords in x and y for each slice in z
-        chords_x = ps.filters.apply_chords(im=image[:, :, i], spacing=0, trim_edges=False, axis=0)
-        chords_y = ps.filters.apply_chords(im=image[:, :, i], spacing=0, trim_edges=False, axis=1)
+        # chords = ps.filters.apply_chords_3D(image)
+        chords_x = ps.filters.apply_chords(im=image[i, :, :], spacing=0, trim_edges=False, axis=0)
+        chords_y = ps.filters.apply_chords(im=image[i, :, :], spacing=0, trim_edges=False, axis=1)
 
-        # Get chord lengths
-        sz_x = ps.filters.region_size(chords_x)
-        sz_y = ps.filters.region_size(chords_y)
+        # # Get chord lengths
+        sz_x[i, :, :] = ps.filters.region_size(chords_x)
+        sz_y[i, :, :] = ps.filters.region_size(chords_y)
 
         # Calculate ellipse area from chords
-        ellipse_area[:, :, i] = np.pi / 4 * sz_x * sz_y
+    ellipse_area = np.pi / 4 * sz_x * sz_y
 
     return sz_x, sz_y, ellipse_area
 

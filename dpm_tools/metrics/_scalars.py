@@ -17,7 +17,7 @@ def minkowski_2d(image: np.ndarray, **kwargs) -> Tuple[float, float, float]:
     Returns:
         Tuple[float, float, float]: Area, perimeter, radius of curvature
     """
-
+    image = np.pad(image, ((1, 1), (1, 1)), mode='constant', constant_values=0)
     area, perim, curv = mk.functionals(image.astype(bool), **kwargs)
     perim *= 2 * np.pi
     curv *= np.pi
@@ -36,11 +36,11 @@ def minkowski_3d(image: np.ndarray, **kwargs) -> Tuple[float, float, float, floa
     Returns:
         Tuple[float, float, float, float]: Volume, surface area, mean curvature, Euler characteristic
     """
-
+    image = np.pad(image, ((1, 1), (1, 1), (1, 1)), mode='constant', constant_values=0)
     vol, sa, curv, ec = mk.functionals(image.astype(bool), **kwargs)
     sa *= 8
     curv *= 2 * np.pi ** 2
-    ec *= 4 * np.pi / 3
+    ec *= 8 * np.pi / 3
 
     return vol, sa, curv, ec
 
