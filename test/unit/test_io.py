@@ -1,3 +1,6 @@
+class IOTest:
+    def test_io(self):
+        pass
 # import sys
 # sys.path.append('../..') #Add custom filepath here
 # import unittest
@@ -36,6 +39,7 @@
 #     actual = dpm.io_utils._sort_files("..\data",".tiff","Initial_1_00000.tiff",2)
 #     #expected = 100
 #     #self.assertEqual(actual, expected)
+#
 #
 # test = TestDPMTools()
 #
