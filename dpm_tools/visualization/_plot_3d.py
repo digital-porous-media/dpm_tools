@@ -2,6 +2,7 @@ import numpy as np
 import pyvista as pv
 from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap
 import warnings
+import skimage
 
 
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
@@ -318,13 +319,20 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
-    mesh = pv.UniformGrid(dims=(vector_data.nz, vector_data.ny, vector_data.nx),
+    mesh = pv.ImageData(dimensions=(vector_data.nz, vector_data.ny, vector_data.nx),
                           spacing=(1.0, 1.0, 1.0),
                           origin=(0.0, 0.0, 0.0))
 
-    mesh['Magnitude'] = np.array([vector_data.vector[0].flatten('F'),
+    x = mesh.points[:, 0]
+    y = mesh.points[:, 1]
+    z = mesh.points[:, 2]
+    vectors = np.array([vector_data.vector[0].flatten('F'),
                                   vector_data.vector[1].flatten('F'),
                                   vector_data.vector[2].flatten('F')]).T
+    mesh['Magnitude'] = vectors
+    # mesh.cell_data['Magnitude'] = np.array([vector_data.vector[0].flatten('F'),
+    #                               vector_data.vector[1].flatten('F'),
+    #                               vector_data.vector[2].flatten('F')]).T
 
     if streamline_kwargs is None:
         streamline_kwargs = {'n_points': int(vector_data.nz**1.25),
@@ -381,15 +389,17 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
     # pv_image_obj = _wrap_array(data.scalar)
 
-    mesh = pv.UniformGrid(dims=(data.nz, data.ny, data.nx),
+    mesh = pv.ImageData(dimensions=(data.nz, data.ny, data.nx),
                           spacing=(1.0, 1.0, 1.0),
                           origin=(0.0, 0.0, 0.0))
 
+    mesh['scalars'] = data.image.flatten(order="F")
+
     # data.scalar = data.scalar.reshape(data.nz, data.ny, data.nx)
     # data.scalar = np.swapaxes(data.scalar, 0, 2)
-    data.scalar[data.scalar == 0.0] = np.nan
+    data.image[data.image == 0.0] = np.nan
 
-    fig.add_volume(mesh, scalars=data.scalar.flatten(order="F"), opacity='foreground', **mesh_kwargs)
+    fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
 
 
     return fig
@@ -421,9 +431,10 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
                        'ambient': 0.15}
 
     if plotter_kwargs is None:
-        plotter_kwargs['notebook'] = notebook
-    
-    plotter_kwargs['notebook'] = notebook
+        plotter_kwargs = {}
+        # plotter_kwargs['notebook'] = notebook
+    #
+    # plotter_kwargs['notebook'] = notebook
         
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
@@ -431,21 +442,22 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
     medial_axis = skimage.morphology.skeletonize(data.image) 
     pv_image_obj = _wrap_array(medial_axis)
 
-    contours_ma = medial_axis.contour(isosurfaces=[0.5])
+    contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
     fig.add_mesh(contours_ma, style='wireframe', color='r', line_width=2, name='medial_axis')
 
+    # pv_image_obj_sample = _wrap_array(data.image)
+    #
+    # contours_sample = pv_image_obj_sample.contour(isosurfaces=show_isosurface)
+    fig = plot_isosurface(data, fig=fig, mesh_kwargs=mesh_kwargs)
+    #
+    # def my_plane_func(normal, origin):
+    #     sliced = contours_sample.slice(normal=normal, origin=origin)
+    #     fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
+    #                 name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
+    #
+    #     fig.add_plane_widget(my_plane_func, normal='z', origin=[0, 0, medial_axis.shape[2]])
+    #
+    #     return fig
 
-    pv_image_obj_sample = _wrap_array(data.image)
-
-    contours_sample = pv_image_obj_sample.contour(isosurfaces=show_isosurface)
-    fig.add_mesh(contours_sample, **mesh_kwargs)
-    
-    def my_plane_func(normal, origin):
-        sliced = contours_sample.slice(normal=normal, origin=origin)
-        fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
-                    name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
-
-        fig.add_plane_widget(my_plane_func, normal='z', origin=[0, 0, medial_axis.shape[2]])
-
-        return fig
+    return fig
 

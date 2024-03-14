@@ -25,11 +25,11 @@ Pore scale characterization metrics
     heterogeneity_curve
 """
 
-from ._maps import *
+from ._maps import slicewise_edt, slicewise_mis, edt, sdt, mis, chords, time_of_flight, constriction_factor
 
-from ._feature_utils import *
+from ._feature_utils import _morph_drain_config, _set_linear_trend
 
-from ._scalars import *
+from ._scalars import minkowski_2d, minkowski_3d, morph_drain, heterogeneity_curve
 
 # from ._curves import *
 
