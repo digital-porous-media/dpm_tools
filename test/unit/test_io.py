@@ -1,5 +1,5 @@
 import sys
-sys.path.append('..') #Add custom filepath here
+sys.path.append('../..') #Add custom filepath here
 import unittest
 from numpy.testing import assert_allclose
 import dpm_tools.io as dpm
