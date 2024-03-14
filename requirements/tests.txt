@@ -1,0 +1,8 @@
+codecov
+coverage
+nbval
+pytest
+pytext-cache
+pytest-cov
+pytest-custom-exit-code
+pytest-split
