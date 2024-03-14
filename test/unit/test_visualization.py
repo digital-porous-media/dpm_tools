@@ -10,7 +10,7 @@ import pyvista as pv
 import warnings
 warnings.filterwarnings("ignore")
 
-class VisualizationTest:
+class TestVisualization:
     def setup_class(self):
         np.random.seed(12573)
         spheres = ps.generators.overlapping_spheres(shape=[100, 100, 100], r=10, porosity=0.6).astype(np.uint8)
