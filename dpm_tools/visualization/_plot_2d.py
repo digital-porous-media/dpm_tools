@@ -22,16 +22,20 @@ def hist(data,
     Parameters:
     ___
     :data: The data to plot histogram for.
-    :param data2: The data to plot histogram for.
-    :param nbins: The number of bins for the histogram.
+    :data2: The data to plot histogram for.
+    :nbins: The number of bins for the histogram.
+    :write_csv: True = write the histogram to a csv file.
+
+    Returns:
+        plt.figure: The figure that was generated
 
     If save_fig is True, a save path should be supplied to kwargs under key "filepath"
     Use data2 for adding a second distribution and plotting them together
     """
 
     # # Make line between bars black
-    # if 'edgecolor' not in kwargs:
-    #     kwargs['edgecolor'] = 'k'
+    if 'edgecolor' not in kwargs:
+        kwargs['edgecolor'] = 'k'
 
     # Set default figure size
     if 'fig_size' not in kwargs:
@@ -110,7 +114,7 @@ def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slic
     return fig
 
 
-def make_gif(data, dpi: int = 96, **kwargs):
+def make_gif(data, dpi: int = 96, save: bool = False, **kwargs):
     """
     Function to make and save a gif
     """
@@ -133,8 +137,10 @@ def make_gif(data, dpi: int = 96, **kwargs):
     images = [[ax1.imshow(slices, vmin=0, vmax=255, **kwargs)] for slices in tqdm(gif_slices)]
 
     animation = anim.ArtistAnimation(fig, images)
-
-    animation.save(f"{data.basepath}/{data.basename}.gif", writer='imagemagick', fps=7)
+    if save:
+        animation.save(f"{data.basepath}/{data.basename}.gif", writer='imagemagick', fps=7)
+    else:
+        plt.show()
 
     return images
 

@@ -4,7 +4,6 @@ import dpm_tools
 from pathlib import Path
 from numpy.testing import assert_allclose
 from skimage.morphology import ball, cube
-import tifffile
 import porespy as ps
 
 
@@ -16,15 +15,15 @@ class MetricsTest:
 
     def test_edt_ball(self):
         euclidean_distance = dpm_tools.metrics.edt(self.ball)
-        assert np.allclose([euclidean_distance.min(), euclidean_distance.max()], [0.0, 10.049875])
+        assert_allclose([euclidean_distance.min(), euclidean_distance.max()], [0.0, 10.049875])
 
     def test_sdt_ball(self):
         signed_distance = dpm_tools.metrics.sdt(self.ball)
-        assert np.allclose([signed_distance.min(), signed_distance.max()], [-7.5498343, 10.049875])
+        assert_allclose([signed_distance.min(), signed_distance.max()], [-7.5498343, 10.049875])
 
     def test_mis_ball(self):
         inscribed_sphere = dpm_tools.metrics.mis(self.ball)
-        assert np.allclose([inscribed_sphere.min(), inscribed_sphere.max()], [0.0, 10.049875])
+        assert_allclose([inscribed_sphere.min(), inscribed_sphere.max()], [0.0, 10.049875])
 
     def test_slicewise_edt_ball(self):
         slicewise_euclidean_distance = dpm_tools.metrics.slicewise_edt(self.ball)
@@ -33,39 +32,39 @@ class MetricsTest:
                             10.049875, 10.,  9.848858,  9.848858,  9.219544,
                             8.944272,  8.062258,  7.2111025,  6.0827627,  4.472136, 1.])
 
-        assert np.allclose(np.max(slicewise_euclidean_distance, axis=(0,1)), max_vals)
+        assert_allclose(np.max(slicewise_euclidean_distance, axis=(0,1)), max_vals)
 
     def test_slicewise_mis_ball(self):
         slicewise_inscribed_spheres = dpm_tools.metrics.slicewise_mis(self.ball)
         max_vals = np.array([1, 4, 6, 7, 7, 8, 9, 9, 9, 10, 10, 10, 9, 9, 9, 8, 7, 7, 6, 4, 1, 1])
 
-        assert np.allclose(np.max(slicewise_inscribed_spheres, axis=(0, 1)), max_vals)
+        assert_allclose(np.max(slicewise_inscribed_spheres, axis=(0, 1)), max_vals)
 
     def test_chords_ball(self):
         x, y, areas = dpm_tools.metrics.chords(self.ball)
         chords_max = np.array([ 1.,  9., 13., 15., 17., 17., 19., 19., 19., 19., 21., 19., 19.,
                     19., 19., 17., 17., 15., 13.,  9.,  1.])
 
-        assert np.allclose(np.max(x, axis=(0, 1)), chords_max)
-        assert np.allclose(np.max(y, axis=(1, 2)), chords_max)
-        assert np.allclose(np.amax(areas), np.pi * (np.amax(chords_max/2)**2))
+        assert_allclose(np.max(x, axis=(0, 1)), chords_max)
+        assert_allclose(np.max(y, axis=(1, 2)), chords_max)
+        assert_allclose(np.amax(areas), np.pi * (np.amax(chords_max/2)**2))
 
     def test_time_of_flight_ball(self):
         tofl_trended = dpm_tools.metrics.time_of_flight(self.ball, boundary='l', detrend=False)
         tofr_trended = dpm_tools.metrics.time_of_flight(self.ball, boundary='r', detrend=False)
 
-        assert np.allclose([tofl_trended.max(), tofr_trended.max()], [19.5, 19.5])
+        assert_allclose([tofl_trended.max(), tofr_trended.max()], [19.5, 19.5])
 
         tofl_detrended = dpm_tools.metrics.time_of_flight(self.ball, boundary='l', detrend=True)
         tofr_detrended = dpm_tools.metrics.time_of_flight(self.ball, boundary='r', detrend=True)
 
-        assert np.allclose([tofl_detrended.min(), tofl_detrended.max(), tofr_detrended.min(), tofr_detrended.max()],
+        assert_allclose([tofl_detrended.min(), tofl_detrended.max(), tofr_detrended.min(), tofr_detrended.max()],
                            [0.0, 6.18626252724756, 0.0, 6.18626252724756])
     def test_constriction_factor_ball(self):
         _, _, thickness_map = dpm_tools.metrics.chords(self.ball)
         cf = dpm_tools.metrics.constriction_factor(thickness_map, power=1)
 
-        assert np.allclose(np.unique(cf), np.array([0., 0.11111112, 0.14285713, 0.33333334, 0.42857137,
+        assert_allclose(np.unique(cf), np.array([0., 0.11111112, 0.14285713, 0.33333334, 0.42857137,
                                                     0.4285714, 0.63636357, 0.6363636, 0.6923076, 0.6923077,
                                                     0.73333335, 0.7333334, 0.7777778, 0.77777785, 0.8181817,
                                                     0.81818175, 0.8181818, 0.8461538, 0.84615386, 0.8461539,
@@ -114,18 +113,18 @@ class MetricsTest:
                                 2.5000002 ,  2.6       ,  3.2       ,  3.25      ,  4.        ,
                                 4.5000005 ,  5.        ,  7.9999995 , 20.        ])
 
-        assert np.allclose(np.unique(cf), edt_unique)
+        assert_allclose(np.unique(cf), edt_unique)
 
     def test_minkowski_2d_ball(self):
         with pytest.raises(Exception):
             dpm_tools.metrics.minkowski_2d(self.ball)
 
         area, perim, curv = dpm_tools.metrics.minkowski_2d(self.ball[10])
-        assert np.allclose([area, perim, curv], (317.0, 65.06451422842865, 1.0))
+        assert_allclose([area, perim, curv], (317.0, 65.06451422842865, 1.0))
 
     def test_minkowski_3d_ball(self):
         volume, area, curv, euler = dpm_tools.metrics.minkowski_3d(self.ball)
-        assert np.allclose([volume, area, curv, euler],
+        assert_allclose([volume, area, curv, euler],
                            [4169.0, 1262.1090288786693, 129.16729594427238, 1.9999999999999998])
 
     def test_morph_drain(self):
@@ -133,39 +132,39 @@ class MetricsTest:
 
         radii, sw, config = dpm_tools.metrics.morph_drain(self.spheres)
 
-        assert np.allclose(radii, np.array([17.36188383, 16.49378964, 15.66910016, 14.88564515, 14.14136289,
+        assert_allclose(radii, np.array([17.36188383, 16.49378964, 15.66910016, 14.88564515, 14.14136289,
                                             13.43429475, 12.76258001, 12.12445101, 11.51822846, 10.94231704,
                                             10.39520118,  9.87544113,  9.38166907,  8.91258562,  8.46695633,
                                              8.04360852,  7.64142809,  7.25935669,  6.89638885,  6.55156941,
                                              6.22399094,  5.91279139]))
 
-        assert np.allclose(sw, np.array([1.        , 0.99165638, 0.98242387, 0.96848671, 0.96848671,
+        assert_allclose(sw, np.array([1.        , 0.99165638, 0.98242387, 0.96848671, 0.96848671,
                                          0.96361529, 0.95676428, 0.95676428, 0.9234682 , 0.72262266,
                                          0.72262266, 0.53219706, 0.53219706, 0.38310597, 0.38310597,
                                          0.38310597, 0.19660618, 0.19660618, 0.1139972 , 0.1139972 ,
                                          0.1139972 , 0.06980421]))
 
         ids, counts = np.unique(config, return_counts=True)
-        assert np.allclose(ids, [0, 1, 2])
-        assert np.allclose(counts, [400380, 557764,  41856])
+        assert_allclose(ids, [0, 1, 2])
+        assert_allclose(counts, [400380, 557764,  41856])
 
     def test_morph_drain_config_ball(self):
         config, sw = dpm_tools.metrics._morph_drain_config(self.spheres, 4.5)
-        assert np.allclose(sw, 0.04025883059270872)
+        assert_allclose(sw, 0.04025883059270872)
 
         ids, counts = np.unique(config, return_counts=True)
-        assert np.allclose(ids, [0, 1, 2])
-        assert np.allclose(counts, [400380, 575480,  24140])
+        assert_allclose(ids, [0, 1, 2])
+        assert_allclose(counts, [400380, 575480,  24140])
 
     def test_heterogeneity_curve_ball(self):
         np.random.seed(112057)
         radii, variance = dpm_tools.metrics.heterogeneity_curve(self.spheres)
-        assert np.allclose(radii, np.array([ 18,  20,  22,  24,  26,  28,  30,  32,  34,  36,  38,  40,  42,
+        assert_allclose(radii, np.array([ 18,  20,  22,  24,  26,  28,  30,  32,  34,  36,  38,  40,  42,
                                              44,  46,  48,  50,  52,  55,  57,  59,  61,  63,  65,  67,  69,
                                              71,  73,  75,  77,  79,  81,  83,  85,  87,  89,  91,  93,  95,
                                              97,  99, 101, 103, 106, 108, 110, 112, 114, 116, 118]))
 
-        assert np.allclose(variance, np.array([1.51746246e-02, 8.78398359e-03, 6.71367477e-03, 4.71184115e-03,
+        assert_allclose(variance, np.array([1.51746246e-02, 8.78398359e-03, 6.71367477e-03, 4.71184115e-03,
                                                3.78188518e-03, 2.20582610e-03, 1.55966288e-03, 1.04812750e-03,
                                                5.47927765e-04, 3.89760525e-04, 1.71487358e-04, 8.81955332e-05,
                                                7.27613964e-05, 3.85910879e-05, 1.85092052e-05, 1.53797914e-06,
