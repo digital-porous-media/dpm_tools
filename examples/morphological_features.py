@@ -8,7 +8,7 @@ import pathlib
 from natsort import natsorted
 
 if __name__ == '__main__':
-    parent_path = pathlib.Path("/Users/bchang/Library/CloudStorage/Box-Box/Pore Model Image sharing/porous solid bitumen pore models")
+    parent_path = pathlib.Path(r"C:\Users\bcc2459\Box\Pore Model Image sharing\porous solid bitumen pore models")
 
     names = []
     heterogeneity_radii = []
@@ -58,28 +58,28 @@ if __name__ == '__main__':
         # # plt.xlim([0, 1.0])
         # # plt.ylim([0, 2.0])
 
-        # radii, variances = heterogeneity_curve(img.image)
-        # heterogeneity_radii.append(radii)
-        # heterogeneity_variances.append(variances)
+        radii, variances = heterogeneity_curve(img.image)
+        heterogeneity_radii.append(radii)
+        heterogeneity_variances.append(variances)
         # plot_heterogeneity_curve(radii, variances)
-        #
+
         # plt.show()
 
         Vn[i], An[i], Sn[i], Xn[i] = minkowski_3d(img.image)
-        # print("Minkowski Functionals:")
-        # print(f"\tVolume: {Vn:.3f}\n\tSurface Area: {An:.3}\n\tMean Curvature: {Sn:.3f}\n\tEuler Characteristic: {Xn:.3}")
+        print("Minkowski Functionals:")
+        print(f"\tVolume: {Vn[i]:.3f}\n\tSurface Area: {An[i]:.3}\n\tMean Curvature: {Sn[i]:.3f}\n\tEuler Characteristic: {Xn[i]:.3}")
 
-    # df = pd.DataFrame(data={'Name': names,
-    #                         'Vsi_Radius': heterogeneity_radii, 'Vsi_Variance': heterogeneity_variances,
-    #                         'Vn': Vn, 'An': An, 'Sn': Sn, 'Xn': Xn})
+    df = pd.DataFrame(data={'Name': names,
+                            'Vsi_Radius': heterogeneity_radii, 'Vsi_Variance': heterogeneity_variances,
+                            'Vn': Vn, 'An': An, 'Sn': Sn, 'Xn': Xn})
 
-    df = pd.read_parquet(parent_path.parent.parent / '3d_metrics.parquet')
-    print(df.head())
-    df['Vn'] = Vn
-    df['An'] = An
-    df['Sn'] = Sn
-    df['Xn'] = Xn
-
+    # df = pd.read_parquet(pathlib.Path(r"C:\Users\bcc2459\Box") / '3d_metrics.parquet')
+    # print(df.head())
+    # df['Vn'] = Vn
+    # df['An'] = An
+    # df['Sn'] = Sn
+    # df['Xn'] = Xn
+    #
     df.to_csv(parent_path.parent.parent / '3d_metrics.csv')
     df.to_parquet(parent_path.parent.parent / '3d_metrics.parquet')
     print(df.describe())
