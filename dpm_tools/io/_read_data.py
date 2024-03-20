@@ -5,6 +5,7 @@ import string
 import netCDF4 as nc
 from hdf5storage import loadmat
 from dataclasses import dataclass, field
+import pathlib
 from collections.abc import Iterable
 
 # __all__ = [
@@ -13,7 +14,7 @@ from collections.abc import Iterable
 #     'Image',
 #     'Vector'
 # ]
-def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
+def _read_tiff(filepath: pathlib.Path, full_path: bool = True, **kwargs) -> np.ndarray:
     """
     A utility function to read in TIFF files
     full_path = True if the entire path to the file is provided in filepath (including the file itself)
@@ -21,21 +22,27 @@ def _read_tiff(filepath: str, full_path: bool = True, **kwargs) -> np.ndarray:
     """
     if not full_path:
         try:
-            filepath = os.path.join(filepath, kwargs['filename'])
+            filepath = filepath / kwargs['filename']
         except FileNotFoundError:
             print('Please provide a filename')
 
     return tiffread(filepath)
 
 
-def _read_raw(filepath: str, **kwargs) -> np.ndarray:
+def _read_raw(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     """
     A utility function to read in RAW files
     Must provide image size as nz, ny, nx, number of bits, signed/unsigned and endianness in kwargs
     """
     assert 'meta' in kwargs, "Image metadata dictionary is required to contain " \
                              "keywords 'nz', 'ny', 'nx', 'bits','signed' and 'byte_order'"
+
     metadata = kwargs['meta']
+
+    assert all(key in metadata for key in ['nz', 'ny', 'nx', 'bits', 'signed', 'byte_order']), \
+        f"Image metadata dictionary must " \
+        f"contain { {'nz', 'ny', 'nx', 'bits', 'signed', 'byte_order'} - metadata.keys()}"
+
     bits = metadata['bits']
     signed = metadata['signed']
     byte_order = metadata['byte_order']
@@ -66,7 +73,7 @@ def _read_raw(filepath: str, **kwargs) -> np.ndarray:
     return np.fromfile(filepath, dtype=datatype).reshape([nz, ny, nx])
 
 
-def _read_nc(filepath: str, **kwargs) -> np.ndarray:
+def _read_nc(filepath: pathlib.Path, **kwargs) -> np.ndarray:
 
     ds = nc.Dataset(filepath)
 
@@ -106,8 +113,9 @@ def _read_nc(filepath: str, **kwargs) -> np.ndarray:
     return image_array
 
 
-def _read_mat(filepath: str, data_keys: str = None, **kwargs):
-    data = loadmat(filepath)
+def _read_mat(filepath: pathlib.Path, data_keys: str = None, **kwargs):
+
+    data = loadmat(str(filepath))
     if data_keys is None:
         image = [data[k] for k in [*data.keys()]]
 
@@ -192,5 +200,4 @@ class Vector(Image):
 
 
         self.magnitude = np.sqrt(self.vector[0]**2 + self.vector[1]**2 + self.vector[2]**2)
-
 

@@ -1,176 +1,139 @@
 import glob
 import os
-import sys
-import tifffile as tiff
-from PIL import Image
-import exifread
+import tifffile
 import numpy as np
-import pandas as pd
+import pathlib
+from typing import Any, Tuple
+import re
 
 from ._read_data import read_image
 from ._write_data import write_image
 
 
-def _find_files(directory: str, extension: str) -> list:
-    sizes = []
-    
-    path = directory+"/**/*"+extension
-
-    found = glob.glob(path, recursive=True)
-
-    count = 0
-
-    for obj in found:
-        count = count + 1
-        size = str(os.path.getsize(obj)) + " bytes"
-        sizes.append(size)
-
-    found_tuple = list(zip(found, sizes))
-
-    print(f"There are {count} files with the {extension} extension in the directory {directory}")
-    files_df = pd.DataFrame(found_tuple, columns=['File', 'Size'])
-    print(files_df)
-    
-    return found_tuple
-
-
-def _find_tiff_files(directory: str) -> list:
-    #Create lists for data columns
-    found = []
-    files = []
-    sizes = []
-    folders = []
-    slices = []
-    width = []
-    height = []
-    dt = []
-    bt = []
-
-    #Find all .tiff files
-    extension = ".tiff"
-    path = directory+"/**/*"+extension
-    found.extend(glob.glob(path, recursive=True))
-
-    #Find all .tif files
-    extension = ".tif"
-    path = directory+"/**/*"+extension
-    found.extend(glob.glob(path, recursive=True))
-
-    #Iterate through each found file
-    for obj in found:
-        get_folder = obj.split("\\")
-        folder_name = ""
-        for fold in get_folder:
-            if(extension not in fold):
-                folder_name = folder_name + "\\" + fold
-            elif(extension in fold):
-                files.append(fold)
-                folders.append(folder_name)
-                image = tiff.imread(obj)
-
-                if(len(image.shape) == 2):
-                    slices.append(1)
-                    width.append(image.shape[0])
-                    height.append(image.shape[1])
-                else:
-                    slices.append(image.shape[0])
-                    width.append(image.shape[1])
-                    height.append(image.shape[2])
-                dt.append(image.dtype)
-                bt.append(image.dtype.byteorder)
-        size = str(os.path.getsize(obj)) + " bytes"
-        sizes.append(size)
-
-    found_tuple = list(zip(files, sizes, folders, slices, width, height, dt, bt))
-
-    files_df = pd.DataFrame(found_tuple, columns=['File', 'Size', 'Folder', 'Slices', 'Width', 'Height', 'Data Type', 'Byte Order'])
-    print(files_df)
-    
-    return found_tuple
-
-
-#Check if .tiff file is a 2D or 3D image
-def _evaluate_dimensions(directory: str, starting_file: str) -> int:
-    #Exifread code from https://stackoverflow.com/questions/46477712/reading-tiff-image-metadata-in-python
-    path = directory+"\\"+starting_file
-    f = open(path, 'rb')
-
-    # Return Exif tags
-    tags = exifread.process_file(f)
-    tags_list = list(tags.keys())
-
-    #Iterate through each image tag
-    i = 0
-    slices = 1
-    while(slices == 1 and i < len(tags_list)):
-        tag = tags_list[i]
-        
-        #Find image description tag
-        if "ImageDescription" in tag:
-            value = str(tags[tag])
-            description_parts = value.split("\n")
-
-            #Iterate through each part of the description
-            for part in description_parts:
-
-                #Find number of slices
-                if "slices" in part:
-                    find_slices = part.split("=")
-                    slices = int(find_slices[-1])
-        i += 1
-
-    return slices
-
-
-def _sort_files(directory: str, extension: str, starting_file: str, slices: int) -> list:
+def find_files_with_ext(directory: pathlib.Path, extension: str) -> list:
     """
-    A function to sort the files in a directory by number slice.
-    This is useful when dealing with directories of tiff slices rather than volumetric tiff
+    Search the given parent directory for files with the given extension.
+
+    Parameters
+        directory: pathlib.Path of the parent directory
+        extension: extension of the files to find
+
+    Returns
+        list: A list with the file names containing the given extension
     """
-    unsorted_files = {}
-    sorted_files = []
-    count = slices
 
-    # Find all files with extension in directory
-    path = directory+"/*"+extension
-    found = glob.glob(path)
+    if not isinstance(directory, pathlib.Path):
+        directory = pathlib.Path(directory)
 
-    # Split up file names for sorting
-    for obj in found:
-        split1 = obj.split(".")
-        split2 = split1[0].split(" ")
-        split3 = split2[-1].split("_")
-        split4 = split3[-1].split("\\")
-        unsorted_files[split4[-1]] = obj
+    if not extension.startswith("."):
+        extension = f".{extension}"
 
-    # Sort files
-    sorting_list = sorted(unsorted_files)
+    assert directory.exists(), f"{directory} could not be found"
+    assert directory.is_dir(), f"{directory} is not a directory"
 
-    # Append full path names to sorted list using sorted file names
-    for i in sorting_list:
-        print(i)
-        # Start appending names to list using user-provided range
-        if i in starting_file:
-            sorted_files.append(unsorted_files[i])
-            count = 1
-        elif count < slices:
-            sorted_files.append(unsorted_files[i])
-            count = count + 1
-    print(sorted_files)
+    files_found = list(directory.glob(f'**/*{extension}'))
 
-    return sorted_files
+    return files_found
 
 
-# TODO Add option to combine based on indices of desired slices
+def _get_file_sizes(file_list: list[pathlib.Path]) -> list[int]:
+    """
+    Get the sizes of all files in the given list in bytes
 
-def _combine_slices(filepath: str, filenames: list, use_compression='zlib') -> np.ndarray:
-    
-    #Combines individual slices in a stack.
-    #To control which slices to include, supply a list of filenames
-    
+    Parameters
+        file_list: A list of pathlib.Path objects
+
+    Returns
+        list: A list of the file sizes in bytes
+    """
+    if not isinstance(file_list, list):
+        file_list = [file_list]
+
+    assert len(file_list) > 0, "File list cannot be empty"
+
+    return [os.path.getsize(object) for object in file_list]
+
+
+def _get_tiff_tag(tiff_page: tifffile.TiffPage, tag_name: str) -> Any:
+    """
+    Utility function to get the value of the given tag from the given tiff page
+
+    Parameters
+        tiff_page: tifffile.TiffPage object
+        tag_name: Name of the tag to get the value of
+
+    Returns
+        Any: The value of the given tag
+    """
+    tag = tiff_page.tags.get(tag_name)
+    return tag.value if tag else None
+
+
+def get_tiff_metadata(directory: pathlib.Path) -> Tuple:
+    """
+    Get the metadata of all tiff files in the given directory.
+
+    Parameters
+        directory: pathlib.Path of the parent directory
+
+    Returns
+        pd.DataFrame: DataFrame with the file name, number of slices,
+        width, height
+    """
+
+    # Find all .tiff files
+    tiff_files = find_files_with_ext(directory, ".tif*")
+    sizes = _get_file_sizes(tiff_files)
+    slices = [None] * len(tiff_files)
+    width = [None] * len(tiff_files)
+    length = [None] * len(tiff_files)
+
+    for i, obj in enumerate(tiff_files):
+        with tifffile.TiffFile(obj) as t:
+            slices[i] = len(t.pages)
+            page = t.pages[0]
+            width[i] = _get_tiff_tag(page, tag_name="ImageWidth")
+            length[i] = _get_tiff_tag(page, tag_name="ImageLength")
+
+    return tiff_files, sizes, slices, width, length
+
+
+def natural_sort(list_to_sort: list) -> list:
+    """
+    Sort a list of strings or  in alphanumeric order.
+
+    Parameters
+        list_to_sort: A list of strings or pathlib.Path objects to sort naturally
+
+    Returns
+        list: A list of strings in alphanumeric order
+    """
+
+    sorted_list = sorted(list_to_sort,
+                         key=lambda item: [int(part) if part.isdigit() else part.lower()
+                                           for part in re.split(r'(\d+)', str(item))])
+
+    if isinstance(list_to_sort[0], pathlib.Path):
+        sorted_list = [pathlib.Path(i) for i in sorted_list]
+
+    return sorted_list
+
+
+def combine_slices(filepath: pathlib.Path, filenames: list[pathlib.Path], use_compression='zlib') -> np.ndarray:
+    """
+    Combine individual slices into a volumetric stack. To control which slices to include, supply a list of filenames.
+
+    Parameters:
+        filepath (str): Path to the directory containing the tiff files
+        filenames (list): List of the file names of the tiff files to combine
+        use_compression (str): Compression type to use for the combined tiff file
+
+    Returns:
+        np.ndarray: Array containing the combined stack
+    """
 
     # Read first slices and determine datatype
-    first_slice = read_image(os.path.join(filepath, filenames[0]))
+    first_slice = read_image(filepath / filenames[0])
     datatype = first_slice.dtype
 
     # Create new array for combined file
@@ -183,62 +146,21 @@ def _combine_slices(filepath: str, filenames: list, use_compression='zlib') -> n
 
     # Read each image and add to array
     for count, file in enumerate(filenames[1:], 1):
-        next_file = read_image(os.path.join(filepath, file))
+        next_file = read_image(filepath / file)
         combined_stack[count] = np.array(next_file)
 
     # Convert array to .tiff file and save it
     print("Final shape of combined stack = ", combined_stack.shape)
     print("-" * 53)
-    # Check if bigtiff is needed
-    # is_bigtiff = False if combined_stack.nbytes < 4294967296 else True
-    
-    if(combined_stack.nbytes >= 4294967296):
-        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = True)
-    else:
-        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize = False)
 
-    #write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-    #            image=combined_stack, filetype='tiff')
+    write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
+                image=combined_stack, filetype='tiff', compression_type=use_compression,
+                tiffSize=(combined_stack.nbytes >= 4294967296))
 
     return combined_stack
-"""
-
-def _combine_slices(filepath, filenames, substack_name, use_compression='zlib') -> np.ndarray:
-
-    #Read first slices and determine datatype
-    first_slice = read_image(os.path.join(filepath, filenames[0]))
-    datatype = first_slice.dtype
-
-    #Create new array for combined file
-    combined_stack = np.zeros(
-        [len(filenames), first_slice.shape[0], first_slice.shape[1]], dtype=datatype
-    )
-
-    #Add first slice to array
-    combined_stack[0] = np.array(first_slice)
-    
-    #Read each image and add to array
-    for count, file in enumerate(filenames[1:], 1):
-        next_file = read_image(os.path.join(filepath, file))
-        combined_stack[count] = np.array(next_file)
-    
-    
-    #Convert array to .tiff file and save it
-    print("Final shape of combined stack = ", combined_stack.shape)
-    print("-"*53)
-    if(combined_stack.nbytes >= 4294967296):
-        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize=True)
-    else:
-        write_image(save_path=filepath, save_name=f'combined_stack_0-{len(filenames)}.tif',
-                image=combined_stack, filetype='tiff', compression_type=use_compression, tiffSize=False)
-"""
 
 
 def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
-
     conversion_list = ['raw', 'tiff', 'tif', 'nc']
     filepath = filepath.replace('\\', '/')
     original_image = read_image(read_path=filepath, **kwargs)
@@ -246,10 +168,9 @@ def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
     filepath, filename = filepath.rsplit('/', 1)
     basename, extension = filename.rsplit('.', 1)
 
-    assert extension in conversion_list, "Unsupported filetype, cannot convert"
+    assert extension in conversion_list, f"Unsupported filetype {extension}, must be one of {conversion_list}"
 
     filename = basename + "." + convert_to.lower()
     write_image(save_path=filepath, save_name=filename, image=original_image, filetype=convert_to)
-
 
 
