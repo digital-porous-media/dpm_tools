@@ -182,7 +182,7 @@ class TestMetrics:
                                                0.00000000e+00, 4.81482486e-35]))
 
 if __name__ == "__main__":
-    tests = MetricsTest()
+    tests = TestMetrics()
     tests.setup_class()
     for item in tests.__dir__():
         if item.startswith('test'):

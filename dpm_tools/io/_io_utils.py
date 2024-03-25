@@ -160,17 +160,28 @@ def combine_slices(filepath: pathlib.Path, filenames: list[pathlib.Path], use_co
     return combined_stack
 
 
-def convert_filetype(filepath: str, convert_to: str, **kwargs) -> None:
-    conversion_list = ['raw', 'tiff', 'tif', 'nc']
-    filepath = filepath.replace('\\', '/')
+def convert_filetype(filepath: pathlib.Path, convert_to: str, **kwargs) -> None:
+    """
+    Convert the file extension from one format to another
+
+    Parameters:
+        filepath: pathlib.Path object with the path to the file to convert
+        convert_to: str extension of the file format to convert to
+        **kwargs: keyword arguments needed to read the file
+
+    Returns:
+        None
+    """
+    conversion_list = ['.raw', '.tiff', '.tif', '.nc']
+
+    # Make sure there is no .
+    convert_to = convert_to.lower()
+    if not convert_to.startswith("."):
+        convert_to = "." + convert_to
+
     original_image = read_image(read_path=filepath, **kwargs)
 
-    filepath, filename = filepath.rsplit('/', 1)
-    basename, extension = filename.rsplit('.', 1)
-
-    assert extension in conversion_list, f"Unsupported filetype {extension}, must be one of {conversion_list}"
-
-    filename = basename + "." + convert_to.lower()
-    write_image(save_path=filepath, save_name=filename, image=original_image, filetype=convert_to)
+    new_filepath = filepath.with_suffix(convert_to)
+    write_image(save_path=new_filepath.parent, save_name=new_filepath.name, image=original_image, filetype=convert_to)
 
 
