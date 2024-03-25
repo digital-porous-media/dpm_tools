@@ -44,7 +44,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         fig = _initialize_plotter(**plotter_kwargs)
     
     # Swapping axes for pyvista compatibility
-    ax_swap_arr = np.swapaxes(data.image, 0, 2)
+    ax_swap_arr = np.swapaxes(data.scalar, 0, 2)
     
     # Wrap NumPy array to pyvista object
     pv_image_obj = _wrap_array(ax_swap_arr)
@@ -162,12 +162,12 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
     
-    pv_image_obj = _wrap_array(data.image)
+    pv_image_obj = _wrap_array(data.scalar)
 
     if show_isosurface is None:
-        show_isosurface = [(np.amax(data.image)+np.amin(data.image))/2]
+        show_isosurface = [(np.amax(data.scalar)+np.amin(data.scalar))/2]
         warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.'+
-              f'Using the midpoint of the isosurface array instead ({np.amin(data.image)},{np.amax(data.image)}).\n',
+              f'Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{np.amax(data.scalar)}).\n',
               stacklevel=2)
 
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
@@ -201,7 +201,7 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
                        'color': (1, 1, 1)}
     
     
-    wall_bin = data.image.copy()
+    wall_bin = data.scalar.copy()
     wall_bin[1:-1, 1:-1, 1:-1] = 255
     vtk_wall = _wrap_array(wall_bin)
     wall_contours = vtk_wall.contour([255])
@@ -384,8 +384,8 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
         fig = _initialize_plotter(**plotter_kwargs)
 
     # Create a bounded volume
-    # wall_bin = 255 * np.ones((data.image.shape[0]+2, data.image.shape[1]+2, data.image.shape[2]+2))
-    # wall_bin[1:-1, 1:-1, 1:-1] = data.image.copy()
+    # wall_bin = 255 * np.ones((data.scalar.shape[0]+2, data.scalar.shape[1]+2, data.scalar.shape[2]+2))
+    # wall_bin[1:-1, 1:-1, 1:-1] = data.scalar.copy()
 
     # pv_image_obj = _wrap_array(data.scalar)
 
@@ -393,11 +393,11 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
                           spacing=(1.0, 1.0, 1.0),
                           origin=(0.0, 0.0, 0.0))
 
-    mesh['scalars'] = data.image.flatten(order="F")
+    mesh['scalars'] = data.scalar.flatten(order="F")
 
     # data.scalar = data.scalar.reshape(data.nz, data.ny, data.nx)
     # data.scalar = np.swapaxes(data.scalar, 0, 2)
-    data.image[data.image == 0.0] = np.nan
+    data.scalar[data.scalar == 0.0] = np.nan
 
     fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
 
@@ -439,13 +439,13 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
     
-    medial_axis = skimage.morphology.skeletonize(data.image) 
+    medial_axis = skimage.morphology.skeletonize(data.scalar)
     pv_image_obj = _wrap_array(medial_axis)
 
     contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
     fig.add_mesh(contours_ma, style='wireframe', color='r', line_width=2, name='medial_axis')
 
-    # pv_image_obj_sample = _wrap_array(data.image)
+    # pv_image_obj_sample = _wrap_array(data.scalar)
     #
     # contours_sample = pv_image_obj_sample.contour(isosurfaces=show_isosurface)
     fig = plot_isosurface(data, fig=fig, mesh_kwargs=mesh_kwargs)

@@ -45,7 +45,7 @@ class TestVisualization:
         assert len(gif_images) > 0
 
     def test_plot_heterogeneity_curve(self):
-        radii, variances = dpm_metrics.heterogeneity_curve(self.spheres.image)
+        radii, variances = dpm_metrics.heterogeneity_curve(self.spheres.scalar)
         n_figs_before = plt.gcf().number
         dpm_vis.plot_heterogeneity_curve(radii, variances)
         n_figs_after = plt.gcf().number
