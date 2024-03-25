@@ -14,9 +14,9 @@ class TestVisualization:
     def setup_class(self):
         np.random.seed(12573)
         spheres = ps.generators.overlapping_spheres(shape=[100, 100, 100], r=10, porosity=0.6).astype(np.uint8)
-        self.spheres = dpm_io.Image(spheres)
-        self.thickness = dpm_io.Image(dpm_metrics.edt(self.spheres.image))
-        self.velocity = dpm_io.Vector(image=spheres, scalar=spheres, vector=[self.thickness.image]*3)
+        self.spheres = dpm_io.Image(scalar=spheres)
+        self.thickness = dpm_io.Image(scalar=dpm_metrics.edt(self.spheres.scalar))
+        self.velocity = dpm_io.Image(scalar=spheres, vector=[self.thickness.scalar]*3)
 
     def test_hist(self):
         plt.close('all')
@@ -45,7 +45,7 @@ class TestVisualization:
         assert len(gif_images) > 0
 
     def test_plot_heterogeneity_curve(self):
-        radii, variances = dpm_metrics.heterogeneity_curve(self.spheres.image)
+        radii, variances = dpm_metrics.heterogeneity_curve(self.spheres.scalar)
         n_figs_before = plt.gcf().number
         dpm_vis.plot_heterogeneity_curve(radii, variances)
         n_figs_after = plt.gcf().number
@@ -97,7 +97,7 @@ class TestVisualization:
 
 
 if __name__ == "__main__":
-    tests = VisualizationTest()
+    tests = TestVisualization()
     tests.setup_class()
     for item in tests.__dir__():
         if item.startswith('test'):

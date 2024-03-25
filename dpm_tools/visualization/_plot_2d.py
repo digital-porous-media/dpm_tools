@@ -46,15 +46,15 @@ def hist(data,
     kwargs.pop('fig_size', None)  # Remove fig_size argument from kwargs
 
     if data2 is not None:
-        plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs, label='data1')
-        plt.hist(x=data2.image.ravel(), bins=nbins, density=True, **kwargs, label='data2')
+        plt.hist(x=data.scalar.ravel(), bins=nbins, density=True, **kwargs, label='data1')
+        plt.hist(x=data2.scalar.ravel(), bins=nbins, density=True, **kwargs, label='data2')
         plt.legend()
         plt.xlabel('Gray value')
         plt.ylabel('Probability')
         plt.tight_layout()
         plt.show()
     else:
-        freq, bins, _ = plt.hist(x=data.image.ravel(), bins=nbins, density=True, **kwargs)
+        freq, bins, _ = plt.hist(x=data.scalar.ravel(), bins=nbins, density=True, **kwargs)
         plt.xlabel('Gray value')
         plt.ylabel('Probability')
         plt.tight_layout()
@@ -84,9 +84,9 @@ def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
         kwargs['cmap'] = 'viridis'
 
     if slice_num is None:
-        slice_num = data.image.shape[slice_axis] // 2
+        slice_num = data.scalar.shape[slice_axis] // 2
 
-    show_slice = data.image.take(indices=slice_num, axis=slice_axis)
+    show_slice = data.scalar.take(indices=slice_num, axis=slice_axis)
 
     fig = plt.figure(dpi=400)
     plt.imshow(show_slice, **kwargs)
@@ -99,7 +99,7 @@ def plot_slice(data, slice_num: int = None, slice_axis: int = 0, **kwargs):
 
 def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slice_axis: int = 0, **kwargs):
     if thumb_slice is None:
-        thumb_slice = int(np.floor(data.image.shape[slice_axis] / 2))
+        thumb_slice = int(np.floor(data.scalar.shape[slice_axis] / 2))
 
     fig = plt.figure()
     fig.set_size_inches(fig_size)
@@ -107,7 +107,7 @@ def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slic
     ax.set_axis_off()
     fig.add_axes(ax)
     plt.set_cmap('Greys')
-    show_slice = _scale_image(data.image).take(indices=thumb_slice, axis=slice_axis)
+    show_slice = _scale_image(data.scalar).take(indices=thumb_slice, axis=slice_axis)
     ax.imshow(show_slice, aspect='equal', vmin=0, vmax=1, **kwargs)
     plt.show()
 
@@ -133,7 +133,7 @@ def make_gif(data, dpi: int = 96, save: bool = False, **kwargs):
     fig.add_axes(ax1)
     plt.set_cmap('Greys')
 
-    gif_slices = _scale_image(data.image[::slice_save])
+    gif_slices = _scale_image(data.scalar[::slice_save])
     images = [[ax1.imshow(slices, vmin=0, vmax=255, **kwargs)] for slices in tqdm(gif_slices)]
 
     animation = anim.ArtistAnimation(fig, images)
