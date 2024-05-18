@@ -1,0 +1,6 @@
+minkowski\_2d
+=============
+
+.. currentmodule:: dpm_tools.metrics
+
+.. autofunction:: minkowski_2d
