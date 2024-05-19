@@ -22,10 +22,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     """
 
     if show_slices is None:
-        """
         show_slices = [data.nx // 2, data.ny // 2, data.nz // 2]
-        """
-        show_slices = [data.shape[1] // 2, data.shape[2] // 2, data.shape[0] // 2]
     
     # Overriding the above line because it prevents orthogonal slices from showing for some reason.
     if plotter_kwargs is None:
@@ -38,24 +35,17 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     x_slice, y_slice, z_slice = show_slices
 
     # Tests to make sure input slices are within image dimensions
-    """
     assert 0 <= x_slice < data.nx, "X-slice value outside image dimensions"
     assert 0 <= y_slice < data.ny, "Y-slice value outside image dimensions"
     assert 0 <= z_slice < data.nz, "Z-slice value outside image dimensions"
-    """
-    assert 0 <= x_slice < data.shape[1], "X-slice value outside image dimensions"
-    assert 0 <= y_slice < data.shape[2], "Y-slice value outside image dimensions"
-    assert 0 <= z_slice < data.shape[0], "Z-slice value outside image dimensions"
+
 
     # Initialize plotter object
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
     
     # Swapping axes for pyvista compatibility
-    '''
     ax_swap_arr = np.swapaxes(data.scalar, 0, 2)
-    '''
-    ax_swap_arr = np.swapaxes(data, 0, 2)
     
     # Wrap NumPy array to pyvista object
     pv_image_obj = _wrap_array(ax_swap_arr)
@@ -89,8 +79,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         fig.add_mesh(starting_mesh,name='timestep_mesh', **mesh_kwargs, show_scalar_bar=False)
         _ = fig.add_scalar_bar(position_x=0.9, position_y= 0.2, height=0.5, vertical=True)
         fig.add_slider_widget(callback=lambda value: engine('z', int(value)),
-                            #   rng = [1, data.nz-1],
-                              rng = [1, data.shape[0]-1],
+                              rng = [1, data.nz-1],
                               value=50,
                               pointa=(0.025, 0.1),
                               pointb=(0.31, 0.1),
@@ -98,8 +87,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                               fmt="%0.f",
                               style='modern')
         fig.add_slider_widget(callback=lambda value: engine('x', int(value)),
-                            #   rng = [1, data.nx-1],
-                              rng = [1, data.shape[1]-1],
+                              rng = [1, data.nx-1],
                               value=50,
                               pointa=(0.35, 0.1),
                               pointb=(0.64, 0.1),
@@ -107,8 +95,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                               fmt="%0.f",
                               style='modern')
         fig.add_slider_widget(callback=lambda value: engine('y', int(value)),
-                            #   rng = [1, data.ny-1],
-                              rng = [1, data.shape[2]-1],
+                              rng = [1, data.ny-1],
                               value=50,
                               pointa=(0.67, 0.1),
                               pointb=(0.98, 0.1),
@@ -175,21 +162,14 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
         
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-    '''
+
     pv_image_obj = _wrap_array(data.scalar)
-    '''
-    pv_image_obj = _wrap_array(data)
+ 
 
     if show_isosurface is None:
-        '''
         show_isosurface = [(np.amax(data.scalar)+np.amin(data.scalar))/2]
         warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.'+
               f'Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{np.amax(data.scalar)}).\n',
-              stacklevel=2)
-        '''
-        show_isosurface = [(np.amax(data)+np.amin(data))/2]
-        warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.'+
-              f'Using the midpoint of the isosurface array instead ({np.amin(data)},{np.amax(data)}).\n',
               stacklevel=2)
 
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
@@ -221,12 +201,8 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
     if mesh_kwargs is None:
         mesh_kwargs = {'opacity': 0.2,
                        'color': (1, 1, 1)}
-    
-    '''
-        wall_bin = data.scalar.copy()
 
-    '''
-    wall_bin = data.copy()
+    wall_bin = data.scalar.copy()
     wall_bin[1:-1, 1:-1, 1:-1] = 255
     vtk_wall = _wrap_array(wall_bin)
     wall_contours = vtk_wall.contour([255])
@@ -413,15 +389,10 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
     # wall_bin[1:-1, 1:-1, 1:-1] = data.scalar.copy()
 
     # pv_image_obj = _wrap_array(data.scalar)
-    '''
+
     mesh = pv.ImageData(dimensions=(data.nz, data.ny, data.nx),
                           spacing=(1.0, 1.0, 1.0),
                           origin=(0.0, 0.0, 0.0))
-    '''
-    
-    mesh = pv.ImageData(dimensions=(data.shape[0], data.shape[2], data.shape[1]),
-                        spacing=(1.0, 1.0, 1.0),
-                        origin=(0.0, 0.0, 0.0))
 
     mesh['scalars'] = data.scalar.flatten(order="F")
 
@@ -468,10 +439,9 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
         
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-    '''
-        medial_axis = skimage.morphology.skeletonize(data.scalar)
-    '''
-    medial_axis = skimage.morphology.skeletonize(data)
+
+    medial_axis = skimage.morphology.skeletonize(data.scalar)
+
     pv_image_obj = _wrap_array(medial_axis)
 
     contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
