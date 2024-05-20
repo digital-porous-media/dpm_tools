@@ -319,21 +319,21 @@ class Image:
 
 
 # TODO combine VectorImage and Image classes
-@dataclass
-class Vector(Image):
-    scalar: np.ndarray = None
-    vector: list = None
-
-    def __post_init__(self):
-        assert self.scalar is not None or self.vector is not None, "Provide either scalar or vector data"
-
-        if self.scalar.ndim == 2:
-            self.scalar = self.scalar[np.newaxis, :, :]
-
-        self.nz, self.nx, self.ny = self.scalar.shape
-
-
-        self.magnitude = np.sqrt(self.vector[0]**2 + self.vector[1]**2 + self.vector[2]**2)
+# @dataclass
+# class Vector(Image):
+#     scalar: np.ndarray = None
+#     vector: list = None
+#
+#     def __post_init__(self):
+#         assert self.scalar is not None or self.vector is not None, "Provide either scalar or vector data"
+#
+#         if self.scalar.ndim == 2:
+#             self.scalar = self.scalar[np.newaxis, :, :]
+#
+#         self.nz, self.nx, self.ny = self.scalar.shape
+#
+#
+#         self.magnitude = np.sqrt(self.vector[0]**2 + self.vector[1]**2 + self.vector[2]**2)
 
 if __name__ == "__main__":
     scalar_path = pathlib.Path('C:/Users/bcc2459/Documents/dpm_tools/data/3_fractures.tif')
