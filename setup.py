@@ -57,8 +57,11 @@ setup(
         'hdf5storage',
         'porespy',
         'edt',
+        'scikit-fmm',
         'connected-components-3d',
-        'quantimpy==0.4.6'
+        #'quantimpy==0.4.6',
+        'quantimpy',
+        'pyarrow'
     ],
     author='Digital Porous Media Team',
     author_email='bcchang@utexas.edu',

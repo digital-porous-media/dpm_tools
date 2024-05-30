@@ -12,7 +12,7 @@ def _get_version():
     return __version__
 
 __version__ = _get_version()
-print(f'Version {__version__}')
+# print(f'Version {__version__}')
 
 
 def timer(func):
