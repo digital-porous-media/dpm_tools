@@ -2,6 +2,7 @@ import numpy as np
 import pyvista as pv
 from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap
 import warnings
+import skimage
 
 
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
@@ -43,7 +44,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         fig = _initialize_plotter(**plotter_kwargs)
     
     # Swapping axes for pyvista compatibility
-    ax_swap_arr = np.swapaxes(data.image, 0, 2)
+    ax_swap_arr = np.swapaxes(data.scalar, 0, 2)
     
     # Wrap NumPy array to pyvista object
     pv_image_obj = _wrap_array(ax_swap_arr)
@@ -161,12 +162,12 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
     
-    pv_image_obj = _wrap_array(data.image)
+    pv_image_obj = _wrap_array(data.scalar)
 
     if show_isosurface is None:
-        show_isosurface = [(np.amax(data.image)+np.amin(data.image))/2]
+        show_isosurface = [(np.amax(data.scalar)+np.amin(data.scalar))/2]
         warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.'+
-              f'Using the midpoint of the isosurface array instead ({np.amin(data.image)},{np.amax(data.image)}).\n',
+              f'Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{np.amax(data.scalar)}).\n',
               stacklevel=2)
 
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
@@ -200,7 +201,7 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
                        'color': (1, 1, 1)}
     
     
-    wall_bin = data.image.copy()
+    wall_bin = data.scalar.copy()
     wall_bin[1:-1, 1:-1, 1:-1] = 255
     vtk_wall = _wrap_array(wall_bin)
     wall_contours = vtk_wall.contour([255])
@@ -318,13 +319,20 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
-    mesh = pv.UniformGrid(dims=(vector_data.nz, vector_data.ny, vector_data.nx),
+    mesh = pv.ImageData(dimensions=(vector_data.nz, vector_data.ny, vector_data.nx),
                           spacing=(1.0, 1.0, 1.0),
                           origin=(0.0, 0.0, 0.0))
 
-    mesh['Magnitude'] = np.array([vector_data.vector[0].flatten('F'),
+    x = mesh.points[:, 0]
+    y = mesh.points[:, 1]
+    z = mesh.points[:, 2]
+    vectors = np.array([vector_data.vector[0].flatten('F'),
                                   vector_data.vector[1].flatten('F'),
                                   vector_data.vector[2].flatten('F')]).T
+    mesh['Magnitude'] = vectors
+    # mesh.cell_data['Magnitude'] = np.array([vector_data.vector[0].flatten('F'),
+    #                               vector_data.vector[1].flatten('F'),
+    #                               vector_data.vector[2].flatten('F')]).T
 
     if streamline_kwargs is None:
         streamline_kwargs = {'n_points': int(vector_data.nz**1.25),
@@ -376,24 +384,80 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
         fig = _initialize_plotter(**plotter_kwargs)
 
     # Create a bounded volume
-    # wall_bin = 255 * np.ones((data.image.shape[0]+2, data.image.shape[1]+2, data.image.shape[2]+2))
-    # wall_bin[1:-1, 1:-1, 1:-1] = data.image.copy()
+    # wall_bin = 255 * np.ones((data.scalar.shape[0]+2, data.scalar.shape[1]+2, data.scalar.shape[2]+2))
+    # wall_bin[1:-1, 1:-1, 1:-1] = data.scalar.copy()
 
     # pv_image_obj = _wrap_array(data.scalar)
 
-    mesh = pv.UniformGrid(dims=(data.nz, data.ny, data.nx),
+    mesh = pv.ImageData(dimensions=(data.nz, data.ny, data.nx),
                           spacing=(1.0, 1.0, 1.0),
                           origin=(0.0, 0.0, 0.0))
+
+    mesh['scalars'] = data.scalar.flatten(order="F")
 
     # data.scalar = data.scalar.reshape(data.nz, data.ny, data.nx)
     # data.scalar = np.swapaxes(data.scalar, 0, 2)
     data.scalar[data.scalar == 0.0] = np.nan
 
-    fig.add_volume(mesh, scalars=data.scalar.flatten(order="F"), opacity='foreground', **mesh_kwargs)
+    fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
 
 
     return fig
 
 
 
+def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
+                    mesh_kwargs: dict = None, plotter_kwargs: dict = None, notebook = False) -> pv.Plotter:
+    """
+    Plots an interactive visual with a medial axis and a 3D isosurface of given data.
+
+    Parameters:
+        data: A dataclass containing 3D labeled image data
+        fig: Pyvista plotter object
+        show_isosurface: List of isosurfaces to show. Default is single isosurface at average between maximum and minimum label values.
+        notebook: True for rendring in Jupyter notebook. Defaults to False.
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+        plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.
+    Returns:
+        pv.Plotter: PyVista plotter object with added orthogonal slice mesh.
+    """
+
+    # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    if mesh_kwargs is None:
+        mesh_kwargs = {'opacity': 0.45,
+                       'smooth_shading': True,
+                       'diffuse': 0.75,
+                       'color': (77 / 255, 195 / 255, 255 / 255),
+                       'ambient': 0.15}
+
+    if plotter_kwargs is None:
+        plotter_kwargs = {}
+        # plotter_kwargs['notebook'] = notebook
+    #
+    # plotter_kwargs['notebook'] = notebook
+        
+    if fig is None:
+        fig = _initialize_plotter(**plotter_kwargs)
+    
+    medial_axis = skimage.morphology.skeletonize(data.scalar)
+    pv_image_obj = _wrap_array(medial_axis)
+
+    contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
+    fig.add_mesh(contours_ma, style='wireframe', color='r', line_width=2, name='medial_axis')
+
+    # pv_image_obj_sample = _wrap_array(data.scalar)
+    #
+    # contours_sample = pv_image_obj_sample.contour(isosurfaces=show_isosurface)
+    fig = plot_isosurface(data, fig=fig, mesh_kwargs=mesh_kwargs)
+    #
+    # def my_plane_func(normal, origin):
+    #     sliced = contours_sample.slice(normal=normal, origin=origin)
+    #     fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
+    #                 name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
+    #
+    #     fig.add_plane_widget(my_plane_func, normal='z', origin=[0, 0, medial_axis.shape[2]])
+    #
+    #     return fig
+
+    return fig
 
