@@ -1,7 +1,13 @@
 import numpy as np
 import porespy as ps
 from edt import edt as edist
+from _minkowski_coeff import *
+from _feature_utils import pad_to_size, create_kernel, _centered
+from binary_configs import *
+from tqdm import tqdm
+import skimage
 from typing import Tuple, Literal
+
 
 __all__ = [
     "slicewise_edt",
@@ -12,6 +18,7 @@ __all__ = [
     "chords",
     "time_of_flight",
     "constriction_factor",
+    "minkowski_map"
 ]
 
 def slicewise_edt(image: np.ndarray) -> np.ndarray:
@@ -188,4 +195,115 @@ def constriction_factor(thickness_map: np.ndarray, power: float = 1.0) -> np.nda
 
     return constriction_map
 
+def minkowski_map(image: np.ndarray, support_size: list, backend='cpu') -> np.ndarray:
+    """
+    Compute a map of the 3 (4) Minkowski functionals for a given support size of a 2D (3D) image.
 
+    ##################################################################
+    # Method adopted from Jiang and Arns (2020)
+    # https://journals.aps.org/pre/pdf/10.1103/PhysRevE.101.033302
+    ##################################################################
+
+    Parameters:
+        image: 2D or 3D binary image. Foreground voxels should be labeled 1 and background voxels labeled 0.
+        support_size: Size of the window to compute local Minkowski functionals.
+
+    Returns:
+         numpy.ndarray: Minkowski maps of size image.shape with local Minkowski functionals
+
+    """
+
+    assert image.ndim == len(support_size), "Image must have same number of dimensions as support_size"
+    assert image.ndim == 2 or image.ndim == 3, "Image must be either 2D or 3D"
+
+    if image.dtype != np.uint8:
+        image = image.astype(np.uint8)
+
+
+
+
+    if image.ndim == 2:
+        return _mink_map_2d(image, support_size)
+
+    elif image.ndim == 3:
+        return _mink_map_3d(image, support_size)
+
+def _mink_map_2d(image: np.ndarray, support_size: list) -> np.ndarray:
+
+    binary_image_shape = image.shape
+
+    # Pad the binary image such that convolution results in the same size image
+    map_shape = tuple([image.shape[i] + support_size[i] - 1 for i in range(len(support_size))])
+    image_padded = pad_to_size(image, target_shape=map_shape)
+
+    # Initialize the MF maps
+    v2 = arrlib.zeros(binary_image_shape, dtype='float64')
+    v1 = arrlib.zeros(binary_image_shape, dtype='float64')
+    v0_8 = arrlib.zeros(binary_image_shape, dtype='float64')
+    v0_26 = arrlib.zeros(binary_image_shape, dtype='float64')
+    v0 = arrlib.zeros(binary_image_shape, dtype='float64')
+
+    # Compute the configurations using a convolutional kernel.
+    # This will result in an image with the same size as binary image with labels 0-255.
+    configs = get_binary_configs_2d(image_padded, binary_image_shape[0], binary_image_shape[1])
+
+    # Define the support structure kernel. This is just an array of ones of size equal to the support structure.
+    B = create_kernel(support_size, arrlib)
+    B_fft = fftn(B, map_shape, axes=(0, 1))
+
+    for i in tqdm(range(6)):
+        I = get_array(skimage.util.map_array(configs, np.array([i]), np.array([1])))
+        I_fft = fftn(I, map_shape, axes=(0, 1))
+
+        convolution_result = ifftn(B_fft * I_fft, map_shape, axes=(0, 1)).real
+        shape_valid = [convolution_result.shape[a] if a not in (0, 1) else binary_image_shape[a]
+                       for a in range(convolution_result.ndim)]
+        convolution_result = _centered(convolution_result, shape_valid, arrlib).copy()
+        v2 += contributions_2d["v2"][i] / 4. * convolution_result
+        v1 += contributions_2d["v1_4"][i] / 8. * np.pi * convolution_result
+        # Take the average of 8-connected and 26-connected Euler characteristic
+        v0 += (contributions_2d["v0_8"][i] + contributions_2d["v0_26"][i]) * convolution_result / (4. * 2)
+
+    v2, v1, v0 = [to_numpy(v) for v in [v2, v1, v0]]
+
+    return v2, v1, v0
+
+
+def _mink_map_3d(image: np.ndarray, support_size: list) -> np.ndarray:
+
+    binary_image_shape = image.shape
+
+    # Pad the binary image such that convolution results in the same size image
+    map_shape = tuple([image.shape[i] + support_size[i] - 1 for i in range(len(support_size))])
+    image_padded = pad_to_size(image, target_shape=map_shape)
+
+    # Initialize the MF maps
+    v3 = arrlib.zeros(binary_image_shape, dtype='float64')
+    v2 = arrlib.zeros(binary_image_shape, dtype='float64')
+    v1 = arrlib.zeros(binary_image_shape, dtype='float64')
+    v0 = arrlib.zeros(binary_image_shape, dtype='float64')
+
+    # Compute the configurations using a convolutional kernel.
+    # This will result in an image with the same size as binary image with labels 0-255.
+    configs = get_binary_configs_3d(image_padded, binary_image_shape[0], binary_image_shape[1])
+
+    # Define the support structure kernel. This is just an array of ones of size equal to the support structure.
+    B = create_kernel(support_size, arrlib)
+    B_fft = fftn(B, map_shape, axes=(0, 1, 2))
+
+    for i in tqdm(range(22)):
+        I = get_array(skimage.util.map_array(configs, np.array([i]), np.array([1])))
+        I_fft = fftn(I, map_shape, axes=(0, 1, 2))
+
+        convolution_result = ifftn(B_fft * I_fft, map_shape, axes=(0, 1, 2)).real
+        shape_valid = [convolution_result.shape[a] if a not in (0, 1, 2) else binary_image_shape[a]
+                       for a in range(convolution_result.ndim)]
+        convolution_result = _centered(convolution_result, shape_valid, arrlib).copy()
+        v2 += contributions_2d["v2"][i] / 4. * convolution_result
+        v1 += contributions_2d["v1_4"][i] / 8. * np.pi * convolution_result
+        # Take the average of 8-connected and 26-connected Euler characteristic
+        v0 += (contributions_2d["v0_8"][i] + contributions_2d["v0_26"][i]) * convolution_result / (4. * 2)
+
+    v2, v1, v0 = [to_numpy(v) for v in [v2, v1, v0]]
+
+    return v2, v1, v0

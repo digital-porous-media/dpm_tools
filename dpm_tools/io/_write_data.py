@@ -21,7 +21,7 @@ def _write_tiff(save_path: pathlib.Path, save_filename: str, image_stack: np.nda
         None
 
     """
-    if not (save_filename.endswith('.tiff') or save_filename.endswith('.tif')):
+    if not (save_filename.suffix == '.tiff' or save_filename.suffix == '.tif'):
         save_filename = save_filename + '.tiff'
 
     if compress:
