@@ -172,3 +172,40 @@ def _get_heterogeneity_grid_points(image_shape: Tuple[int, ...], n_samples: int 
     centers = np.array([rndx, rndy, rndz]).T[:n_samples]
 
     return centers
+
+
+def create_kernel(kernel_size, arrlib):
+    """Create a kernel based on the size of the support structure."""
+    kernel = arrlib.ones(kernel_size, dtype=np.float64)
+    return kernel
+
+def pad_to_size(array, target_shape, pad_mode='symmetric'):
+    """
+    Pad an array to the given target shape.
+
+    Parameter:
+        array: Numpy array to pad
+        target_shape: target shape of the padded array
+        pad_mode: mode for padding (default: symmetric)
+
+    Return:
+        np.ndarray: Padded array
+    """
+    assert array.ndim == len(target_shape), "Only 2D and 3D arrays are supported"
+
+
+    min_idx = [(target_shape[i] - array.shape[i])//2 for i in range(array.ndim)]
+    max_idx = [target_shape[i] - min_idx[i] - array.shape[i] for i in range(array.ndim)]
+    padding_width = tuple([(min_idx[i], max_idx[i]) for i in range(len(min_idx))])
+
+    return np.pad(array, pad_width=padding_width, mode=pad_mode)
+
+def _centered(arr, newshape, arrlib):
+    # Return the center newshape portion of the array.
+    newshape = arrlib.asarray(newshape)
+    currshape = arrlib.array(arr.shape)
+    startind = (currshape - newshape) // 2
+    endind = startind + newshape
+    myslice = [slice(startind[k], endind[k]) for k in range(len(endind))]
+    return arr[tuple(myslice)]
+

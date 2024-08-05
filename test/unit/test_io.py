@@ -10,6 +10,7 @@ class TestIO:
     def setup_class(self):
         self.path = pathlib.Path(__file__).parent
         self.blobs = ps.generators.blobs([256, 125, 512], porosity=0.3)
+
     def test_scalar_dataclass_from_numpy(self):
         test_img = dpm_tools.io.Image(scalar=self.blobs)
 
