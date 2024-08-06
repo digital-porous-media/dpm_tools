@@ -3,10 +3,11 @@ import porespy as ps
 from edt import edt as edist
 from _minkowski_coeff import *
 from _feature_utils import pad_to_size, create_kernel, _centered
+from _fft_backends import _get_backend
 from binary_configs import *
 from tqdm import tqdm
 import skimage
-from typing import Tuple, Literal
+from typing import Tuple, Literal, Iterable, Any
 
 
 __all__ = [
@@ -195,6 +196,7 @@ def constriction_factor(thickness_map: np.ndarray, power: float = 1.0) -> np.nda
 
     return constriction_map
 
+
 def minkowski_map(image: np.ndarray, support_size: list, backend='cpu') -> np.ndarray:
     """
     Compute a map of the 3 (4) Minkowski functionals for a given support size of a 2D (3D) image.
@@ -207,7 +209,7 @@ def minkowski_map(image: np.ndarray, support_size: list, backend='cpu') -> np.nd
     Parameters:
         image: 2D or 3D binary image. Foreground voxels should be labeled 1 and background voxels labeled 0.
         support_size: Size of the window to compute local Minkowski functionals.
-
+        backend: Backend for fft computations. Can be 'cpu' or 'cuda'. 'cpu' option uses pyFFTW
     Returns:
          numpy.ndarray: Minkowski maps of size image.shape with local Minkowski functionals
 
@@ -219,17 +221,15 @@ def minkowski_map(image: np.ndarray, support_size: list, backend='cpu') -> np.nd
     if image.dtype != np.uint8:
         image = image.astype(np.uint8)
 
-
-
-
     if image.ndim == 2:
-        return _mink_map_2d(image, support_size)
+        return _mink_map_2d(image, support_size, backend)
 
     elif image.ndim == 3:
-        return _mink_map_3d(image, support_size)
+        return _mink_map_3d(image, support_size, backend)
 
-def _mink_map_2d(image: np.ndarray, support_size: list) -> np.ndarray:
 
+def _mink_map_2d(image: np.ndarray, support_size: list, backend: str) -> tuple[Any, Any, Any]:
+    fftn, ifftn, to_numpy, get_array, arrlib = _get_backend(backend)
     binary_image_shape = image.shape
 
     # Pad the binary image such that convolution results in the same size image
@@ -239,8 +239,6 @@ def _mink_map_2d(image: np.ndarray, support_size: list) -> np.ndarray:
     # Initialize the MF maps
     v2 = arrlib.zeros(binary_image_shape, dtype='float64')
     v1 = arrlib.zeros(binary_image_shape, dtype='float64')
-    v0_8 = arrlib.zeros(binary_image_shape, dtype='float64')
-    v0_26 = arrlib.zeros(binary_image_shape, dtype='float64')
     v0 = arrlib.zeros(binary_image_shape, dtype='float64')
 
     # Compute the configurations using a convolutional kernel.
@@ -260,17 +258,17 @@ def _mink_map_2d(image: np.ndarray, support_size: list) -> np.ndarray:
                        for a in range(convolution_result.ndim)]
         convolution_result = _centered(convolution_result, shape_valid, arrlib).copy()
         v2 += contributions_2d["v2"][i] / 4. * convolution_result
-        v1 += contributions_2d["v1_4"][i] / 8. * np.pi * convolution_result
+        v1 += contributions_2d["v1"][i] / 8. * np.pi * convolution_result
         # Take the average of 8-connected and 26-connected Euler characteristic
-        v0 += (contributions_2d["v0_8"][i] + contributions_2d["v0_26"][i]) * convolution_result / (4. * 2)
+        v0 += (contributions_2d["v0_4"][i] + contributions_2d["v0_8"][i]) * convolution_result / (4. * 2)
 
     v2, v1, v0 = [to_numpy(v) for v in [v2, v1, v0]]
 
     return v2, v1, v0
 
 
-def _mink_map_3d(image: np.ndarray, support_size: list) -> np.ndarray:
-
+def _mink_map_3d(image: np.ndarray, support_size: list, backend: str) -> tuple[Any, Any, Any, Any]:
+    fftn, ifftn, to_numpy, get_array, arrlib = _get_backend(backend)
     binary_image_shape = image.shape
 
     # Pad the binary image such that convolution results in the same size image
@@ -299,11 +297,13 @@ def _mink_map_3d(image: np.ndarray, support_size: list) -> np.ndarray:
         shape_valid = [convolution_result.shape[a] if a not in (0, 1, 2) else binary_image_shape[a]
                        for a in range(convolution_result.ndim)]
         convolution_result = _centered(convolution_result, shape_valid, arrlib).copy()
-        v2 += contributions_2d["v2"][i] / 4. * convolution_result
-        v1 += contributions_2d["v1_4"][i] / 8. * np.pi * convolution_result
+        v3 += contributions_3d["v3"][i] / 8. * convolution_result
+        v2 += contributions_3d["v2"][i] / 24. * 4 * convolution_result
+        # Take the average of 4 and 8 connected integral mean curvature
+        v1 += (contributions_3d["v1_4"][i] + contributions_2d["v1_8"][i]) * convolution_result / (24. * 2 * np.pi * 2)
         # Take the average of 8-connected and 26-connected Euler characteristic
-        v0 += (contributions_2d["v0_8"][i] + contributions_2d["v0_26"][i]) * convolution_result / (4. * 2)
+        v0 += (contributions_3d["v0_6"][i] + contributions_2d["v0_26"][i]) * convolution_result / (8. * 2)
 
-    v2, v1, v0 = [to_numpy(v) for v in [v2, v1, v0]]
+    v3, v2, v1, v0 = [to_numpy(v) for v in [v3, v2, v1, v0]]
 
-    return v2, v1, v0
+    return v3, v2, v1, v0
