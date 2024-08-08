@@ -1,16 +1,32 @@
 import numpy as np
-from quantimpy import minkowski as mk
 from typing import Tuple
 import edt
+from ._minkowski_coeff import contributions_2d, contributions_3d
 from ._feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
-from binary_configs import *
-import matplotlib.pyplot as plt
+from .binary_configs import *
 
-
-
-def minkowski_2d(image: np.ndarray) -> Tuple[float, float, float]:
+def minkowski_functionals(image: np.ndarray) -> Tuple:
     """
-    Compute the 2D Minkowski functionals (area, perimeter, Euler Characteristic)
+    Compute the 2D or 3D Minkowski functionals from a Numpy array.
+
+    Parameters:
+        image: The binary image where the phase of interest is 1. Datatype should be 'uint8'
+    Returns:
+        Tuple, float: For 2D images, returns a tuple of area, perimeter, and Euler characteristic. For 3D images, returns
+        a tuple of volume, surface area, integral mean curvature, and Euler characeteristic.
+    """
+    if image.dtype != np.uint8:
+        image = image.astype(np.uint8)
+    if image.ndim == 2:
+        return _minkowski_2d(image)
+    elif image.ndim == 3:
+        return _minkowski_3d(image)
+    else:
+        raise Exception("Image must be 2D or 3D image")
+
+def _minkowski_2d(image: np.ndarray) -> Tuple[float, float, float]:
+    """
+    Helper function to compute the 2D Minkowski functionals (area, perimeter, Euler Characteristic)
 
     Parameters:
         image: The binary image where the phase of interest is 1.
@@ -24,16 +40,16 @@ def minkowski_2d(image: np.ndarray) -> Tuple[float, float, float]:
     configs_hist = get_configs_histogram_2d(image, nx, ny)
     v2 = np.sum(contributions_2d["v2"] / 4. * configs_hist)
     v1 = np.sum(contributions_2d["v1"] / 8. * np.pi * configs_hist)
-    v0_8 = np.sum(contributions_3d["v0_8"] / 4. * configs_hist)
-    v0_4 = np.sum(contributions_3d["v0_4"] / 4. * configs_hist)
+    v0_8 = np.sum(contributions_2d["v0_8"] / 4. * configs_hist)
+    v0_4 = np.sum(contributions_2d["v0_4"] / 4. * configs_hist)
     v0 = (v0_4 + v0_8) / 2
 
     return v2, v1, v0
 
 
-def minkowski_3d(image: np.ndarray) -> Tuple[float, float, float, float]:
+def _minkowski_3d(image: np.ndarray) -> Tuple[float, float, float, float]:
     """
-    Compute the 3D scalar Minkowski functionals (volume, surface area, mean curvature, Euler Characteristic)
+    Helper function to compute the 3D scalar Minkowski functionals (volume, surface area, mean curvature, Euler Characteristic)
 
     Parameters:
         image: The binary image where the phase of interest is 1.
@@ -156,5 +172,10 @@ def heterogeneity_curve(image: np.ndarray, no_radii: int = 50, n_samples_per_rad
 
     return radii, variance
 
+if __name__ == '__main__':
+    from skimage.morphology import ball
+    a = ball(100)
+    a = a[100]
+    print(minkowski_2d(a))
 
 

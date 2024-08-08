@@ -121,12 +121,12 @@ class TestMetrics:
             dpm_tools.metrics.minkowski_2d(self.ball)
 
         area, perim, curv = dpm_tools.metrics.minkowski_2d(self.ball[10])
-        assert_allclose([area, perim, curv], (317.0, 65.06451422842865, 1.0))
+        assert_allclose([area, perim, curv], (317.0, 65.973446, 1.0))
 
     def test_minkowski_3d_ball(self):
         volume, area, curv, euler = dpm_tools.metrics.minkowski_3d(self.ball)
         assert_allclose([volume, area, curv, euler],
-                           [4169.0, 1262.1090288786693, 129.16729594427238, 1.9999999999999998])
+                           [4169.0, 1268.0, 131.9469, 1.0])
 
     @pytest.mark.skip(reason="Passes locally but fails on github actions")
     def test_morph_drain(self):

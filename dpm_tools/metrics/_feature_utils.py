@@ -1,6 +1,7 @@
 import numpy as np
 import cc3d
-from quantimpy.morphology import dilate, erode
+from scipy.ndimage import binary_erosion, binary_dilation
+from skimage.morphology import ball
 from typing import Tuple, Any
 
 __all__ = ['_set_linear_trend']
@@ -73,8 +74,9 @@ def _morph_drain_config(image: np.ndarray, radius: float) -> Tuple[np.ndarray, f
     pore_vol = np.count_nonzero(seg_image)
 
     seg_image_padded = np.pad(seg_image.astype(np.uint8), pad_width=1, mode='constant', constant_values=1)
+    strel = ball(radius)
 
-    eroded_image = erode(seg_image_padded.astype(bool), dist=radius)[1:-1, 1:-1, 1:-1]
+    eroded_image = binary_erosion(seg_image_padded, structure=strel)[1:-1, 1:-1, 1:-1]
 
     eroded_connected_component_labels, num_features = cc3d.connected_components(eroded_image, connectivity=6,
                                                                                 return_N=True)
@@ -89,7 +91,7 @@ def _morph_drain_config(image: np.ndarray, radius: float) -> Tuple[np.ndarray, f
     eroded_labels = np.pad(eroded_labels, pad_width=1, mode='constant', constant_values=0)
 
     # Step 3: perform dilation on the labelled pore space
-    eroded_labels_dilated = dilate(eroded_labels.astype(bool), dist=radius)[1:-1, 1:-1, 1:-1]
+    eroded_labels_dilated = binary_dilation(eroded_labels.astype(bool), structure=strel)[1:-1, 1:-1, 1:-1]
 
     eroded_labels_dilated = eroded_labels_dilated.astype(np.uint8)
     eroded_labels_dilated[np.logical_not(eroded_labels_dilated)] = 2
