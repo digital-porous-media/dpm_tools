@@ -61,8 +61,6 @@ setup(
         'edt',
         'scikit-fmm',
         'connected-components-3d',
-        #'quantimpy==0.4.6',
-        'quantimpy',
         'pyarrow'
     ],
     ext_modules=cythonize("dpm_tools/metrics/binary_configs.pyx"),
