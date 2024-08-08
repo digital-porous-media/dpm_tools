@@ -2,6 +2,8 @@ import os
 import sys
 import codecs
 from setuptools import setup, find_packages
+from Cython.Build import cythonize
+import numpy as np
 
 sys.path.append(os.getcwd())
 version_path = 'dpm_tools/__version__.py'
@@ -63,6 +65,8 @@ setup(
         'quantimpy',
         'pyarrow'
     ],
+    ext_modules=cythonize("dpm_tools/metrics/binary_configs.pyx"),
+    include_dirs=[np.get_include()],
     author='Digital Porous Media Team',
     author_email='bcchang@utexas.edu',
     download_url='https://github.com/digital-porous-media/dpm_tools',
