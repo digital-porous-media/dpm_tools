@@ -181,7 +181,7 @@ def create_kernel(kernel_size, arrlib):
     kernel = arrlib.ones(kernel_size, dtype=np.float64)
     return kernel
 
-def pad_to_size(array, target_shape, pad_mode='symmetric'):
+def pad_to_size(array, target_shape, pad_mode='reflect'):
     """
     Pad an array to the given target shape.
 
@@ -199,7 +199,7 @@ def pad_to_size(array, target_shape, pad_mode='symmetric'):
     min_idx = [(target_shape[i] - array.shape[i])//2 for i in range(array.ndim)]
     max_idx = [target_shape[i] - min_idx[i] - array.shape[i] for i in range(array.ndim)]
     padding_width = tuple([(min_idx[i], max_idx[i]) for i in range(len(min_idx))])
-
+    print(padding_width)
     return np.pad(array, pad_width=padding_width, mode=pad_mode)
 
 def _centered(arr, newshape, arrlib):
