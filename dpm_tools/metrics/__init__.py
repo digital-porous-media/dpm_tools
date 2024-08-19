@@ -31,5 +31,7 @@ from ._feature_utils import _morph_drain_config, _set_linear_trend
 
 from ._scalars import minkowski_functionals, morph_drain, heterogeneity_curve
 
+from .binary_configs import *
+
 # from ._curves import *
 
