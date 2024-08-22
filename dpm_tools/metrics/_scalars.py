@@ -1,11 +1,11 @@
 import numpy as np
 from typing import Tuple
 import edt
-from _minkowski_coeff import contributions_2d, contributions_3d
-from _feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
+from ._minkowski_coeff import contributions_2d, contributions_3d
+from ._feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
 # from binary_configs_numba import *
 #from binary_configs import get_configs_histogram_3d, get_configs_histogram_2d
-from minkowski_cpu import get_configs_histogram_2d, get_configs_histogram_3d
+from .minkowski_cpu import get_configs_histogram_2d, get_configs_histogram_3d
 def minkowski_functionals(image: np.ndarray) -> Tuple:
     """
     Compute the 2D or 3D Minkowski functionals from a Numpy array.
