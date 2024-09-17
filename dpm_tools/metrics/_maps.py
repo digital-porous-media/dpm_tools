@@ -1,10 +1,12 @@
 import numpy as np
 import porespy as ps
 from edt import edt as edist
-from _minkowski_coeff import contributions_2d, contributions_3d
-from _feature_utils import pad_to_size, create_kernel, _centered
-from _fft_backends import _get_backend
-from _minkowski_utils import get_binary_configs_2d, get_binary_configs_3d
+
+from ._minkowski_coeff import *
+from ._feature_utils import pad_to_size, create_kernel, _centered
+from ._fft_backends import _get_backend
+from ._minkowski_utils import *
+
 from tqdm import tqdm
 import skimage
 from typing import Tuple, Literal, Any
