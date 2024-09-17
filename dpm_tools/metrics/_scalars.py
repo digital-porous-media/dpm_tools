@@ -3,9 +3,9 @@ from typing import Tuple
 import edt
 from _minkowski_coeff import contributions_2d, contributions_3d
 from _feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
-# from binary_configs_numba import *
-#from binary_configs import get_configs_histogram_3d, get_configs_histogram_2d
-from minkowski_cpu import get_configs_histogram_2d, get_configs_histogram_3d
+from _minkowski_utils import get_configs_histogram_2d, get_configs_histogram_3d
+
+
 def minkowski_functionals(image: np.ndarray) -> Tuple:
     """
     Compute the 2D or 3D Minkowski functionals from a Numpy array.
@@ -167,30 +167,7 @@ def heterogeneity_curve(image: np.ndarray, no_radii: int = 50, n_samples_per_rad
 
         porosity = np.empty((n_samples_per_radius,), dtype=np.float64)
         for j in range(n_samples_per_radius):
-            porosity[j] = np.count_nonzero(image[rw_mn[j]:rw_mx[j], col_mn[j]:col_mx[j], z_mn[j]:z_mx[j]]) / (
-                        2 * r + 1) ** 3
+            porosity[j] = np.count_nonzero(image[rw_mn[j]:rw_mx[j], col_mn[j]:col_mx[j], z_mn[j]:z_mx[j]]) / (2 * r + 1) ** 3
         variance[i] = np.var(porosity)
 
     return radii, variance
-
-if __name__ == '__main__':
-    from skimage.morphology import ball
-    import timeit
-    import pyvista as pv
-    import matplotlib.pyplot as plt
-    binary_img = np.fromfile(r"C:\Users\bcc2459\Documents\dpm_tools\data\bead_pack_2D.raw", dtype=np.uint8).reshape((500, 500))
-    vof = pv.read(r"C:\Users\bcc2459\Documents\dpm_tools\data\volumeData_00021000.vti").get_array("volumeFraction").reshape((500, 500))
-    vof = -1 * vof + 1
-    vof[binary_img == 1] = 0
-    plt.imshow(vof)
-    plt.colorbar()
-    plt.show()
-    #
-    # im_size = 100
-    # a = ball(im_size)
-    # a = a[im_size]
-    # # a = np.random.randint(0, 2, (im_size, im_size, im_size), dtype=np.uint8)
-    tic = timeit.default_timer()
-    print(minkowski_functionals(vof))
-    print(f"{timeit.default_timer() - tic:.4f} sec")
-

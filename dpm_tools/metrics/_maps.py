@@ -1,11 +1,10 @@
 import numpy as np
-# import porespy as ps
+import porespy as ps
 from edt import edt as edist
-from _minkowski_coeff import *
+from _minkowski_coeff import contributions_2d, contributions_3d
 from _feature_utils import pad_to_size, create_kernel, _centered
 from _fft_backends import _get_backend
-from minkowski_cpu import *
-#from binary_configs import *
+from _minkowski_utils import get_binary_configs_2d, get_binary_configs_3d
 from tqdm import tqdm
 import skimage
 from typing import Tuple, Literal, Any
@@ -235,7 +234,9 @@ def _mink_map_2d(image: np.ndarray, support_size: list, backend: str) -> tuple[A
 
     # Pad the binary image such that convolution results in the same size image
     map_shape = tuple([image.shape[i] + support_size[i] - 1 for i in range(len(support_size))])
-    image_padded = pad_to_size(image, target_shape=map_shape)
+    # Get next power of 2 size larger than support size
+    map_shape = tuple([int(2**np.ceil(np.log2(x))) for x in map_shape])
+    image_padded = pad_to_size(image, target_shape=map_shape, pad_mode="constant")
 
     # Initialize the MF maps
     v2 = arrlib.zeros(binary_image_shape, dtype='float64')
@@ -245,24 +246,28 @@ def _mink_map_2d(image: np.ndarray, support_size: list, backend: str) -> tuple[A
     # Compute the configurations using a convolutional kernel.
     # This will result in an image with the same size as binary image with labels 0-255.
     configs = get_binary_configs_2d(image_padded, image_padded.shape[0], image_padded.shape[1])
-    plt.imshow(configs)
-    plt.colorbar()
-    plt.show()
     # Define the support structure kernel. This is just an array of ones of size equal to the support structure.
     B = create_kernel(support_size, arrlib)
     B_fft = fftn(B, map_shape, axes=(0, 1))
-
+    B_fft = arrlib.fft.fftshift(B_fft)
     for i in tqdm(range(6)):
         I = get_array(skimage.util.map_array(configs, np.array([i]), np.array([1])))
         I_fft = fftn(I, map_shape, axes=(0, 1))
-
-        convolution_result = ifftn(B_fft * I_fft, map_shape, axes=(0, 1)).real
+        I_fft = arrlib.fft.fftshift(I_fft)
+        fft_convolution = arrlib.fft.ifftshift(B_fft * I_fft)
+        convolution_result = ifftn(fft_convolution, map_shape, axes=(0, 1)).real
+        # plt.figure()
+        # plt.imshow(to_numpy(convolution_result))
+        # plt.grid(which="both")
+        # plt.show()
         shape_valid = [convolution_result.shape[a] if a not in (0, 1) else binary_image_shape[a]
                        for a in range(convolution_result.ndim)]
-        convolution_result = _centered(convolution_result, shape_valid, arrlib).copy()
+        convolution_result = _centered(convolution_result, shape_valid, support_size, arrlib).copy()
+
+        # Minkowski Maps
         v2 += contributions_2d["v2"][i] / 4. * convolution_result
         v1 += contributions_2d["v1"][i] / 8. * np.pi * convolution_result
-        # Take the average of 8-connected and 26-connected Euler characteristic
+        # Take the average of 4-connected and 8-connected Euler characteristic
         v0 += (contributions_2d["v0_4"][i] + contributions_2d["v0_8"][i]) * convolution_result / (4. * 2)
 
     v2, v1, v0 = [to_numpy(v) for v in [v2, v1, v0]]
@@ -276,7 +281,9 @@ def _mink_map_3d(image: np.ndarray, support_size: list, backend: str) -> tuple[A
 
     # Pad the binary image such that convolution results in the same size image
     map_shape = tuple([image.shape[i] + support_size[i] - 1 for i in range(len(support_size))])
-    image_padded = pad_to_size(image, target_shape=map_shape)
+    # Get next power of 2 size larger than support size
+    map_shape = tuple([int(2**np.ceil(np.log2(x))) for x in map_shape])
+    image_padded = pad_to_size(image, target_shape=map_shape, pad_mode="reflect")
 
     # Initialize the MF maps
     v3 = arrlib.zeros(binary_image_shape, dtype='float64')
@@ -286,20 +293,22 @@ def _mink_map_3d(image: np.ndarray, support_size: list, backend: str) -> tuple[A
 
     # Compute the configurations using a convolutional kernel.
     # This will result in an image with the same size as binary image with labels 0-255.
-    configs = get_binary_configs_3d(image_padded, binary_image_shape[0], binary_image_shape[1], binary_image_shape[2])
-
+    configs = get_binary_configs_3d(image_padded, map_shape[0], map_shape[1], map_shape[2])
+    
     # Define the support structure kernel. This is just an array of ones of size equal to the support structure.
     B = create_kernel(support_size, arrlib)
     B_fft = fftn(B, map_shape, axes=(0, 1, 2))
-
+    B_fft = arrlib.fft.fftshift(B_fft)
     for i in tqdm(range(22)):
         I = get_array(skimage.util.map_array(configs, np.array([i]), np.array([1])))
         I_fft = fftn(I, map_shape, axes=(0, 1, 2))
+        I_fft = arrlib.fft.fftshift(I_fft)
+        fft_convolution = arrlib.fft.ifftshift(B_fft * I_fft)
+        convolution_result = ifftn(fft_convolution, map_shape, axes=(0, 1, 2)).real
 
-        convolution_result = ifftn(B_fft * I_fft, map_shape, axes=(0, 1, 2)).real
         shape_valid = [convolution_result.shape[a] if a not in (0, 1, 2) else binary_image_shape[a]
                        for a in range(convolution_result.ndim)]
-        convolution_result = _centered(convolution_result, shape_valid, arrlib).copy()
+        convolution_result = _centered(convolution_result, shape_valid, support_size, arrlib).copy()
         v3 += contributions_3d["v3"][i] / 8. * convolution_result
         v2 += contributions_3d["v2"][i] / 24. * 4 * convolution_result
         # Take the average of 4 and 8 connected integral mean curvature
@@ -314,46 +323,58 @@ def _mink_map_3d(image: np.ndarray, support_size: list, backend: str) -> tuple[A
 if __name__ == '__main__':
     from skimage.morphology import ball
     import matplotlib.pyplot as plt
-    import os
     import pyvista as pv
-    import matplotlib.pyplot as plt
 
-    binary_img = np.fromfile(r"C:\Users\bcc2459\Documents\dpm_tools\data\bead_pack_2D.raw", dtype=np.uint8).reshape((500, 500))
-    vof = pv.read(r"C:\Users\bcc2459\Documents\dpm_tools\data\volumeData_00021000.vti").get_array("volumeFraction").reshape((500, 500))
-    vof = -1 * vof + 1
-    vof[binary_img == 1] = 0
-    vof[-1] = 0
-    vof = vof.astype(np.uint8)
-    plt.imshow(vof)
-    plt.colorbar()
-    plt.show()
-
-    v2, v1, v0 = minkowski_map(vof, support_size=[50, 50], backend='cuda')
-
-    plt.figure(dpi=400)
-    plt.imshow(v2)
-    plt.show()
-    plt.figure(dpi=400)
-    plt.imshow(v1)
-    plt.show()
-    plt.figure(dpi=400)
-    plt.imshow(v0)
-    plt.show()
-
-    # # a = ball(100)
-    # # a = a[100]
-    # v3, v2, v1, v0 = minkowski_map(vof, support_size=[20, 20, 20], backend='cuda')
-    #
-    # plt.figure(dpi=400)
-    # plt.imshow(v3[20])
+    # binary_img = np.fromfile(r"C:\Users\bcc2459\Documents\dpm_tools\data\bead_pack_2D.raw", dtype=np.uint8).reshape((500, 500))
+    # vof = pv.read(r"C:\Users\bcc2459\Documents\dpm_tools\data\volumeData_00021000.vti").get_array("volumeFraction").reshape((500, 500))
+    # vof = -1 * vof + 1
+    # vof[binary_img == 1] = 0
+    # vof[-1] = 0
+    # vof = vof.astype(np.uint8)
+    # plt.imshow(vof)
+    # plt.colorbar()
     # plt.show()
-    #
+
+    # v2, v1, v0 = minkowski_map(vof, support_size=[50, 50], backend='cpu')
+
     # plt.figure(dpi=400)
-    # plt.imshow(v2[20])
+    # plt.imshow(v2)
     # plt.show()
     # plt.figure(dpi=400)
-    # plt.imshow(v1[20])
+    # plt.imshow(v1)
     # plt.show()
     # plt.figure(dpi=400)
-    # plt.imshow(v0[20])
+    # plt.imshow(v0)
+    # plt.show()
+
+    # 3D
+    vof = ball(100)
+    v3, v2, v1, v0 = minkowski_map(vof, support_size=[20, 20, 20], backend='cuda')
+    
+    plt.figure(dpi=400)
+    plt.imshow(v3[100])
+    plt.show()
+    plt.figure(dpi=400)
+    plt.imshow(v2[100])
+    plt.show()
+    plt.figure(dpi=400)
+    plt.imshow(v1[100])
+    plt.show()
+    plt.figure(dpi=400)
+    plt.imshow(v0[100])
+    plt.show()
+    
+    # # 2D Example
+    # vof = ball(100)
+    # vof = vof[100]
+    # v2, v1, v0 = minkowski_map(vof, support_size=[20, 20], backend='cuda')
+    
+    # plt.figure(dpi=400)
+    # plt.imshow(v2)
+    # plt.show()
+    # plt.figure(dpi=400)
+    # plt.imshow(v1)
+    # plt.show()
+    # plt.figure(dpi=400)
+    # plt.imshow(v0)
     # plt.show()

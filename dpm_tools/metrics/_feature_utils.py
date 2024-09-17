@@ -188,26 +188,45 @@ def pad_to_size(array, target_shape, pad_mode='reflect'):
     Parameter:
         array: Numpy array to pad
         target_shape: target shape of the padded array
-        pad_mode: mode for padding (default: symmetric)
+        pad_mode: mode for padding (default: 'reflect'). Should be a valid mode of np.pad
 
     Return:
         np.ndarray: Padded array
     """
-    assert array.ndim == len(target_shape), "Only 2D and 3D arrays are supported"
+    assert array.ndim == len(target_shape), "Array and target dimensions must match"
+     # Check that the target shape is larger than or equal to the array shape
+    if any(ts < s for ts, s in zip(target_shape, array.shape)):
+        raise ValueError("Target shape must be greater than or equal to the array shape in all dimensions")
 
-
-    min_idx = [(target_shape[i] - array.shape[i])//2 for i in range(array.ndim)]
+    min_idx = [(target_shape[i] - array.shape[i]) // 2 for i in range(array.ndim)]
     max_idx = [target_shape[i] - min_idx[i] - array.shape[i] for i in range(array.ndim)]
     padding_width = tuple([(min_idx[i], max_idx[i]) for i in range(len(min_idx))])
-    print(padding_width)
+
     return np.pad(array, pad_width=padding_width, mode=pad_mode)
 
-def _centered(arr, newshape, arrlib):
+def _centered(arr, newshape, support_size, arrlib):
     # Return the center newshape portion of the array.
     newshape = arrlib.asarray(newshape)
     currshape = arrlib.array(arr.shape)
+    myslice = [slice(support_size[k], currshape[k]) for k in range(arr.ndim)]
+    arr = arr[tuple(myslice)]
+
+
+    # target_size = arrlib.array([newshape[i] + support_size[i] - 1 for i in range(len(support_size))])
+    # print(newshape, currshape)
+    # startind = (currshape - target_size) // 2
+    # endind = currshape
+    # print(startind, endind)
+    # myslice = [slice(startind[k], endind[k]) for k in range(len(endind))]
+    # arr = arr[tuple(myslice)]
+
+    currshape = arrlib.array(arr.shape)
+    # endind = currshap
+    # startind = currshape - newshape
+    # endind = currshape
     startind = (currshape - newshape) // 2
     endind = startind + newshape
+    # endind = startind + newshape
     myslice = [slice(startind[k], endind[k]) for k in range(len(endind))]
     return arr[tuple(myslice)]
 
