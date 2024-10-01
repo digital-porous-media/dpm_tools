@@ -48,6 +48,7 @@ setup(
         'dpm_tools.metrics',
         'dpm_tools.visualization'
     ],
+    setup_requires=['numpy']
     install_requires=[
         'numpy',
         'matplotlib',
