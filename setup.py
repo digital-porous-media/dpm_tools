@@ -2,7 +2,7 @@ import os
 import sys
 import codecs
 from setuptools import setup, find_packages
-from Cython.Build import cythonize
+# from Cython.Build import cythonize
 import numpy as np
 
 sys.path.append(os.getcwd())
@@ -61,10 +61,10 @@ setup(
         'edt',
         'scikit-fmm',
         'connected-components-3d',
-        'Cython',
+        # 'Cython',
         'pyarrow'
     ],
-    ext_modules=cythonize("dpm_tools/metrics/binary_configs.pyx"),
+    # ext_modules=cythonize("dpm_tools/metrics/binary_configs.pyx"),
     include_dirs=[np.get_include()],
     author='Digital Porous Media Team',
     author_email='bcchang@utexas.edu',
