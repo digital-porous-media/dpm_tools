@@ -3,7 +3,7 @@ import sys
 import codecs
 from setuptools import setup, find_packages
 # from Cython.Build import cythonize
-import numpy as np
+# import numpy as np
 
 sys.path.append(os.getcwd())
 version_path = 'dpm_tools/__version__.py'
