@@ -65,7 +65,7 @@ setup(
         'pyarrow'
     ],
     # ext_modules=cythonize("dpm_tools/metrics/binary_configs.pyx"),
-    include_dirs=[np.get_include()],
+    # include_dirs=[np.get_include()],
     author='Digital Porous Media Team',
     author_email='bcchang@utexas.edu',
     download_url='https://github.com/digital-porous-media/dpm_tools',
