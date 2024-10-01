@@ -11,15 +11,9 @@ This module contains functions for reading and writing 3D volumetric images from
    :template: base_tmpl.rst
    :toctree:
 
-    ImageFromFile
     Image
     read_image
-    _read_tiff
-    _read_raw
-    _read_mat
     write_image
-    _write_tiff
-    _write_mat
     find_files_with_ext
     get_tiff_metadata
     natural_sort
