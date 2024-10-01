@@ -203,9 +203,7 @@ def minkowski_map(image: np.ndarray, support_size: list, backend='cpu') -> np.nd
     """
     Compute a map of the 3 (4) Minkowski functionals for a given support size of a 2D (3D) image.
 
-    ##################################################################
     Method adopted from `Jiang and Arns (2020) <https://journals.aps.org/pre/pdf/10.1103/PhysRevE.101.033302>`
-    ##################################################################
 
     Parameters:
         image: 2D or 3D binary image. Foreground voxels should be labeled 1 and background voxels labeled 0.
