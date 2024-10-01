@@ -46,6 +46,8 @@ setup(
         'dpm_tools.metrics',
         'dpm_tools.visualization'
     ],
+    setup_requires=[
+        'numpy']
     install_requires=[
         'numpy',
         'matplotlib',
@@ -59,6 +61,7 @@ setup(
         'edt',
         'scikit-fmm',
         'connected-components-3d',
+        'cython',
         #'quantimpy==0.4.6',
         'quantimpy',
         'pyarrow'

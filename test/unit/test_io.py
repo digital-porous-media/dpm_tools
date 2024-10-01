@@ -1,6 +1,64 @@
-class IOTest:
-    def test_io(self):
+import numpy as np
+import pytest
+import dpm_tools
+
+from numpy.testing import assert_allclose
+import pathlib
+import porespy as ps
+
+class TestIO:
+    def setup_class(self):
+        self.path = pathlib.Path(__file__).parent
+        self.blobs = ps.generators.blobs([256, 125, 512], porosity=0.3)
+    def test_scalar_dataclass_from_numpy(self):
+        test_img = dpm_tools.io.Image(scalar=self.blobs)
+
+        assert test_img.nz == 256
+        assert test_img.nx == 125
+        assert test_img.ny == 512
+
+    def test_vector_dataclass_from_numpy(self):
         pass
+
+    def test_dataclass_from_numpy(self):
+        pass
+
+    def test_scalar_dataclass_from_raw(self):
+        pass
+
+    def test_scalar_dataclass_from_tiff(self):
+        pass
+
+    def test_vector_dataclass_from_raw(self):
+        pass
+
+    def test_vector_dataclass_from_tiff(self):
+        pass
+
+    def test_dataclass_from_raw(self):
+        pass
+
+    def test_dataclass_from_tiff(self):
+        pass
+
+    def test_find_files_with_ext(self):
+        pass
+
+    def test_get_tiff_metadata(self):
+        pass
+
+    def test_natural_sort(self):
+        pass
+
+    def test_combine_slices(self):
+        pass
+
+    def test_convert_filetype(self):
+        pass
+
+
+
+
 # import sys
 # sys.path.append('../..') #Add custom filepath here
 # import unittest
@@ -47,3 +105,11 @@ class IOTest:
 # test.test_find_tiff_files()
 # test.test_evaluate_dimensions()
 # test.test_sort_files()
+
+if __name__ == "__main__":
+    tests = TestIO()
+    tests.setup_class()
+    for item in tests.__dir__():
+        if item.startswith('test'):
+            print('running test: '+item)
+            tests.__getattribute__(item)()
