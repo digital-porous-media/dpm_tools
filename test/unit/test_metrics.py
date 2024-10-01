@@ -18,7 +18,7 @@ class TestMetrics:
         assert_allclose([euclidean_distance.min(), euclidean_distance.max()], [0.0, 10.049875])
 
     def test_sdt_ball(self):
-        signed_distance = dpm_tools.metrics.sdt(self.ball)
+        signed_distance = dpm_tools.metrics.sdt(self.ball.astype(np.int16))
         assert_allclose([signed_distance.min(), signed_distance.max()], [-7.5498343, 10.049875])
 
     def test_mis_ball(self):
