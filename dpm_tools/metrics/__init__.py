@@ -18,18 +18,20 @@ Pore scale characterization metrics
     chords
     time_of_flight
     constriction_factor
-    minkowski_2d
-    minkowski_3d
+    minkowski_functionals
     morph_drain
     _morph_drain_config
     heterogeneity_curve
+    minkowski_map
 """
 
-from ._maps import slicewise_edt, slicewise_mis, edt, sdt, mis, chords, time_of_flight, constriction_factor
+from ._maps import slicewise_edt, slicewise_mis, edt, sdt, mis, chords, time_of_flight, constriction_factor, minkowski_map
 
 from ._feature_utils import _morph_drain_config, _set_linear_trend
 
-from ._scalars import minkowski_2d, minkowski_3d, morph_drain, heterogeneity_curve
+from ._scalars import minkowski_functionals, morph_drain, heterogeneity_curve
+
+# from .binary_configs import *
 
 # from ._curves import *
 

@@ -1,48 +1,82 @@
 import numpy as np
-from quantimpy import minkowski as mk
 from typing import Tuple
 import edt
+from ._minkowski_coeff import contributions_2d, contributions_3d
 from ._feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
-import matplotlib.pyplot as plt
+from ._minkowski_utils import get_configs_histogram_2d, get_configs_histogram_3d
 
 
-
-def minkowski_2d(image: np.ndarray, **kwargs) -> Tuple[float, float, float]:
+def minkowski_functionals(image: np.ndarray) -> Tuple:
     """
-    Compute the 2D Minkowski functionals (area, perimeter, Euler Characteristic)
+    Compute the 2D or 3D Minkowski functionals from a Numpy array.
+
+    Parameters:
+        image: The binary image where the phase of interest is 1. Datatype should be 'uint8'
+    Returns:
+        Tuple, float: For 2D images, returns a tuple of area, perimeter, and Euler characteristic. For 3D images, returns
+        a tuple of volume, surface area, integral mean curvature, and Euler characeteristic.
+    """
+    if image.dtype != np.uint8:
+        image = image.astype(np.uint8)
+    if image.ndim == 2:
+        return _minkowski_2d(image)
+    elif image.ndim == 3:
+        return _minkowski_3d(image)
+    else:
+        raise Exception("Image must be 2D or 3D image")
+
+def _minkowski_2d(image: np.ndarray) -> Tuple[float, float, float]:
+    """
+    Helper function to compute the 2D Minkowski functionals (area, perimeter, Euler Characteristic)
 
     Parameters:
         image: The binary image where the phase of interest is 1.
-        **kwargs: Additional keyword arguments to be passed to the Quantimpy Minkowski functionals function
     Returns:
         Tuple[float, float, float]: Area, perimeter, radius of curvature
     """
     image = np.pad(image, ((1, 1), (1, 1)), mode='constant', constant_values=0)
-    area, perim, curv = mk.functionals(image.astype(bool), **kwargs)
-    perim *= 2 * np.pi
-    curv *= np.pi
 
-    return area, perim, curv
+    # Get the isotropic configurations (3D)
+    nx, ny = image.shape
+    configs_hist = get_configs_histogram_2d(image, nx, ny)
+    v2 = np.sum(contributions_2d["v2"] / 4. * configs_hist)
+    v1 = np.sum(contributions_2d["v1"] / 8. * np.pi * configs_hist)
+    v0_8 = np.sum(contributions_2d["v0_8"] / 4. * configs_hist)
+    v0_4 = np.sum(contributions_2d["v0_4"] / 4. * configs_hist)
+    v0 = (v0_4 + v0_8) / 2
+
+    return v2, v1, v0
 
 
-def minkowski_3d(image: np.ndarray, **kwargs) -> Tuple[float, float, float, float]:
+def _minkowski_3d(image: np.ndarray) -> Tuple[float, float, float, float]:
     """
-    Compute the 3D scalar Minkowski functionals (volume, surface area, mean curvature, Euler Characteristic)
+    Helper function to compute the 3D scalar Minkowski functionals (volume, surface area, mean curvature, Euler Characteristic)
 
     Parameters:
         image: The binary image where the phase of interest is 1.
-        **kwargs: Additional keyword arguments to be passed to the Quantimpy Minkowski functionals function
-
     Returns:
         Tuple[float, float, float, float]: Volume, surface area, mean curvature, Euler characteristic
     """
     image = np.pad(image, ((1, 1), (1, 1), (1, 1)), mode='constant', constant_values=0)
-    vol, sa, curv, ec = mk.functionals(image.astype(bool), **kwargs)
-    sa *= 8
-    curv *= 2 * np.pi ** 2
-    ec *= 8 * np.pi / 3
 
-    return vol, sa, curv, ec
+    # Get the isotropic configurations (3D)
+    nx, ny, nz = image.shape
+    # bin_img = np.transpose(binary_image, (2, 1, 0))
+    # bin_img = np.transpose(binary_image, (1, 2, 0))
+    configs_hist = get_configs_histogram_3d(image, nx, ny, nz)
+    v3 = np.sum(contributions_3d["v3"] / 8. * configs_hist)
+    v2 = np.sum(contributions_3d["v2"] / 24. * 4 * configs_hist)
+    v1_4 = np.sum(contributions_3d["v1_4"] / 24. * 2 * np.pi * configs_hist)
+    v1_8 = np.sum(contributions_3d["v1_8"] / 24. * 2 * np.pi * configs_hist)
+    # Take the average of 4-connected and 8-connected interfaces
+    v1 = (v1_4 + v1_8) / 2
+
+    v0_6 = np.sum(contributions_3d["v0_6"] / 8. * configs_hist)
+    v0_26 = np.sum(contributions_3d["v0_26"] / 8. * configs_hist)
+    # Take the average of 6-connected and 26-connected interfaces
+    v0 = (v0_6 + v0_26) / 2
+
+    return v3, v2, v1, v0
 
 
 # TODO: Minkowski Tensors
@@ -133,11 +167,7 @@ def heterogeneity_curve(image: np.ndarray, no_radii: int = 50, n_samples_per_rad
 
         porosity = np.empty((n_samples_per_radius,), dtype=np.float64)
         for j in range(n_samples_per_radius):
-            porosity[j] = np.count_nonzero(image[rw_mn[j]:rw_mx[j], col_mn[j]:col_mx[j], z_mn[j]:z_mx[j]]) / (
-                        2 * r + 1) ** 3
+            porosity[j] = np.count_nonzero(image[rw_mn[j]:rw_mx[j], col_mn[j]:col_mx[j], z_mn[j]:z_mx[j]]) / (2 * r + 1) ** 3
         variance[i] = np.var(porosity)
 
     return radii, variance
-
-
-

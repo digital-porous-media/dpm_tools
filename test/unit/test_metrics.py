@@ -18,7 +18,7 @@ class TestMetrics:
         assert_allclose([euclidean_distance.min(), euclidean_distance.max()], [0.0, 10.049875])
 
     def test_sdt_ball(self):
-        signed_distance = dpm_tools.metrics.sdt(self.ball)
+        signed_distance = dpm_tools.metrics.sdt(self.ball.astype(np.int16))
         assert_allclose([signed_distance.min(), signed_distance.max()], [-7.5498343, 10.049875])
 
     def test_mis_ball(self):
@@ -120,13 +120,13 @@ class TestMetrics:
         with pytest.raises(Exception):
             dpm_tools.metrics.minkowski_2d(self.ball)
 
-        area, perim, curv = dpm_tools.metrics.minkowski_2d(self.ball[10])
-        assert_allclose([area, perim, curv], (317.0, 65.06451422842865, 1.0))
+        area, perim, curv = dpm_tools.metrics.minkowski_functionals(self.ball[10])
+        assert_allclose([area, perim, curv], (317.0, 65.973446, 1.0))
 
     def test_minkowski_3d_ball(self):
-        volume, area, curv, euler = dpm_tools.metrics.minkowski_3d(self.ball)
+        volume, area, curv, euler = dpm_tools.metrics.minkowski_functionals(self.ball)
         assert_allclose([volume, area, curv, euler],
-                           [4169.0, 1262.1090288786693, 129.16729594427238, 1.9999999999999998])
+                           [4169.0, 1268.0, 131.9469, 1.0])
 
     @pytest.mark.skip(reason="Passes locally but fails on github actions")
     def test_morph_drain(self):
