@@ -203,7 +203,7 @@ def minkowski_map(image: np.ndarray, support_size: list, backend='cpu') -> np.nd
     """
     Compute a map of the 3 (4) Minkowski functionals for a given support size of a 2D (3D) image.
 
-    Method adopted from `Jiang and Arns (2020) <https://journals.aps.org/pre/pdf/10.1103/PhysRevE.101.033302>`
+    Method adopted from `Jiang and Arns (2020) <https://journals.aps.org/pre/pdf/10.1103/PhysRevE.101.033302>`_
 
     Parameters:
         image: 2D or 3D binary image. Foreground voxels should be labeled 1 and background voxels labeled 0.
@@ -255,10 +255,6 @@ def _mink_map_2d(image: np.ndarray, support_size: list, backend: str) -> tuple[A
         I_fft = arrlib.fft.fftshift(I_fft)
         fft_convolution = arrlib.fft.ifftshift(B_fft * I_fft)
         convolution_result = ifftn(fft_convolution, map_shape, axes=(0, 1)).real
-        # plt.figure()
-        # plt.imshow(to_numpy(convolution_result))
-        # plt.grid(which="both")
-        # plt.show()
         shape_valid = [convolution_result.shape[a] if a not in (0, 1) else binary_image_shape[a]
                        for a in range(convolution_result.ndim)]
         convolution_result = _centered(convolution_result, shape_valid, support_size, arrlib).copy()
@@ -318,62 +314,3 @@ def _mink_map_3d(image: np.ndarray, support_size: list, backend: str) -> tuple[A
     v3, v2, v1, v0 = [to_numpy(v) for v in [v3, v2, v1, v0]]
 
     return v3, v2, v1, v0
-
-if __name__ == '__main__':
-    from skimage.morphology import ball
-    import matplotlib.pyplot as plt
-    import pyvista as pv
-
-    # binary_img = np.fromfile(r"C:\Users\bcc2459\Documents\dpm_tools\data\bead_pack_2D.raw", dtype=np.uint8).reshape((500, 500))
-    # vof = pv.read(r"C:\Users\bcc2459\Documents\dpm_tools\data\volumeData_00021000.vti").get_array("volumeFraction").reshape((500, 500))
-    # vof = -1 * vof + 1
-    # vof[binary_img == 1] = 0
-    # vof[-1] = 0
-    # vof = vof.astype(np.uint8)
-    # plt.imshow(vof)
-    # plt.colorbar()
-    # plt.show()
-
-    # v2, v1, v0 = minkowski_map(vof, support_size=[50, 50], backend='cpu')
-
-    # plt.figure(dpi=400)
-    # plt.imshow(v2)
-    # plt.show()
-    # plt.figure(dpi=400)
-    # plt.imshow(v1)
-    # plt.show()
-    # plt.figure(dpi=400)
-    # plt.imshow(v0)
-    # plt.show()
-
-    # 3D
-    vof = ball(100)
-    v3, v2, v1, v0 = minkowski_map(vof, support_size=[20, 20, 20], backend='cuda')
-    
-    plt.figure(dpi=400)
-    plt.imshow(v3[100])
-    plt.show()
-    plt.figure(dpi=400)
-    plt.imshow(v2[100])
-    plt.show()
-    plt.figure(dpi=400)
-    plt.imshow(v1[100])
-    plt.show()
-    plt.figure(dpi=400)
-    plt.imshow(v0[100])
-    plt.show()
-    
-    # # 2D Example
-    # vof = ball(100)
-    # vof = vof[100]
-    # v2, v1, v0 = minkowski_map(vof, support_size=[20, 20], backend='cuda')
-    
-    # plt.figure(dpi=400)
-    # plt.imshow(v2)
-    # plt.show()
-    # plt.figure(dpi=400)
-    # plt.imshow(v1)
-    # plt.show()
-    # plt.figure(dpi=400)
-    # plt.imshow(v0)
-    # plt.show()
