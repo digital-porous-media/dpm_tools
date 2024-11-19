@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dpm_tools"
+description = "A collection of tools and workflows to streamline the processing and visualization of porous media images."
+readme = "README.md"
+authors = [{ name = "Digital Porous Media", email = "bcchang@utexas.edu" }]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["digital porous media", "image analysis"]
+dependencies = [
+    "numpy", 
+    "matplotlib", 
+    "pyvista[all]", 
+    "pandas", 
+    "tifffile", 
+    "exifread", 
+    "netcdf4", 
+    "hdf5storage", 
+    "porespy", 
+    "edt", 
+    "scikit-fmm", 
+    "connected-components-3d", 
+    "pyarrow"]
+
+[tool.setuptools]
+packages = ["dpm_tools"]
+
+# If you want setuptools to automatically find packages:
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["dpm_tools*"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["dpm_tools.tests*"]  # exclude packages matching these glob patterns (empty by default)
+
+[project.optional-dependencies]
+dev = [
+    "pytest", 
+    "sphinx", 
+    "black",
+    "codecov",
+    "coverage",
+    "nbval",
+    "pytest",
+    "pytest-cache",
+    "pytest-cov",
+    "pytest-custom-exit-code",
+    "pytest-split"
+    ]
+
+docs = [
+    "myst-nb",
+    "pydata-sphinx-theme",
+    "sphinx",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinx-autodoc-typehints"]
+
+segment = [
+    "dpm_srm",
+    "dpm_srg"
+]
+
+[project.urls]
+Homepage = "https://github.com/digital-porous-media/"
+Repository = "https://github.com/digital-porous-media/dpm_tools"
+Issues = "https://github.com/digital-porous-media/dpm_tools/issues"
+
+
+#[tool.pytest.ini_options]
+#minversion = "6.0"
+#addopts = "-ra -q"
+#testpaths = ["tests"]
+
+#[tool.black]
+#line-length = 88
+#target-version = ['py38']
