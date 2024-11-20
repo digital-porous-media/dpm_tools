@@ -3,7 +3,8 @@ from tifffile import imread as tiffread
 import numpy as np
 import string
 import netCDF4 as nc
-from hdf5storage import loadmat
+import h5py
+from scipy.io import loadmat
 from dataclasses import dataclass, field
 import pathlib
 from collections.abc import Iterable
@@ -146,16 +147,32 @@ def _read_mat(filepath: pathlib.Path, data_keys: str = None, **kwargs) -> np.nda
     Returns:
         np.ndarray: The image array
     """
-    data = loadmat(str(filepath))
-    if data_keys is None:
-        image = [data[k] for k in [*data.keys()]]
+    try:
+        with h5py.File(filepath, 'r') as data:
+            if data_keys is None:
+                image = {k: data[k][:] for k in [*data.keys()]}
+                # image = data
+                # image = [data[k][:] for k in [*data.keys()]]
 
-    else:
-        try:
-            image = data[data_keys]
-        except KeyError:
-            print("Key could not be found in this file")
-            image = []
+            else:
+                try:
+                    image = data[data_keys][:]
+                except KeyError:
+                    print("Key could not be found in this file")
+                    image = []
+    except OSError:
+        data = loadmat(filepath)
+        if data_keys is None:
+            image = {k: data[k] for k in [*data.keys()]}
+            # image = data
+            # image = [data[k] for k in [*data.keys()]]
+
+        else:
+            try:
+                image = data[data_keys]
+            except KeyError:
+                print("Key could not be found in this file")
+                image = []
 
     return image
 

@@ -1,9 +1,10 @@
 [build-system]
-requires = ["setuptools>=45", "wheel"]
+requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "dpm_tools"
+version = "0.0.1"
 description = "A collection of tools and workflows to streamline the processing and visualization of porous media images."
 readme = "README.md"
 authors = [{ name = "Digital Porous Media", email = "bcchang@utexas.edu" }]
@@ -29,15 +30,15 @@ dependencies = [
     "tifffile", 
     "exifread", 
     "netcdf4", 
-    "hdf5storage", 
+    "h5py", 
     "porespy", 
     "edt", 
     "scikit-fmm", 
     "connected-components-3d", 
     "pyarrow"]
 
-[tool.setuptools]
-packages = ["dpm_tools"]
+#[tool.setuptools]
+#packages = ["dpm_tools"]
 
 # If you want setuptools to automatically find packages:
 [tool.setuptools.packages.find]
