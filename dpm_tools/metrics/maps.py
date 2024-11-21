@@ -3,7 +3,7 @@ import porespy as ps
 from edt import edt as edist
 
 from ._minkowski_coeff import *
-from ._feature_utils import pad_to_size, create_kernel, _centered
+from .feature_utils import pad_to_size, create_kernel, _centered
 from ._fft_backends import _get_backend
 from ._minkowski_utils import *
 
@@ -95,7 +95,6 @@ def slicewise_mis(image, **kwargs) -> np.ndarray:
     Returns:
         numpy.ndarray: Maximum inscribed sphere computed on each slice (maximum inscribed disk)
     """
-    # ? why do we pad this?
     input_image = np.pad(array=image.copy(), pad_width=((0, 0), (0, 0), (0, 1)), constant_values=1)
 
     # Calculate slice-wise local thickness from PoreSpy
@@ -122,7 +121,6 @@ def chords(image) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     sz_y = np.zeros_like(ellipse_area)
     for i in range(image.shape[0]):
         # Calculate the chords in x and y for each slice in z
-        # chords = ps.filters.apply_chords_3D(image)
         chords_x = ps.filters.apply_chords(im=image[i, :, :], spacing=0, trim_edges=False, axis=0)
         chords_y = ps.filters.apply_chords(im=image[i, :, :], spacing=0, trim_edges=False, axis=1)
 

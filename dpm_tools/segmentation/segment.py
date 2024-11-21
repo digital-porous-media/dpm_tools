@@ -26,7 +26,7 @@ def statistical_region_merging(image: np.ndarray, Q: float = 5.0, normalize: boo
         numpy.ndarray: A numpy.ndarray labeled image of the same shape and datatype as the input image.
     """
     # Get image dimensions
-    image_dims = str(image.ndims)
+    image_dims = str(image.ndim)
     assert image_dims in ["2", "3"], "Image must be either 2 or 3 dimensional ndarray"
     
     # Get image datatype
@@ -40,6 +40,7 @@ def statistical_region_merging(image: np.ndarray, Q: float = 5.0, normalize: boo
         image[image < img_min] = img_min
         image[image > img_max] = img_max
         image = (image - img_min) / (img_max - img_min) * np.iinfo(image.dtype).max
+        image = image.astype(image_dtype)
     
     func_dict = {"2":
                     {
@@ -55,21 +56,22 @@ def statistical_region_merging(image: np.ndarray, Q: float = 5.0, normalize: boo
                     }
                 }
     
-    srg_obj = func_dict[image_dims][image_dtype](image, Q)
-    srg_obj.segment()
     
-    return srg_obj.get_result()
+    srm_obj = func_dict[image_dims][image_dtype](image, Q)
+    srm_obj.segment()
+    segmentation = srm_obj.get_result()
+    
+    return segmentation
     
 
-def seeded_region_growing(image: np.ndarray, seed_image: np.ndarray, normalize: bool = True)
+def seeded_region_growing(image: np.ndarray, seed_image: np.ndarray, normalize: bool = True):
     """ Perform seeded region growing on a gray level image using predefined seeds
     """
-    # TODO: Write wrapper code for dpm_srg
-    image_dims = image.ndims
-    assert image_dims in [2, 3], "Image must be either 2 or 3 dimensional ndarray"
+    image_dims = str(image.ndim)
+    assert image_dims in ["2", "3"], "Image must be either 2 or 3 dimensional ndarray"
     
-    seed_dims = seed_image.ndims
-    assert seed_dims == image_dims, "Seed image must have the same dimensions as the input image"
+    seed_dims = seed_image.ndim
+    assert seed_dims == int(image_dims), "Seed image must have the same dimensions as the input image"
     
     # Get image datatype
     image_dtype = str(image.dtype)
@@ -83,6 +85,7 @@ def seeded_region_growing(image: np.ndarray, seed_image: np.ndarray, normalize: 
         image[image < img_min] = img_min
         image[image > img_max] = img_max
         image = (image - img_min) / (img_max - img_min) * np.iinfo(image.dtype).max
+        image = image.astype(image_dtype)
     
     func_dict = {"2":
                     {
@@ -98,7 +101,7 @@ def seeded_region_growing(image: np.ndarray, seed_image: np.ndarray, normalize: 
                     }
                 }
     
-    srg_obj = func_dict[image_dims][image_dtype](image, Q)
+    srg_obj = func_dict[image_dims][image_dtype](image, seed_image)
     srg_obj.segment()
     
     return srg_obj.get_result()

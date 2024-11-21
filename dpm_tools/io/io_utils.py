@@ -6,8 +6,8 @@ import pathlib
 from typing import Any, Tuple
 import re
 
-from ._read_data import read_image
-from ._write_data import write_image
+from .read_data import read_image
+from .write_data import write_image
 
 
 def find_files_with_ext(directory: pathlib.Path, extension: str) -> list:

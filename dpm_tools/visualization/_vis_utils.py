@@ -48,8 +48,6 @@ def _scale_image(image_data: np.ndarray, scale_to: type = np.uint8) -> np.ndarra
     :rtype: np.ndarray
     """
 
-    # assert image_data.dtype.type is not scale_to, f"Image data is already of type {scale_to.__name__}"
-
     if 'int' in scale_to.__name__:
         dtype_info = np.iinfo(scale_to)
 

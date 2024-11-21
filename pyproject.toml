@@ -34,7 +34,8 @@ dependencies = [
     "porespy", 
     "edt", 
     "scikit-fmm", 
-    "connected-components-3d", 
+    "connected-components-3d",
+    "pyfftw", 
     "pyarrow"]
 
 #[tool.setuptools]

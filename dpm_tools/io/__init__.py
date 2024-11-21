@@ -24,8 +24,8 @@ This module contains functions for reading and writing 3D volumetric images from
 
 """
 
-from ._io_utils import find_files_with_ext, get_tiff_metadata, natural_sort, combine_slices, convert_filetype
+from .io_utils import find_files_with_ext, get_tiff_metadata, natural_sort, combine_slices, convert_filetype
 
-from ._read_data import read_image, Image
+from .read_data import read_image, Image
 
-from ._write_data import write_image
+from .write_data import write_image

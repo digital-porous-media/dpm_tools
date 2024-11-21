@@ -40,17 +40,11 @@ def initialize_mapping(n_dim):
 
 @jit('u1[:, :](u1[:, :], u8, u8)', nopython=True, parallel=False)
 def get_binary_configs_2d(image, dim0, dim1):
-    # n_threads = numba.get_num_threads()
-    # chunk_size = n_threads * 8
-    # n_chunks = (dim0 // (chunk_size)) + 1
 
     mask = np.zeros((dim0 - 1, dim1 - 1), dtype=np.uint8)
 
     IC = initialize_mapping(2)
 
-    # for chunk in prange(n_chunks):
-    #     start_x = chunk * chunk_size
-    #     end_x = min(start_x + chunk_size + 2, dim0)
     for x in range(dim0 - 1):
         for y in range(dim1 - 1):
             mask_val = (int(image[x, y] == 1) +

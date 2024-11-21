@@ -50,12 +50,11 @@ def _custom_cmap(vector, color_map: str = 'turbo') -> Tuple[ListedColormap, floa
 
     min_magnitude = np.percentile(log_mag, 25)
     max_magnitude = np.percentile(log_mag, 99)
-    # print(f'Log min. = {min_magnitude}, Log max. = {max_magnitude}')
 
     cmap_modified = cm.get_cmap(color_map, 65535)
     spacing = lambda x: np.log10(x)
     new_cmap = ListedColormap(cmap_modified(spacing(np.linspace(1, 10, 65535))))
-    # return min_magnitude, max_magnitude
+
     return new_cmap, 10 ** min_magnitude, 10 ** max_magnitude
 
 

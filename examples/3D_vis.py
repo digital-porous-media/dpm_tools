@@ -37,7 +37,7 @@ if __name__ == '__main__':
     filepath = Path('C:/Users/bchan/Documents/DPM_Tools/data/10_01_256_elec.mat')
     #file_data = loadmat('C:/Users/bchan/Documents/DPM_Tools/data/10_01_256_elec.mat')
     file_data = read_image(filepath)
-    print(file_data.keys())
+    # print(file_data.keys())
     # # a, b, c = img['phi'].shape
     binary_img = file_data['phi'][:] != 0
     # print(np.count_nonzero(binary_img))

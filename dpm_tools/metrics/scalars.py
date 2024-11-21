@@ -2,7 +2,7 @@ import numpy as np
 from typing import Tuple
 import edt
 from ._minkowski_coeff import contributions_2d, contributions_3d
-from ._feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
+from .feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
 from ._minkowski_utils import get_configs_histogram_2d, get_configs_histogram_3d
 
 
@@ -61,8 +61,6 @@ def _minkowski_3d(image: np.ndarray) -> Tuple[float, float, float, float]:
 
     # Get the isotropic configurations (3D)
     nx, ny, nz = image.shape
-    # bin_img = np.transpose(binary_image, (2, 1, 0))
-    # bin_img = np.transpose(binary_image, (1, 2, 0))
     configs_hist = get_configs_histogram_3d(image, nx, ny, nz)
     v3 = np.sum(contributions_3d["v3"] / 8. * configs_hist)
     v2 = np.sum(contributions_3d["v2"] / 24. * 4 * configs_hist)
