@@ -1,6 +1,0 @@
-myst-nb
-pydata-sphinx-theme
-sphinx
-sphinx-copybutton
-sphinx-design
-sphinx-autodoc-typehints

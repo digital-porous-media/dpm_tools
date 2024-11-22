@@ -6,7 +6,7 @@ from tqdm import tqdm
 from typing import Any
 
 from ._vis_utils import _make_dir, _write_hist_csv, _scale_image
-from ..metrics._feature_utils import _sigmoid
+from ..metrics.feature_utils import _sigmoid
 
 
 # TODO Add fig save decorator
@@ -65,8 +65,8 @@ def hist(data,
     #     save_path = f'{_make_dir("./figures")}'
 
     # TODO add write_csv with proper savepath
-    if write_csv:
-        _write_hist_csv(freq, bins, './figures/histogram_csv.csv')
+    # if write_csv:
+    #     _write_hist_csv(freq, bins, './figures/histogram_csv.csv')
 
     # TODO add savefig?
 

@@ -3,7 +3,8 @@ from tifffile import imread as tiffread
 import numpy as np
 import string
 import netCDF4 as nc
-from hdf5storage import loadmat
+import h5py
+from scipy.io import loadmat
 from dataclasses import dataclass, field
 import pathlib
 from collections.abc import Iterable
@@ -146,16 +147,32 @@ def _read_mat(filepath: pathlib.Path, data_keys: str = None, **kwargs) -> np.nda
     Returns:
         np.ndarray: The image array
     """
-    data = loadmat(str(filepath))
-    if data_keys is None:
-        image = [data[k] for k in [*data.keys()]]
+    try:
+        with h5py.File(filepath, 'r') as data:
+            if data_keys is None:
+                image = {k: data[k][:] for k in [*data.keys()]}
+                # image = data
+                # image = [data[k][:] for k in [*data.keys()]]
 
-    else:
-        try:
-            image = data[data_keys]
-        except KeyError:
-            print("Key could not be found in this file")
-            image = []
+            else:
+                try:
+                    image = data[data_keys][:]
+                except KeyError:
+                    print("Key could not be found in this file")
+                    image = []
+    except OSError:
+        data = loadmat(filepath)
+        if data_keys is None:
+            image = {k: data[k] for k in [*data.keys()]}
+            # image = data
+            # image = [data[k] for k in [*data.keys()]]
+
+        else:
+            try:
+                image = data[data_keys]
+            except KeyError:
+                print("Key could not be found in this file")
+                image = []
 
     return image
 
@@ -275,67 +292,4 @@ class Image:
             self.scalar = images[0]
             self.vector = images[1:]
 
-
-# @dataclass(kw_only=True)
-# class ImageFromFile(Image):
-#     """
-#     ImageFromFile dataclass inherited from the Image dataclass. This dataclass allows users to pass the path to an image file
-#
-#     At least one of scalar or vector attributes must be provided.
-#
-#     Attributes:
-#         basepath (pathlib.Path): Path to the parent directory holding the data file
-#         filename (str): Name of the data file
-#         meta (dict): A dictionary of the necessary metadata to load the image
-#         filepath: Joint file path derived from basename and filename (i.e. basename / filename)
-#         image: The 3D image (e.g. binary image, pressure field, etc.)
-#         vector (list[np.ndarray, np.ndarray, np.ndarray]): A list containing 3 np.ndarrays of the vector components
-#         shape (tuple): The shape of the 3D ndarray containing the image
-#         nx (int): Width of the image (in voxels)
-#         ny (int): Height of the image (in voxels)
-#         nz (int): Number of slices of the image
-#         magnitude: Magnitude of vector (if vector is provided)
-#     """
-#     basepath: pathlib.Path
-#     filename: str
-#     meta: field(default_factory=dict) = None
-#     filepath: str = field(init=False)
-#     image: np.ndarray = field(init=False)
-#
-#     def __post_init__(self):
-#         self.filepath = os.path.join(self.basepath, self.filename)
-#         self.basename, self.ext = self.filename.rsplit('.', 1)
-#         self.image = read_image(self.filepath, meta=self.meta)
-#
-#         # Add 3rd axis if image is 2D
-#         if self.image.ndim == 2:
-#             self.image = self.image[np.newaxis, :, :]
-#
-#         self.nz, self.nx, self.ny = self.image.shape
-#
-#         # TODO add multiple fields (ex. velocity field)
-#         # TODO add functionality for coordinate data
-
-
-# TODO combine VectorImage and Image classes
-# @dataclass
-# class Vector(Image):
-#     scalar: np.ndarray = None
-#     vector: list = None
-#
-#     def __post_init__(self):
-#         assert self.scalar is not None or self.vector is not None, "Provide either scalar or vector data"
-#
-#         if self.scalar.ndim == 2:
-#             self.scalar = self.scalar[np.newaxis, :, :]
-#
-#         self.nz, self.nx, self.ny = self.scalar.shape
-#
-#
-#         self.magnitude = np.sqrt(self.vector[0]**2 + self.vector[1]**2 + self.vector[2]**2)
-
-if __name__ == "__main__":
-    scalar_path = pathlib.Path('C:/Users/bcc2459/Documents/dpm_tools/data/3_fractures.tif')
-    img = Image(filepaths=[scalar_path, scalar_path, scalar_path, scalar_path], meta=[{}, {}, {}, {}])
-    print(img.scalar)
 

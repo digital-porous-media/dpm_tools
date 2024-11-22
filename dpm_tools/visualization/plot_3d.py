@@ -66,7 +66,6 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                 self.update()
         
             def update(self):
-                # This is where you call your simulation
                 pv_image_obj = _wrap_array(ax_swap_arr)
                 result = pv_image_obj.slice_orthogonal(**self.kwargs,contour=True)
                 fig.add_mesh(result,name='timestep_mesh', **mesh_kwargs, show_scalar_bar=False)
@@ -145,7 +144,6 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
         pv.Plotter: PyVista plotter object with added orthogonal slice mesh.
     """
 
-    # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
     if mesh_kwargs is None:
         mesh_kwargs = {'opacity': 0.45,
                        'smooth_shading': True,
@@ -155,9 +153,6 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
 
     if plotter_kwargs is None:
         plotter_kwargs = {}
-        # display_kwargs = {'filename': data.basename,
-        #                   'take_screenshot': False,
-        #                   'interactive': False}
         
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
@@ -193,8 +188,6 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
         
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-
-    #plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     if mesh_kwargs is None:
         mesh_kwargs = {'opacity': 0.2,
@@ -241,13 +234,12 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
     if vector_data.vector is not None:
         glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
 
-    # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
 
     x, y, z = np.mgrid[:vector_data.nx:glyph_space,
                        :vector_data.ny:glyph_space,
                        :vector_data.nz:glyph_space]
 
-    # Pseudo mesh for scale bar of the figure #####################################
+    # Pseudo mesh for scale bar of the figure
     glyph_kwargs2 = {'scale': array*np.max(vector_data.magnitude),
                     'orient': True,
                     'tolerance': 0.05,
@@ -264,7 +256,6 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
     [glyph_kwargs2.pop(pop_key) for pop_key in ['scale', 'orient']]
     glyphs2 = mesh2.glyph(orient='vectors', scale='scalars', **glyph_kwargs2)
     fig2.add_mesh(glyphs2)
-    ###############################################################################
 
     if plotter_kwargs is None:
         plotter_kwargs = {}
@@ -308,7 +299,6 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
         pv.Plotter: Plotter object with streamlines added as a mesh
     """
 
-    # plotter_kwargs, _ = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
     if plotter_kwargs is None:
         plotter_kwargs = {}
     if mesh_kwargs is None:
@@ -330,9 +320,6 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
                                   vector_data.vector[1].flatten('F'),
                                   vector_data.vector[2].flatten('F')]).T
     mesh['Magnitude'] = vectors
-    # mesh.cell_data['Magnitude'] = np.array([vector_data.vector[0].flatten('F'),
-    #                               vector_data.vector[1].flatten('F'),
-    #                               vector_data.vector[2].flatten('F')]).T
 
     if streamline_kwargs is None:
         streamline_kwargs = {'n_points': int(vector_data.nz**1.25),
@@ -376,9 +363,6 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
     if plotter_kwargs is None:
         plotter_kwargs = {}
-        # display_kwargs = {'filename': data.basename,
-        #                   'take_screenshot': False,
-        #                   'interactive': False}
 
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
@@ -387,16 +371,12 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
     # wall_bin = 255 * np.ones((data.scalar.shape[0]+2, data.scalar.shape[1]+2, data.scalar.shape[2]+2))
     # wall_bin[1:-1, 1:-1, 1:-1] = data.scalar.copy()
 
-    # pv_image_obj = _wrap_array(data.scalar)
-
     mesh = pv.ImageData(dimensions=(data.nz, data.ny, data.nx),
                           spacing=(1.0, 1.0, 1.0),
                           origin=(0.0, 0.0, 0.0))
 
     mesh['scalars'] = data.scalar.flatten(order="F")
 
-    # data.scalar = data.scalar.reshape(data.nz, data.ny, data.nx)
-    # data.scalar = np.swapaxes(data.scalar, 0, 2)
     data.scalar[data.scalar == 0.0] = np.nan
 
     fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
@@ -432,9 +412,6 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
 
     if plotter_kwargs is None:
         plotter_kwargs = {}
-        # plotter_kwargs['notebook'] = notebook
-    #
-    # plotter_kwargs['notebook'] = notebook
         
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
@@ -444,20 +421,8 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
 
     contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
     fig.add_mesh(contours_ma, style='wireframe', color='r', line_width=2, name='medial_axis')
-
-    # pv_image_obj_sample = _wrap_array(data.scalar)
-    #
-    # contours_sample = pv_image_obj_sample.contour(isosurfaces=show_isosurface)
+    
     fig = plot_isosurface(data, fig=fig, mesh_kwargs=mesh_kwargs)
-    #
-    # def my_plane_func(normal, origin):
-    #     sliced = contours_sample.slice(normal=normal, origin=origin)
-    #     fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
-    #                 name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
-    #
-    #     fig.add_plane_widget(my_plane_func, normal='z', origin=[0, 0, medial_axis.shape[2]])
-    #
-    #     return fig
 
     return fig
 
