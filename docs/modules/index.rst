@@ -12,4 +12,6 @@ Modules
 
       dpm_tools.io
       dpm_tools.metrics
+      dpm_tools.segmentation
       dpm_tools.visualization
+      
