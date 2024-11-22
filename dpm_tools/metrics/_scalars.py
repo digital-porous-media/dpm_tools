@@ -2,7 +2,7 @@ import numpy as np
 from typing import Tuple
 import edt
 from ._minkowski_coeff import contributions_2d, contributions_3d
-from .feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
+from ._feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
 from ._minkowski_utils import get_configs_histogram_2d, get_configs_histogram_3d
 
 
@@ -24,6 +24,7 @@ def minkowski_functionals(image: np.ndarray) -> Tuple:
         return _minkowski_3d(image)
     else:
         raise Exception("Image must be 2D or 3D image")
+
 
 def _minkowski_2d(image: np.ndarray) -> Tuple[float, float, float]:
     """
@@ -57,7 +58,8 @@ def _minkowski_3d(image: np.ndarray) -> Tuple[float, float, float, float]:
     Returns:
         Tuple[float, float, float, float]: Volume, surface area, mean curvature, Euler characteristic
     """
-    image = np.pad(image, ((1, 1), (1, 1), (1, 1)), mode='constant', constant_values=0)
+    image = np.pad(image, ((1, 1), (1, 1), (1, 1)),
+                   mode='constant', constant_values=0)
 
     # Get the isotropic configurations (3D)
     nx, ny, nz = image.shape
@@ -130,7 +132,6 @@ def morph_drain(image: np.ndarray, target_saturation: float = 0.1,
 
 def heterogeneity_curve(image: np.ndarray, no_radii: int = 50, n_samples_per_radius: int = 50,
                         min_radius: int = np.inf, max_radius: int = np.inf, grid: bool = False) -> Tuple[np.ndarray, np.ndarray]:
-
     """
     Compute a curve of the porosity variance over n_samples_per_radius points for no_radii size moving windows.
     This provides a rough estimate for quantifying the heterogeneity of the pore space.
@@ -156,7 +157,8 @@ def heterogeneity_curve(image: np.ndarray, no_radii: int = 50, n_samples_per_rad
     variance = np.empty_like(radii, dtype=np.float64)
 
     for i, r in enumerate(radii):
-        cntrs = _get_heterogeneity_centers_3d(image.shape, r, n_samples_per_radius, grid=grid)
+        cntrs = _get_heterogeneity_centers_3d(
+            image.shape, r, n_samples_per_radius, grid=grid)
 
         rr, cc, zz = cntrs[:, 0], cntrs[:, 1], cntrs[:, 2]
         mn = np.array([rr - r, cc - r, zz - r])
@@ -165,7 +167,8 @@ def heterogeneity_curve(image: np.ndarray, no_radii: int = 50, n_samples_per_rad
 
         porosity = np.empty((n_samples_per_radius,), dtype=np.float64)
         for j in range(n_samples_per_radius):
-            porosity[j] = np.count_nonzero(image[rw_mn[j]:rw_mx[j], col_mn[j]:col_mx[j], z_mn[j]:z_mx[j]]) / (2 * r + 1) ** 3
+            porosity[j] = np.count_nonzero(
+                image[rw_mn[j]:rw_mx[j], col_mn[j]:col_mx[j], z_mn[j]:z_mx[j]]) / (2 * r + 1) ** 3
         variance[i] = np.var(porosity)
 
     return radii, variance

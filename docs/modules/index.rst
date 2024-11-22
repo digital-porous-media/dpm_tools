@@ -1,17 +1,16 @@
-.. _modules_index
+.. _modules_index:
 
 Modules
 =====================================
 
-
 .. automodule:: dpm_tools
+   :members:
 
    .. autosummary::
       :toctree: generated
       :recursive:
 
-      dpm_tools.io
-      dpm_tools.metrics
-      dpm_tools.segmentation
-      dpm_tools.visualization
-      
+      io
+      metrics
+      segmentation
+      visualization

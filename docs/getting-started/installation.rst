@@ -1,8 +1,8 @@
 .. _installation:
 
-############
+####################
 Installing DPM Tools
-############
+####################
 
 DPM Tools is a collection of tools for analysis of 2D and 3D porous media images. We tried to keep dependencies to a minimum and to only rely on common Python packages. 
 
@@ -14,7 +14,7 @@ DPM Tools requires at least Python 3.8, but **Python 3.10+** is recommended.
 
 
 Required dependencies
---------------
+---------------------
 DPM Tools requires the following packages:
 
 - numpy
@@ -46,18 +46,37 @@ DPM Tools also includes some optional dependencies. For now, these are limited t
 Look out for more modules in the future!
 
 
-Install stable release
-----------------------
-Stable releases can be installed from `PyPI <https://pypi.org/project/dpm-tools>` using ``pip``::
+Install stable releases
+=======================
+
+Installing with Pip:
+--------------------
+
+Stable releases can be installed from `PyPI <https://pypi.org/project/dpm-tools>`_ using ``pip``::
+
    pip install dpm_tools
 
 To install with the optional segmentation module, install using ``pip`` with::
+
    pip install dpm_tools[segment]
+
+
+Installing with Conda:
+----------------------
+
+Alternatively, DPM Tools can be installed with ``conda``::
+
+   conda install -c conda-forge dpm_tools
+
+To install with the optional segmentation module, install using ``conda`` with::
+
+   conda install -c conda-forge dpm_tools[segment]
 
 
 Installing the Development Branch from GitHub 
 ---------------------------------------------
 You can install the latest version from GitHub by cloning `DPM Tools <https://github.com/digital-porous-media/dpm_tools>`_, and running::
+   
    git clone https://github.com/digital-porous-media/dpm_tools.git
    cd dpm_tools
    python -m pip install -e .[all]

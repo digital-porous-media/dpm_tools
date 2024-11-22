@@ -2,6 +2,7 @@ from time import perf_counter_ns
 
 from . import metrics
 from . import io
+from . import segmentation
 from . import visualization
 
 def _get_version():

@@ -7,14 +7,11 @@ DPM Tools is an open-source project led by the `Prodanović group <https://sites
     DPM Tools would not be possible if not for many other open-source projects. We acknowledge and thank these communities for their hard work in building the software that makes DPM Tools possible.
 
 Citation
--------
+---------
 
 If you use DPM Tools in your work, please help our visibility by citing our work.
 
 BibTex:
-
-.. code::
-    IN PROGRESS
 
 Authors
 -------
@@ -28,6 +25,7 @@ Special thanks to the following list of authors who have made substantial contri
 - Maša Prodanović, (`@dr-masha <https://github.com/dr-masha/>`_)
 
 Further thanks to the Prodanović group members and outside collaborators that support the Digital Porous Media organization.
+
 - Xuesong Ma, (`@cedar-ma <https://github.com/cedar-ma/>`_)
 - James E. McClure, (`@JamesEMcClure <https://github.com/JamesEMcClure/>`_)
 - Maria Esteva

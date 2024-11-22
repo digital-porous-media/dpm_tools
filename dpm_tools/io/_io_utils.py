@@ -6,8 +6,8 @@ import pathlib
 from typing import Any, Tuple
 import re
 
-from .read_data import read_image
-from .write_data import write_image
+from ._read_data import read_image
+from ._write_data import write_image
 
 
 def find_files_with_ext(directory: pathlib.Path, extension: str) -> list:
@@ -182,6 +182,5 @@ def convert_filetype(filepath: pathlib.Path, convert_to: str, **kwargs) -> None:
     original_image = read_image(read_path=filepath, **kwargs)
 
     new_filepath = filepath.with_suffix(convert_to)
-    write_image(save_path=new_filepath.parent, save_name=new_filepath.name, image=original_image, filetype=convert_to)
-
-
+    write_image(save_path=new_filepath.parent, save_name=new_filepath.name,
+                image=original_image, filetype=convert_to)

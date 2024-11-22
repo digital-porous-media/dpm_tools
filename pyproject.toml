@@ -35,8 +35,7 @@ dependencies = [
     "edt", 
     "scikit-fmm", 
     "connected-components-3d",
-    "pyfftw", 
-    "pyarrow"]
+    "pyfftw"]
 
 #[tool.setuptools]
 #packages = ["dpm_tools"]

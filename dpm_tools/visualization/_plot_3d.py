@@ -6,7 +6,7 @@ import skimage
 
 
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
-                      mesh_kwargs: dict = None, slider = False) -> pv.Plotter:
+                      mesh_kwargs: dict = None, slider: bool = False) -> pv.Plotter:
     """
     Plots 3 orthogonal slices of a 3D image.
 
@@ -23,7 +23,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
 
     if show_slices is None:
         show_slices = [data.nx // 2, data.ny // 2, data.nz // 2]
-    
+
     # Overriding the above line because it prevents orthogonal slices from showing for some reason.
     if plotter_kwargs is None:
         plotter_kwargs = {}
@@ -31,7 +31,8 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         mesh_kwargs = {}
 
     # Test to make sure user only supplied 3 lengths
-    assert len(show_slices) == 3, "Please only specify x-, y-, and z-slices to show"
+    assert len(
+        show_slices) == 3, "Please only specify x-, y-, and z-slices to show"
     x_slice, y_slice, z_slice = show_slices
 
     # Tests to make sure input slices are within image dimensions
@@ -42,13 +43,13 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     # Initialize plotter object
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-    
+
     # Swapping axes for pyvista compatibility
     ax_swap_arr = np.swapaxes(data.scalar, 0, 2)
-    
+
     # Wrap NumPy array to pyvista object
     pv_image_obj = _wrap_array(ax_swap_arr)
-    
+
     # Adding the slider
     if slider is True:
         class MyCustomRoutine:
@@ -60,24 +61,29 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                     'x': 1,
                     'y': 1,
                 }
-        
+
             def __call__(self, param, value):
                 self.kwargs[param] = int(value)
                 self.update()
-        
+
             def update(self):
                 pv_image_obj = _wrap_array(ax_swap_arr)
-                result = pv_image_obj.slice_orthogonal(**self.kwargs,contour=True)
-                fig.add_mesh(result,name='timestep_mesh', **mesh_kwargs, show_scalar_bar=False)
+                result = pv_image_obj.slice_orthogonal(
+                    **self.kwargs, contour=True)
+                fig.add_mesh(result, name='timestep_mesh', **
+                             mesh_kwargs, show_scalar_bar=False)
                 self.output.copy_from(result)
                 return
-        
-        starting_mesh = pv_image_obj.slice_orthogonal(x=int(50), y=int(50), z=int(50),contour=True)
+
+        starting_mesh = pv_image_obj.slice_orthogonal(
+            x=int(50), y=int(50), z=int(50), contour=True)
         engine = MyCustomRoutine(starting_mesh)
-        fig.add_mesh(starting_mesh,name='timestep_mesh', **mesh_kwargs, show_scalar_bar=False)
-        _ = fig.add_scalar_bar(position_x=0.9, position_y= 0.2, height=0.5, vertical=True)
+        fig.add_mesh(starting_mesh, name='timestep_mesh',
+                     **mesh_kwargs, show_scalar_bar=False)
+        _ = fig.add_scalar_bar(
+            position_x=0.9, position_y=0.2, height=0.5, vertical=True)
         fig.add_slider_widget(callback=lambda value: engine('z', int(value)),
-                              rng = [1, data.nz-1],
+                              rng=[1, data.nz-1],
                               value=50,
                               pointa=(0.025, 0.1),
                               pointb=(0.31, 0.1),
@@ -85,7 +91,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                               fmt="%0.f",
                               style='modern')
         fig.add_slider_widget(callback=lambda value: engine('x', int(value)),
-                              rng = [1, data.nx-1],
+                              rng=[1, data.nx-1],
                               value=50,
                               pointa=(0.35, 0.1),
                               pointb=(0.64, 0.1),
@@ -93,7 +99,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                               fmt="%0.f",
                               style='modern')
         fig.add_slider_widget(callback=lambda value: engine('y', int(value)),
-                              rng = [1, data.ny-1],
+                              rng=[1, data.ny-1],
                               value=50,
                               pointa=(0.67, 0.1),
                               pointb=(0.98, 0.1),
@@ -109,16 +115,15 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         #     return
         # fig.add_slider_widget(slices_slider, [1, data.nz-1], title='Z-slice',fmt="%0.f")
     else:
-    
+
         # Extract 3 orthogonal slices
         slices = pv_image_obj.slice_orthogonal(x=x_slice, y=y_slice, z=z_slice)
-    
+
         # Add the slices as meshes to the PyVista plotter object
         fig.add_mesh(slices, **mesh_kwargs)
-        
-        
+
     _ = fig.add_axes(
-        viewport = (0, 0.8, 0.2, 1),
+        viewport=(0, 0.8, 0.2, 1),
         line_width=5,
         cone_radius=0.6,
         shaft_length=0.7,
@@ -153,20 +158,21 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
 
     if plotter_kwargs is None:
         plotter_kwargs = {}
-        
+
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-    
+
     pv_image_obj = _wrap_array(data.scalar)
 
     if show_isosurface is None:
         show_isosurface = [(np.amax(data.scalar)+np.amin(data.scalar))/2]
-        warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.'+
-              f'Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{np.amax(data.scalar)}).\n',
-              stacklevel=2)
+        warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.' +
+                      f'Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{
+                          np.amax(data.scalar)}).\n',
+                      stacklevel=2)
 
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
-    
+
     fig.add_mesh(contours, **mesh_kwargs)
 
     return fig
@@ -185,15 +191,14 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
     """
     if plotter_kwargs is None:
         plotter_kwargs = {}
-        
+
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
     if mesh_kwargs is None:
         mesh_kwargs = {'opacity': 0.2,
                        'color': (1, 1, 1)}
-    
-    
+
     wall_bin = data.scalar.copy()
     wall_bin[1:-1, 1:-1, 1:-1] = 255
     vtk_wall = _wrap_array(wall_bin)
@@ -201,6 +206,7 @@ def bounding_box(data, fig: pv.Plotter = None, mesh_kwargs: dict = None, plotter
     fig.add_mesh(wall_contours, **mesh_kwargs)
 
     return fig
+
 
 def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, glyph_space: int = 1,
                glyph_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
@@ -220,8 +226,9 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
     """
     if glyph is None:
         glyph = pv.Arrow()
-        
-    array = vector_data.magnitude[::glyph_space, ::glyph_space, ::glyph_space].ravel()/np.max(vector_data.magnitude)
+
+    array = vector_data.magnitude[::glyph_space, ::glyph_space, ::glyph_space].ravel(
+    )/np.max(vector_data.magnitude)
     array2 = np.sqrt(array)
     scale_factor = 20
     if glyph_kwargs is None:
@@ -232,8 +239,8 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
                         'factor': scale_factor}
 
     if vector_data.vector is not None:
-        glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
-
+        glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space,
+                                                        ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
 
     x, y, z = np.mgrid[:vector_data.nx:glyph_space,
                        :vector_data.ny:glyph_space,
@@ -241,12 +248,13 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
 
     # Pseudo mesh for scale bar of the figure
     glyph_kwargs2 = {'scale': array*np.max(vector_data.magnitude),
-                    'orient': True,
-                    'tolerance': 0.05,
-                    'geom': glyph,
-                    'factor': scale_factor}
-    glyph_kwargs2['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
-    
+                     'orient': True,
+                     'tolerance': 0.05,
+                     'geom': glyph,
+                     'factor': scale_factor}
+    glyph_kwargs2['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space,
+                                                     ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
+
     fig2 = _initialize_plotter()
     mesh2 = pv.StructuredGrid(z, y, x)
     mesh2['scalars'] = array*np.max(vector_data.magnitude)
@@ -261,11 +269,11 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
         plotter_kwargs = {}
     if mesh_kwargs is None:
         mesh_kwargs = {}
-        
+
     # Initialize a new plotter object
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-        
+
     # Create a structured grid mesh
     mesh = pv.StructuredGrid(z, y, x)
     mesh['scalars'] = array2
@@ -279,12 +287,11 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
                  title="Magnitude")
     fig.add_mesh(glyphs, scalar_bar_args=sargs, **mesh_kwargs)
 
-
     return fig
 
 
 def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = None,
-               streamline_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
+                     streamline_kwargs: dict = None, mesh_kwargs: dict = None, plotter_kwargs: dict = None) -> pv.Plotter:
     """
     Plot streamlines to the Plotter object
 
@@ -303,22 +310,21 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
         plotter_kwargs = {}
     if mesh_kwargs is None:
         mesh_kwargs = {}
-    
-    
+
     # Initialize a new plotter object if none are provided
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
     mesh = pv.ImageData(dimensions=(vector_data.nz, vector_data.ny, vector_data.nx),
-                          spacing=(1.0, 1.0, 1.0),
-                          origin=(0.0, 0.0, 0.0))
+                        spacing=(1.0, 1.0, 1.0),
+                        origin=(0.0, 0.0, 0.0))
 
     x = mesh.points[:, 0]
     y = mesh.points[:, 1]
     z = mesh.points[:, 2]
     vectors = np.array([vector_data.vector[0].flatten('F'),
-                                  vector_data.vector[1].flatten('F'),
-                                  vector_data.vector[2].flatten('F')]).T
+                        vector_data.vector[1].flatten('F'),
+                        vector_data.vector[2].flatten('F')]).T
     mesh['Magnitude'] = vectors
 
     if streamline_kwargs is None:
@@ -341,6 +347,7 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
     fig.add_mesh(stream.tube(radius=tube_radius), **mesh_kwargs)
 
     return fig
+
 
 def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
                        plotter_kwargs: dict = None) -> pv.Plotter:
@@ -372,8 +379,8 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
     # wall_bin[1:-1, 1:-1, 1:-1] = data.scalar.copy()
 
     mesh = pv.ImageData(dimensions=(data.nz, data.ny, data.nx),
-                          spacing=(1.0, 1.0, 1.0),
-                          origin=(0.0, 0.0, 0.0))
+                        spacing=(1.0, 1.0, 1.0),
+                        origin=(0.0, 0.0, 0.0))
 
     mesh['scalars'] = data.scalar.flatten(order="F")
 
@@ -381,13 +388,11 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
     fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
 
-
     return fig
 
 
-
 def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
-                    mesh_kwargs: dict = None, plotter_kwargs: dict = None, notebook = False) -> pv.Plotter:
+                     mesh_kwargs: dict = None, plotter_kwargs: dict = None, notebook=False) -> pv.Plotter:
     """
     Plots an interactive visual with a medial axis and a 3D isosurface of given data.
 
@@ -412,17 +417,17 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
 
     if plotter_kwargs is None:
         plotter_kwargs = {}
-        
+
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
-    
+
     medial_axis = skimage.morphology.skeletonize(data.scalar)
     pv_image_obj = _wrap_array(medial_axis)
 
     contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
-    fig.add_mesh(contours_ma, style='wireframe', color='r', line_width=2, name='medial_axis')
-    
+    fig.add_mesh(contours_ma, style='wireframe', color='r',
+                 line_width=2, name='medial_axis')
+
     fig = plot_isosurface(data, fig=fig, mesh_kwargs=mesh_kwargs)
 
     return fig
-

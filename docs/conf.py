@@ -69,9 +69,6 @@ html_theme_options = {
         {
             "name": "Issue Tracker", "url": "https://github.com/digital-porous-media/dpm_tools/issues"
         },
-        {
-            "name": "Get Help", "url": "https://github.com/digital-porous-media/dpm_tools/discussions"
-        },
     ],
     "navigation_with_keys": False,
     "show_prev_next": False,

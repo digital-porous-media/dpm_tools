@@ -6,7 +6,7 @@ from tqdm import tqdm
 from typing import Any
 
 from ._vis_utils import _make_dir, _write_hist_csv, _scale_image
-from ..metrics.feature_utils import _sigmoid
+from ..metrics._feature_utils import _sigmoid
 
 
 # TODO Add fig save decorator
@@ -46,15 +46,18 @@ def hist(data,
     kwargs.pop('fig_size', None)  # Remove fig_size argument from kwargs
 
     if data2 is not None:
-        plt.hist(x=data.scalar.ravel(), bins=nbins, density=True, **kwargs, label='data1')
-        plt.hist(x=data2.scalar.ravel(), bins=nbins, density=True, **kwargs, label='data2')
+        plt.hist(x=data.scalar.ravel(), bins=nbins,
+                 density=True, **kwargs, label='data1')
+        plt.hist(x=data2.scalar.ravel(), bins=nbins,
+                 density=True, **kwargs, label='data2')
         plt.legend()
         plt.xlabel('Gray value')
         plt.ylabel('Probability')
         plt.tight_layout()
         plt.show()
     else:
-        freq, bins, _ = plt.hist(x=data.scalar.ravel(), bins=nbins, density=True, **kwargs)
+        freq, bins, _ = plt.hist(
+            x=data.scalar.ravel(), bins=nbins, density=True, **kwargs)
         plt.xlabel('Gray value')
         plt.ylabel('Probability')
         plt.tight_layout()
@@ -107,7 +110,8 @@ def make_thumbnail(data, thumb_slice: int = None, fig_size: tuple = (1, 1), slic
     ax.set_axis_off()
     fig.add_axes(ax)
     plt.set_cmap('Greys')
-    show_slice = _scale_image(data.scalar).take(indices=thumb_slice, axis=slice_axis)
+    show_slice = _scale_image(data.scalar).take(
+        indices=thumb_slice, axis=slice_axis)
     ax.imshow(show_slice, aspect='equal', vmin=0, vmax=1, **kwargs)
     plt.show()
 
@@ -134,11 +138,13 @@ def make_gif(data, dpi: int = 96, save: bool = False, **kwargs):
     plt.set_cmap('Greys')
 
     gif_slices = _scale_image(data.scalar[::slice_save])
-    images = [[ax1.imshow(slices, vmin=0, vmax=255, **kwargs)] for slices in tqdm(gif_slices)]
+    images = [[ax1.imshow(slices, vmin=0, vmax=255, **kwargs)]
+              for slices in tqdm(gif_slices)]
 
     animation = anim.ArtistAnimation(fig, images)
     if save:
-        animation.save(f"{data.basepath}/{data.basename}.gif", writer='imagemagick', fps=7)
+        animation.save(f"{data.basepath}/{data.basename}.gif",
+                       writer='imagemagick', fps=7)
     else:
         plt.show()
 
@@ -162,7 +168,8 @@ def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_
         plt.plot(variances, 'b-', markersize=6, label='Heterogeneity Curve')
         plt.xlabel("Relative Radius")
     else:
-        plt.plot(radii, variances, 'b-', markersize=6, label='Heterogeneity Curve')
+        plt.plot(radii, variances, 'b-', markersize=6,
+                 label='Heterogeneity Curve')
         plt.xlabel("Absolute Radius")
 
     x = np.linspace(-2, 17, len(variances))
@@ -172,7 +179,8 @@ def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_
     bnd = bound[bound <= 0.0025]
     bound[bound <= 0.0025] = np.linspace(0.0025, 0.001, len(bnd))
 
-    plt.fill_between(range(len(variances)), bound, facecolor='g', alpha=0.3, label='Homogeneity Zone')
+    plt.fill_between(range(len(variances)), bound, facecolor='g',
+                     alpha=0.3, label='Homogeneity Zone')
 
     plt.fill_between(range(len(variances)), bound, ((0.035 * (1 - _sigmoid(x2)))) + 0.007, facecolor='r', alpha=0.3,
                      label='Heterogeneity Zone')

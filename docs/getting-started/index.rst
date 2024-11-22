@@ -45,12 +45,12 @@ The only prerequisite for installing DPM Tools is Python. We recommend you use t
 .. grid::
 
    .. grid-item-card:: More Instructions
-      :link: install
+      :link: installation
       :link-type: ref
       :class-title: dpm_tools-card-title
 
       For more detailed installation instructions, including installing optional dependencies, check out the
-      :ref:`install` page.
+      :ref:`installation` page.
 
 
 Tutorials
@@ -71,6 +71,7 @@ Authors
 =======
 
 .. grid::
+   
    .. grid-item-card:: Authors & Citation
       :link: authors
       :link-type: ref
