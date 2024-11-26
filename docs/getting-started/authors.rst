@@ -20,7 +20,7 @@ Special thanks to the following list of authors who have made substantial contri
 
 - Bernard Chang, (`@BC-Chang <https://github.com/BC-Chang/>`_)
 - Frieda Farias, (`@friedafarias <https://github.com/friedafarias>`_)
-- Çinar Turhan, (`@cinarturhan <https://github.com/cinarturhan/>`_)
+- Çınar Turhan, (`@cinarturhan <https://github.com/cinarturhan/>`_)
 - Ali Mohamed, (`@PG-Ali-E-Mohamed <https://github.com/PG-Ali-E-Mohamed/>`_)
 - Maša Prodanović, (`@dr-masha <https://github.com/dr-masha/>`_)
 

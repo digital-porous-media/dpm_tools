@@ -30,7 +30,3 @@ from ._maps import slicewise_edt, slicewise_mis, edt, sdt, mis, chords, time_of_
 from ._feature_utils import _morph_drain_config, _set_linear_trend
 
 from ._scalars import minkowski_functionals, morph_drain, heterogeneity_curve
-
-# from .binary_configs import *
-
-# from ._curves import *

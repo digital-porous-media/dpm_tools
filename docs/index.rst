@@ -11,3 +11,4 @@ Digital Porous Media Tools
 
    getting-started/index
    modules/index
+   tutorial/index

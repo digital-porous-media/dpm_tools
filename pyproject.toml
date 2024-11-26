@@ -35,7 +35,9 @@ dependencies = [
     "edt", 
     "scikit-fmm", 
     "connected-components-3d",
-    "pyfftw"]
+    "pyfftw",
+    "dpm-srm",
+    "dpm-srg"]
 
 #[tool.setuptools]
 #packages = ["dpm_tools"]
@@ -62,17 +64,14 @@ dev = [
     ]
 
 docs = [
+    "trimesh",
+    "scikit-image",
     "myst-nb",
     "pydata-sphinx-theme",
     "sphinx",
     "sphinx-copybutton",
     "sphinx-design",
     "sphinx-autodoc-typehints"]
-
-segment = [
-    "dpm_srm",
-    "dpm_srg"
-]
 
 [project.urls]
 Homepage = "https://github.com/digital-porous-media/"

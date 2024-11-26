@@ -3,7 +3,7 @@ import matplotlib.animation as anim
 import numpy as np
 from itertools import repeat
 from tqdm import tqdm
-from typing import Any
+from typing import Any, Tuple
 
 from ._vis_utils import _make_dir, _write_hist_csv, _scale_image
 from ..metrics._feature_utils import _sigmoid
@@ -151,7 +151,7 @@ def make_gif(data, dpi: int = 96, save: bool = False, **kwargs):
     return images
 
 
-def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_radii: bool = True) -> None:
+def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_radii: bool = True, fig=None, ax=None, **kwargs) -> Tuple[plt.Figure, plt.Axes]:
     """
     Plot the results of the porosity variance heterogeneity analysis with colored heterogeneous/homogenous zones.
 
@@ -161,16 +161,20 @@ def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_
         relative_radii: If True, the plotted radii are relative to the first window size. Otherwise, the absolute radii are shown.
 
     Returns:
-        None
+        fig, ax: Matplotlib figure and axes objects.
     """
-    plt.figure()
-    if relative_radii:
-        plt.plot(variances, 'b-', markersize=6, label='Heterogeneity Curve')
-        plt.xlabel("Relative Radius")
+    
+    if fig is None or ax is None:
+        fig1, ax1 = plt.subplots()
     else:
-        plt.plot(radii, variances, 'b-', markersize=6,
-                 label='Heterogeneity Curve')
-        plt.xlabel("Absolute Radius")
+        fig1, ax1 = fig, ax
+        
+    if relative_radii:
+        ax1.plot(variances, **kwargs)
+        ax1.set_xlabel("Relative Radius")
+    else:
+        ax1.plot(radii, variances, **kwargs)
+        ax1.set_xlabel("Absolute Radius")
 
     x = np.linspace(-2, 17, len(variances))
     x2 = np.linspace(-2, 6, len(variances))
@@ -179,14 +183,12 @@ def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_
     bnd = bound[bound <= 0.0025]
     bound[bound <= 0.0025] = np.linspace(0.0025, 0.001, len(bnd))
 
-    plt.fill_between(range(len(variances)), bound, facecolor='g',
-                     alpha=0.3, label='Homogeneity Zone')
+    ax1.fill_between(range(len(variances)), bound, facecolor='g',
+                     alpha=0.3, label='Homogeneity Zone' if fig is None else None)
 
-    plt.fill_between(range(len(variances)), bound, ((0.035 * (1 - _sigmoid(x2)))) + 0.007, facecolor='r', alpha=0.3,
-                     label='Heterogeneity Zone')
+    ax1.fill_between(range(len(variances)), bound, ((0.035 * (1 - _sigmoid(x2)))) + 0.007, facecolor='r', alpha=0.3,
+                     label='Heterogeneity Zone' if fig is None else None)
 
-    plt.ylabel("Porosity Variance")
+    ax1.set_ylabel("Porosity Variance")
 
-    plt.legend()
-
-    return
+    return fig1, ax1
