@@ -11,7 +11,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     Plots 3 orthogonal slices of a 3D image.
 
     Parameters:
-        data: A dataclass containing 3D image data
+        data: A np array containing 3D image data
         fig: Pyvista plotter object
         show_slices: List of slices in x, y, z to show. Default is middle slice in each direction.
         plotter_kwargs: Additional keyword arguments to pass to the plotter.
@@ -39,6 +39,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     assert 0 <= x_slice < data.nx, "X-slice value outside image dimensions"
     assert 0 <= y_slice < data.ny, "Y-slice value outside image dimensions"
     assert 0 <= z_slice < data.nz, "Z-slice value outside image dimensions"
+
 
     # Initialize plotter object
     if fig is None:
@@ -162,7 +163,9 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
+
     pv_image_obj = _wrap_array(data.scalar)
+ 
 
     if show_isosurface is None:
         show_isosurface = [(np.amax(data.scalar)+np.amin(data.scalar))/2]
@@ -239,9 +242,9 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
                         'factor': scale_factor}
 
     if vector_data.vector is not None:
-        glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space,
-                                                        ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
+        glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
 
+    # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
     x, y, z = np.mgrid[:vector_data.nx:glyph_space,
                        :vector_data.ny:glyph_space,
                        :vector_data.nz:glyph_space]
@@ -422,6 +425,7 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
         fig = _initialize_plotter(**plotter_kwargs)
 
     medial_axis = skimage.morphology.skeletonize(data.scalar)
+
     pv_image_obj = _wrap_array(medial_axis)
 
     contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
