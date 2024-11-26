@@ -19,12 +19,11 @@ This module contains functions for reading and writing 3D volumetric images from
     natural_sort
     combine_slices
     convert_filetype
-
-
+    download_file
 
 """
 
-from ._io_utils import find_files_with_ext, get_tiff_metadata, natural_sort, combine_slices, convert_filetype
+from ._io_utils import find_files_with_ext, get_tiff_metadata, natural_sort, combine_slices, convert_filetype, download_file
 
 from ._read_data import read_image, Image
 

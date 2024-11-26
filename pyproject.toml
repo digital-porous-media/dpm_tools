@@ -36,6 +36,7 @@ dependencies = [
     "scikit-fmm", 
     "connected-components-3d",
     "pyfftw",
+    "wget",
     "dpm-srm",
     "dpm-srg"]
 

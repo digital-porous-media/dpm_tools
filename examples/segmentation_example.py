@@ -11,7 +11,6 @@ seeds = np.random.randint(0, 5, size=(10, 10, 10), dtype=np.uint8)
 # print(segmented.dtype)
 # srm_obj.segment()
 segmented = srm(image[0].astype(np.uint16), Q=5.0)
-print(segmented)
 
 # Plot the result
 fig, ax = plt.subplots(1, 2, figsize=(10, 5))

@@ -1,5 +1,7 @@
 import numpy as np
-from typing import Tuple
+import matplotlib.pyplot as plt
+from scipy import stats
+from typing import Tuple, List, Dict
 import edt
 from ._minkowski_coeff import contributions_2d, contributions_3d
 from ._feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
@@ -172,3 +174,72 @@ def heterogeneity_curve(image: np.ndarray, no_radii: int = 50, n_samples_per_rad
         variance[i] = np.var(porosity)
 
     return radii, variance
+
+def _hist_stats(image: np.ndarray, nbins: int = 256) -> Dict:
+    """
+    Calculate histogram statistics of an image.
+
+    Parameters:
+        image: A 2D or 3D image.
+        nbins: Number of histogram bins. Defaults to 256.
+
+    Returns:
+        dict: A dictionary of image metadata and histogram statistics.
+        Includes the shape, dtype, min, max, mean, median, variance, skewness, and kurtosis.
+    """
+    
+    stats_dict = {'shape': image.shape, 
+                  'dtype': image.dtype,
+                  'min': np.amin(image),
+                  'max': np.amax(image),
+                  'mean': np.mean(image),
+                  'median': np.median(image),
+                  'variance': np.var(image)}
+    
+    hist, bin_edges = np.histogram(image.flatten(), bins=256)
+    bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+    
+    stats_dict['skewness'] = stats.skew(bin_centers)
+    stats_dict['kurtosis'] = stats.kurtosis(bin_centers, fisher=True)
+
+    return stats_dict
+
+def histogram_statistics(*images: np.ndarray, plot_histogram: bool = False, nbins: int = 256, legend_elem: List = []) -> List[Dict]:
+    """
+    Get the statistics of multiple images.
+
+    Parameters:
+        plot_histograms: Plot the image histograms. Defaults to False.
+        bins: Number of histogram bins. Defaults to 256.
+
+    Returns:
+        dict: A dictionary of image metadata and histogram statistics.
+        Includes the shape, dtype, min, max, mean, median, variance, skewness, and kurtosis.
+    """     
+    
+    img_stats = []
+    img_list = []
+    
+    for image in images:
+        stats = _hist_stats(image, nbins)
+        
+        print('-'*35)
+        print('Image statistics:')
+        print(f'\tShape: {stats["shape"]}')
+        print(f'\tData type: {stats["dtype"]}')
+        print(f'\tMin: {stats["min"]}, Max: {stats["max"]}, Mean: {stats["mean"]}\n')
+        
+        
+        img_stats.append(_hist_stats(image, nbins))
+        img_list.append(image.flatten())
+    
+    if plot_histogram:
+        assert len(legend_elem) == len(images), 'Number of legend elements must match the number of images'
+        fig, ax = plt.subplots()
+        ax.hist(img_list, bins=nbins, density=True, histtype='step', fill=False)
+        ax.set_xlabel('Image Value', fontsize=16)
+        ax.set_ylabel('Probability Density', fontsize=16)
+        ax.grid(True) 
+        ax.legend(legend_elem)
+
+    return img_stats
