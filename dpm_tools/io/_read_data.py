@@ -181,7 +181,7 @@ def _not_implemented():
     raise NotImplementedError("No support for this datafile type... yet")
 
 
-def read_image(read_path: pathlib.Path, **kwargs) -> np.ndarray:
+def read_image(read_path: str, **kwargs) -> np.ndarray:
     """
     A general use function for reading in an image of the implemented filetypes
     Currently supports reading in tiff, raw, and mat.
@@ -193,6 +193,7 @@ def read_image(read_path: pathlib.Path, **kwargs) -> np.ndarray:
     Returns:
         np.ndarray: The image array
     """
+    read_path = pathlib.Path(read_path)
 
     filetypes = {'.tiff': _read_tiff,
                  '.tif': _read_tiff,
