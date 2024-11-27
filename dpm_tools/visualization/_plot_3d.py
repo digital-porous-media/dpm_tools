@@ -169,9 +169,8 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
 
     if show_isosurface is None:
         show_isosurface = [(np.amax(data.scalar)+np.amin(data.scalar))/2]
-        warnings.warn('\n\nNo value provided for \'show_isosurfaces\' keyword.' +
-                      f'Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{
-                          np.amax(data.scalar)}).\n',
+        warnings.warn("\n\nNo value provided for \'show_isosurfaces\' keyword. " +
+                      f"Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{np.amax(data.scalar)}).\n",
                       stacklevel=2)
 
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
