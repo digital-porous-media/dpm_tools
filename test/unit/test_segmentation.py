@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.testing import assert_allclose
+import pytest
 import matplotlib.pyplot as plt
 from dpm_tools.segmentation import seeded_region_growing as srg, statistical_region_merging as srm
 # import pyvista as pv
