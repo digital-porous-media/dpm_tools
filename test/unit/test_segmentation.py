@@ -52,7 +52,7 @@ class TestSegmentation:
         assert seg_result.dtype == np.uint8, "Segmented image should be of type uint8"
         assert np.unique(seg_result).size <= np.unique(self.seeds2d).size, "Number of segments should not exceed number of seeds"
         assert np.all(seg_result >= np.amin(self.seeds2d)) and np.all(seg_result <= np.amax(self.seeds2d)), "Segment labels should be between 0 and 4"
-    @pytest.mark.skip(reason="Passes locally but runs out of memory on GitHub Actions")
+    
     def test_srg2d_u32(self):
         seg_result = srg(self.image2d.astype(np.uint32), self.seeds2d)
         seg_true = np.array([[4, 2, 1, 1, 2, 3, 1, 2, 2, 2],
@@ -107,7 +107,6 @@ class TestSegmentation:
         assert np.unique(seg_result).size <= np.unique(self.seeds3d).size, "Number of segments should not exceed number of seeds"
         assert np.all(seg_result >= np.amin(self.seeds3d)) and np.all(seg_result <= np.amax(self.seeds3d)), "Segment labels should be between 0 and 4"
     
-    @pytest.mark.skip(reason="Passes locally but runs out of memory on GitHub Actions")
     def test_srg3d_u32(self):
         seg_result = srg(self.image3d.astype(np.uint32), self.seeds3d)
         seg_true = np.array([[4, 2, 1, 1, 2, 3, 1, 2, 2, 2],
@@ -162,7 +161,7 @@ class TestSegmentation:
         assert_allclose(seg_result, seg_true, atol=1.5)
         assert seg_result.shape == self.image2d.shape, "Segmented image should have the same shape as input"
         assert seg_result.dtype == np.uint16, "Segmented image should be of type uint16"
-        
+    @pytest.mark.skip(reason="Passes locally but runs out of memory on GitHub Actions")    
     def test_srm2d_u32(self):
         seg_result = srm(self.image2d.astype(np.uint32), Q=5.0)
         seg_true = np.array([[4159147423, 2359534120, 1120177789, 1323907596, 4023327551, 2325579152,  3955417615,  865515529, 4294631142,  525965849],
@@ -212,7 +211,8 @@ class TestSegmentation:
         assert_allclose(seg_result[0], seg_true)
         assert seg_result.shape == self.image3d.shape, "Segmented image should have the same shape as input"
         assert seg_result.dtype == np.uint16, "Segmented image should be of type uint16"
-        
+    
+    @pytest.mark.skip(reason="Passes locally but runs out of memory on GitHub Actions")    
     def test_srm3d_u32(self):
         seg_result = srm(self.image3d.astype(np.uint32), Q=5.0)
         
