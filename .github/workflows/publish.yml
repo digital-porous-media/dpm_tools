@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
         python-version: ['3.12']
 
     steps:
@@ -31,6 +31,6 @@ jobs:
       - name: Upload to PyPI
         env:
           TWINE_USERNAME: "__token__"
-          TWINE_PASSWORD: ${{ secrets.TESTPYPI_TOKEN }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
         run: |
-          twine upload --repository testpypi dist/* --verbose
+          twine upload dist/* --verbose
