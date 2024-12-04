@@ -56,8 +56,8 @@ def _read_raw(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     metadata = kwargs['meta']
 
     assert all(key in metadata for key in ['nz', 'ny', 'nx', 'bits', 'signed', 'byte_order']), \
-        f"Image metadata dictionary must contain {
-            ['nz', 'ny', 'nx', 'bits', 'signed', 'byte_order']} - found {list(metadata.keys())}"
+        f"Image metadata dictionary must contain \
+            {['nz', 'ny', 'nx', 'bits', 'signed', 'byte_order']} - found {list(metadata.keys())}"
 
     bits = metadata['bits']
     signed = metadata['signed']
