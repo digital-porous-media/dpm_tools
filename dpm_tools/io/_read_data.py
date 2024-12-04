@@ -56,8 +56,8 @@ def _read_raw(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     metadata = kwargs['meta']
 
     assert all(key in metadata for key in ['nz', 'ny', 'nx', 'bits', 'signed', 'byte_order']), \
-        f"Image metadata dictionary must " \
-        f"contain {{'nz', 'ny', 'nx', 'bits', 'signed', 'byte_order'} - metadata.keys()}"
+        f"Image metadata dictionary must contain {
+            ['nz', 'ny', 'nx', 'bits', 'signed', 'byte_order']} - found {list(metadata.keys())}"
 
     bits = metadata['bits']
     signed = metadata['signed']
@@ -92,6 +92,7 @@ def _read_raw(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     return np.fromfile(filepath, dtype=datatype).reshape([nz, ny, nx])
 
 # TODO: Review this function
+
 
 def _read_nc(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     """
@@ -261,7 +262,8 @@ class Image:
 
         # If vector is populated
         if self.vector is not None:
-            self.magnitude = np.sqrt(self.vector[0]**2 + self.vector[1]**2 + self.vector[2]**2)
+            self.magnitude = np.sqrt(
+                self.vector[0]**2 + self.vector[1]**2 + self.vector[2]**2)
 
         self.nz, self.nx, self.ny = self.scalar.shape
         self.shape = (self.nz, self.nx, self.ny)
@@ -285,9 +287,11 @@ class Image:
         A utility method to read images in from a list of filepaths
         """
 
-        images = [read_image(fp, meta=self.meta[i]) if fp else None for i, fp in enumerate(self.filepaths)]
+        images = [read_image(fp, meta=self.meta[i])
+                  if fp else None for i, fp in enumerate(self.filepaths)]
 
-        assert len(images) == 1 or len(images) == 3 or len(images) == 4, f"You must provide a scalar, a vector, or both"
+        assert len(images) == 1 or len(images) == 3 or len(
+            images) == 4, f"You must provide a scalar, a vector, or both"
 
         if len(images) == 1:
             self.scalar = images[0]

@@ -212,8 +212,10 @@ def histogram_statistics(*images: np.ndarray, plot_histogram: bool = False, nbin
     Get the statistics of multiple images.
 
     Parameters:
+        *images: A list of 2D or 3D images.
         plot_histograms: Plot the image histograms. Defaults to False.
-        bins: Number of histogram bins. Defaults to 256.
+        nbins: Number of histogram bins. Defaults to 256.
+        legend_elem: A list of strings to use as legend labels. Defaults to an empty list.
 
     Returns:
         dict: A dictionary of image metadata and histogram statistics.
@@ -226,7 +228,7 @@ def histogram_statistics(*images: np.ndarray, plot_histogram: bool = False, nbin
     for image in images:
         stats = _hist_stats(image, nbins)
 
-        print('-'*35)
+        print('-' * 35)
         print('Image statistics:')
         print(f'\tShape: {stats["shape"]}')
         print(f'\tData type: {stats["dtype"]}')
@@ -234,17 +236,18 @@ def histogram_statistics(*images: np.ndarray, plot_histogram: bool = False, nbin
               stats["max"]}, Mean: {stats["mean"]}\n')
 
         img_stats.append(_hist_stats(image, nbins))
-        img_list.append(image.flatten())
 
     if plot_histogram:
         assert len(legend_elem) == len(
             images), 'Number of legend elements must match the number of images'
         fig, ax = plt.subplots()
-        ax.hist(img_list, bins=nbins, density=True,
-                histtype='step', fill=False)
+        for img, label in zip(images, legend_elem):
+            ax.hist(img.flatten(), bins=nbins, density=True,
+                    histtype='step', fill=False, label=label)
         ax.set_xlabel('Image Value', fontsize=16)
         ax.set_ylabel('Probability Density', fontsize=16)
         ax.grid(True)
-        ax.legend(legend_elem)
+        ax.legend()
+        # ax.legend(handles, labels)
 
     return img_stats

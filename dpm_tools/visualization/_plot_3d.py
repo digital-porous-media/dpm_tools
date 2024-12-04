@@ -3,6 +3,9 @@ import pyvista as pv
 from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap
 import warnings
 import skimage
+from copy import deepcopy
+import cc3d
+import scipy.stats
 
 
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
@@ -11,11 +14,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     Plots 3 orthogonal slices of a 3D image.
 
     Parameters:
-<<<<<<< HEAD
-        data: A dataclass containing 3D image data
-=======
         data: A np array containing 3D image data
->>>>>>> 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
         fig: Pyvista plotter object
         show_slices: List of slices in x, y, z to show. Default is middle slice in each direction.
         plotter_kwargs: Additional keyword arguments to pass to the plotter.
@@ -44,13 +43,8 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     assert 0 <= y_slice < data.ny, "Y-slice value outside image dimensions"
     assert 0 <= z_slice < data.nz, "Z-slice value outside image dimensions"
 
-
-<< << << < HEAD
-== == == =
-
->>>>>> > 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
-   # Initialize plotter object
-   if fig is None:
+    # Initialize plotter object
+    if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
     # Swapping axes for pyvista compatibility
@@ -79,8 +73,8 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                 pv_image_obj = _wrap_array(ax_swap_arr)
                 result = pv_image_obj.slice_orthogonal(
                     **self.kwargs, contour=True)
-                fig.add_mesh(result, name='timestep_mesh', **
-                             mesh_kwargs, show_scalar_bar=False)
+                fig.add_mesh(result, name='timestep_mesh',
+                             **mesh_kwargs, show_scalar_bar=False)
                 self.output.copy_from(result)
                 return
 
@@ -92,7 +86,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
         _ = fig.add_scalar_bar(
             position_x=0.9, position_y=0.2, height=0.5, vertical=True)
         fig.add_slider_widget(callback=lambda value: engine('z', int(value)),
-                              rng=[1, data.nz-1],
+                              rng=[1, data.nz - 1],
                               value=50,
                               pointa=(0.025, 0.1),
                               pointb=(0.31, 0.1),
@@ -100,7 +94,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                               fmt="%0.f",
                               style='modern')
         fig.add_slider_widget(callback=lambda value: engine('x', int(value)),
-                              rng=[1, data.nx-1],
+                              rng=[1, data.nx - 1],
                               value=50,
                               pointa=(0.35, 0.1),
                               pointb=(0.64, 0.1),
@@ -108,7 +102,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
                               fmt="%0.f",
                               style='modern')
         fig.add_slider_widget(callback=lambda value: engine('y', int(value)),
-                              rng=[1, data.ny-1],
+                              rng=[1, data.ny - 1],
                               value=50,
                               pointa=(0.67, 0.1),
                               pointb=(0.98, 0.1),
@@ -174,10 +168,10 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
     pv_image_obj = _wrap_array(data.scalar)
 
     if show_isosurface is None:
-        show_isosurface = [(np.amax(data.scalar)+np.amin(data.scalar))/2]
+        show_isosurface = [(np.amax(data.scalar) + np.amin(data.scalar)) / 2]
         warnings.warn("\n\nNo value provided for \'show_isosurfaces\' keyword. " +
                       f"Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},{
-                                                                            np.amax(data.scalar)}).\n",
+                          np.amax(data.scalar)}).\n",
                       stacklevel=2)
 
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
@@ -236,8 +230,9 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
     if glyph is None:
         glyph = pv.Arrow()
 
-    array = vector_data.magnitude[::glyph_space, ::glyph_space, ::glyph_space].ravel(
-    )/np.max(vector_data.magnitude)
+    array = vector_data.magnitude[::glyph_space,
+                                  ::glyph_space,
+                                  ::glyph_space].ravel() / np.max(vector_data.magnitude)
     array2 = np.sqrt(array)
     scale_factor = 20
     if glyph_kwargs is None:
@@ -248,36 +243,33 @@ def plot_glyph(vector_data, fig: pv.Plotter = None, glyph: pv.PolyData = None, g
                         'factor': scale_factor}
 
     if vector_data.vector is not None:
-<<<<<< < HEAD
-   glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space,
-                                                    ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
-
-== =====
-   glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space, ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
+        glyph_kwargs['orient'] = [vector_data.vector[i][::glyph_space,
+                                                        ::glyph_space,
+                                                        ::glyph_space] / np.max(vector_data.magnitude) for i in range(3)]
 
     # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
->>>>>> > 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
-   x, y, z = np.mgrid[:vector_data.nx:glyph_space,
+    x, y, z = np.mgrid[:vector_data.nx:glyph_space,
                        :vector_data.ny:glyph_space,
                        :vector_data.nz:glyph_space]
 
     # Pseudo mesh for scale bar of the figure
-    glyph_kwargs2 = {'scale': array*np.max(vector_data.magnitude),
+    glyph_kwargs2 = {'scale': array * np.max(vector_data.magnitude),
                      'orient': True,
                      'tolerance': 0.05,
                      'geom': glyph,
                      'factor': scale_factor}
     glyph_kwargs2['orient'] = [vector_data.vector[i][::glyph_space, ::glyph_space,
-                                                     ::glyph_space]/np.max(vector_data.magnitude) for i in range(3)]
+                                                     ::glyph_space] / np.max(vector_data.magnitude) for i in range(3)]
 
     fig2 = _initialize_plotter()
     mesh2 = pv.StructuredGrid(z, y, x)
-    mesh2['scalars'] = array*np.max(vector_data.magnitude)
+    mesh2['scalars'] = array * np.max(vector_data.magnitude)
     mesh2['vectors'] = np.column_stack((glyph_kwargs2['orient'][0].ravel(),
-                                       glyph_kwargs2['orient'][1].ravel(),
-                                       glyph_kwargs2['orient'][2].ravel()))
+                                        glyph_kwargs2['orient'][1].ravel(),
+                                        glyph_kwargs2['orient'][2].ravel()))
     [glyph_kwargs2.pop(pop_key) for pop_key in ['scale', 'orient']]
-    glyphs2 = mesh2.glyph(orient='vectors', scale='scalars', **glyph_kwargs2)
+    glyphs2 = mesh2.glyph(
+        orient='vectors', scale='scalars', **glyph_kwargs2)
     fig2.add_mesh(glyphs2)
 
     if plotter_kwargs is None:
@@ -352,7 +344,7 @@ def plot_streamlines(vector_data, fig: pv.Plotter = None, tube_radius: float = N
                                    **streamline_kwargs)
 
     if tube_radius is None:
-        tube_radius = 0.75/224 * vector_data.nz
+        tube_radius = 0.75 / 224 * vector_data.nz
 
     if mesh_kwargs is None:
         my_cmap, cmin, cmax = _custom_cmap(mesh['Magnitude'], 'gnuplot')
@@ -399,15 +391,112 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
     mesh['scalars'] = data.scalar.flatten(order="F")
 
-<<<<<< < HEAD
-   # data.scalar[data.scalar == 0.0] = np.nan
-== =====
-   data.scalar[data.scalar == 0.0] = np.nan
->>>>>> > 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
+    # data.scalar[data.scalar == 0.0] = np.nan
 
-   fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
+    fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
 
     return fig
+
+
+def extract_subset(data: np.ndarray, cube_size: int = 100, batch: int = 100, pore_class: int = 0) -> np.ndarray:
+    '''
+    Finds the best cubic subset for visaulizing the segmented dataset.
+
+    Parameters:
+        data: 3D numpy array, vector class from DPM Tools, Image class from DPM Tools.
+        cube_size: Size of the visalization cube, default is 100 (100x100x100).
+        batch: Batch size over which to calculate the stats, default is 100.
+
+    Returns:
+        np.ndarray: Cubic subset that maximizes the connected porosity
+    '''
+
+    if str(type(data)) == "<class 'dpm_tools.io.read_data.Vector'>":
+        scalar_data = deepcopy(data.image)
+    elif str(type(data)) == "<class 'dpm_tools.io.read_data.Image'>":
+        scalar_data = deepcopy(data)
+    else:
+        scalar_data = deepcopy(data)
+
+    if pore_class != 1:
+        scalar_data[scalar_data == pore_class] = 199
+        scalar_data[scalar_data != 199] = pore_class
+        scalar_data[scalar_data == 199] = 1
+
+    size = scalar_data.shape[0] * scalar_data.shape[1] * scalar_data.shape[2]
+    porosity = (scalar_data == 1).sum() / size
+
+    sample_size = cube_size
+
+    # Inner cube increment
+    inc = sample_size - int(sample_size * 0.5)
+
+    # One dimension of the given vector sample cube.
+    max_dim = len(scalar_data)
+
+    batch_for_stats = max_dim - sample_size  # Max possible batch number
+
+    # Or overwrite:
+    batch_for_stats = batch
+
+    stats_array = np.zeros(shape=(5, batch_for_stats))
+
+    i = 0
+    while i < batch_for_stats:
+        mini = np.random.randint(low=0, high=max_dim - sample_size)
+        maxi = mini + sample_size
+
+        scalar_boot = scalar_data[mini:maxi, mini:maxi, mini:maxi]
+        scalar_boot_inner = scalar_data[mini + inc:maxi - inc,
+                                        mini + inc:maxi - inc,
+                                        mini + inc:maxi - inc]
+
+        labels_out_outside, N = cc3d.largest_k(
+            scalar_boot, k=1,
+            connectivity=26, delta=0,
+            return_N=True,
+        )
+
+        index_outside, counts_outside = np.unique(
+            labels_out_outside, return_counts=True)
+        counts_outside_sum = np.sum(counts_outside[1:])
+
+        labels_out_inside, N = cc3d.largest_k(
+            scalar_boot_inner, k=1,
+            connectivity=26, delta=0,
+            return_N=True,
+        )
+
+        index_inside, counts_inside = np.unique(
+            labels_out_inside, return_counts=True)
+        counts_inside_sum = np.sum(counts_inside[1:])
+
+        porosity_selected = (scalar_boot == 1).sum() / sample_size**3
+
+        if (porosity_selected <= porosity * 1.2) & (porosity_selected >= porosity * 0.8):
+            stats_array[0, i] = counts_outside_sum
+            stats_array[1, i] = counts_inside_sum
+            stats_array[2, i] = porosity_selected
+            stats_array[3, i] = mini
+            stats_array[4, i] = scipy.stats.hmean([stats_array[0, i],
+                                                  stats_array[1, i]])
+            i += 1
+
+        else:
+            continue
+
+    best_index = np.argmax(stats_array[4, :])
+    best_subset_range = int(stats_array[3, best_index])
+
+    print(f'Original Porosity: {round(porosity * 100, 2)} %')
+    print(f'Subset Porosity: {round(stats_array[2, best_index] * 100, 2)} %')
+    print(f'Competent Subset: [{best_subset_range}:{best_subset_range + cube_size}, \
+           {best_subset_range}:{best_subset_range + cube_size}, {best_subset_range}:{best_subset_range + cube_size}]')
+
+    best_subset_range = (int(best_subset_range),
+                         int(best_subset_range + cube_size))
+
+    return best_subset_range, stats_array
 
 
 def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
@@ -441,11 +530,8 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
         fig = _initialize_plotter(**plotter_kwargs)
 
     medial_axis = skimage.morphology.skeletonize(data.scalar)
-<<<<<< < HEAD
-== =====
 
->>>>>> > 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
-   pv_image_obj = _wrap_array(medial_axis)
+    pv_image_obj = _wrap_array(medial_axis)
 
     contours_ma = pv_image_obj.contour(isosurfaces=[0.5])
     fig.add_mesh(contours_ma, style='wireframe', color='r',

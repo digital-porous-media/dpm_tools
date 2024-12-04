@@ -187,10 +187,6 @@ def convert_filetype(filepath: pathlib.Path, convert_to: str, **kwargs) -> None:
                 image=original_image, filetype=convert_to)
 
 
-<< << << < HEAD
-== == == =
-
-
 def download_file(url: str, save_path: str = ".") -> None:
     """
     Download a file from the provided URL and save it to the specified save path.
@@ -207,6 +203,3 @@ def download_file(url: str, save_path: str = ".") -> None:
     wget.download(url, out=save_path)
 
     return
-
-
->>>>>> > 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b

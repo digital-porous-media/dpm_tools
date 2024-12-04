@@ -161,38 +161,19 @@ def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_
         relative_radii: If True, the plotted radii are relative to the first window size. Otherwise, the absolute radii are shown.
 
     Returns:
-<<<<<<< HEAD
-        fig, ax: Matplotlib figure and axes object.
-    """
-    if fig is None and ax is None:
-        fig1, ax1 = plt.subplots()
-    else:
-        assert fig is not None and ax is not None, "Both fig and ax must be provided."
-        fig1, ax1 = fig, ax
-    # plt.figure()
-    if relative_radii:
-        ax1.plot(variances, markersize=6, **kwargs)
-        ax1.set_xlabel("Relative Radius")
-    else:
-        ax1.plot(radii, variances, markersize=6,
-                 **kwargs)
-
-
-== == == =
         fig, ax: Matplotlib figure and axes objects.
     """
-    
+
     if fig is None or ax is None:
         fig1, ax1 = plt.subplots()
     else:
         fig1, ax1 = fig, ax
-        
+
     if relative_radii:
         ax1.plot(variances, **kwargs)
         ax1.set_xlabel("Relative Radius")
     else:
         ax1.plot(radii, variances, **kwargs)
->>>>>>> 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
         ax1.set_xlabel("Absolute Radius")
 
     x = np.linspace(-2, 17, len(variances))
@@ -210,9 +191,4 @@ def plot_heterogeneity_curve(radii: np.ndarray, variances: np.ndarray, relative_
 
     ax1.set_ylabel("Porosity Variance")
 
-<<<<<<< HEAD
-    # plt.legend()
-
-=======
->>>>>>> 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
     return fig1, ax1
