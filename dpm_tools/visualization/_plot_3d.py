@@ -398,7 +398,7 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
     return fig
 
 
-def extract_subset(data: np.ndarray, cube_size: int = 100, batch: int = 100, pore_class: int = 0) -> np.ndarray:
+def extract_competent_subset(data: np.ndarray, cube_size: int = 100, batch: int = 100, pore_class: int = 0) -> np.ndarray:
     '''
     Finds the best cubic subset for visaulizing the segmented dataset.
 
