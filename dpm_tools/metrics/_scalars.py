@@ -232,8 +232,8 @@ def histogram_statistics(*images: np.ndarray, plot_histogram: bool = False, nbin
         print('Image statistics:')
         print(f'\tShape: {stats["shape"]}')
         print(f'\tData type: {stats["dtype"]}')
-        print(f'\tMin: {stats["min"]}, Max: {
-              stats["max"]}, Mean: {stats["mean"]}\n')
+        print(f'\tMin: {stats["min"]}, Max: \
+              {stats["max"]}, Mean: {stats["mean"]}\n')
 
         img_stats.append(_hist_stats(image, nbins))
 
