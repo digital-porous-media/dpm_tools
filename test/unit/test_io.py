@@ -6,6 +6,7 @@ from numpy.testing import assert_allclose
 import pathlib
 import porespy as ps
 
+
 class TestIO:
     def setup_class(self):
         self.path = pathlib.Path(__file__).parent
@@ -58,8 +59,6 @@ class TestIO:
         pass
 
 
-
-
 # import sys
 # sys.path.append('../..') #Add custom filepath here
 # import unittest
@@ -106,11 +105,10 @@ class TestIO:
 # test.test_find_tiff_files()
 # test.test_evaluate_dimensions()
 # test.test_sort_files()
-
 if __name__ == "__main__":
     tests = TestIO()
     tests.setup_class()
     for item in tests.__dir__():
         if item.startswith('test'):
-            print('running test: '+item)
+            print('running test: ' + item)
             tests.__getattribute__(item)()

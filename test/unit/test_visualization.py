@@ -10,13 +10,17 @@ import pyvista as pv
 import warnings
 warnings.filterwarnings("ignore")
 
+
 class TestVisualization:
     def setup_class(self):
         np.random.seed(12573)
-        spheres = ps.generators.overlapping_spheres(shape=[100, 100, 100], r=10, porosity=0.6).astype(np.uint8)
+        spheres = ps.generators.overlapping_spheres(
+            shape=[100, 100, 100], r=10, porosity=0.6).astype(np.uint8)
         self.spheres = dpm_io.Image(scalar=spheres)
-        self.thickness = dpm_io.Image(scalar=dpm_metrics.edt(self.spheres.scalar))
-        self.velocity = dpm_io.Image(scalar=spheres, vector=[self.thickness.scalar]*3)
+        self.thickness = dpm_io.Image(
+            scalar=dpm_metrics.edt(self.spheres.scalar))
+        self.velocity = dpm_io.Image(scalar=spheres, vector=[
+                                     self.thickness.scalar] * 3)
 
     def test_hist(self):
         plt.close('all')
@@ -25,14 +29,16 @@ class TestVisualization:
         n_figs_after = single_hist_fig.number
         assert n_figs_before < n_figs_after
 
-        patch_height = [patch.get_height() for patch in single_hist_fig.gca().patches]
-        assert_allclose(patch_height, [2.0019, 0.0, 0.0, 0.0, 2.9981000000000004])
+        patch_height = [patch.get_height()
+                        for patch in single_hist_fig.gca().patches]
+        assert_allclose(
+            patch_height, [2.0019, 0.0, 0.0, 0.0, 2.9981000000000004])
+
     def test_plot_slice(self):
         n_figs_before = plt.gcf().number
         slice_fig = dpm_vis.plot_slice(self.thickness)
         n_figs_after = slice_fig.number
         assert n_figs_before < n_figs_after
-
 
     def test_make_thumbnail(self):
         n_figs_before = plt.gcf().number
@@ -61,7 +67,6 @@ class TestVisualization:
         assert fig.mesh[0].n_cells
         assert fig.mesh[1].n_cells
         assert fig.mesh[2].n_cells
-
 
     def test_plot_isosurface(self):
         fig = dpm_vis.plot_isosurface(self.spheres, show_isosurface=[0.5])
@@ -94,12 +99,10 @@ class TestVisualization:
         assert fig.mesh.n_cells
 
 
-
-
 if __name__ == "__main__":
     tests = TestVisualization()
     tests.setup_class()
     for item in tests.__dir__():
         if item.startswith('test'):
-            print('running test: '+item)
+            print('running test: ' + item)
             tests.__getattribute__(item)()
