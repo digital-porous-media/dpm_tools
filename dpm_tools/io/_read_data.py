@@ -15,6 +15,8 @@ from collections.abc import Iterable
 #     'Image',
 #     'Vector'
 # ]
+
+
 def _read_tiff(filepath: pathlib.Path, full_path: bool = True, **kwargs) -> np.ndarray:
     """
     A utility function to read in TIFF files
@@ -55,7 +57,7 @@ def _read_raw(filepath: pathlib.Path, **kwargs) -> np.ndarray:
 
     assert all(key in metadata for key in ['nz', 'ny', 'nx', 'bits', 'signed', 'byte_order']), \
         f"Image metadata dictionary must " \
-        f"contain { {'nz', 'ny', 'nx', 'bits', 'signed', 'byte_order'} - metadata.keys()}"
+        f"contain {{'nz', 'ny', 'nx', 'bits', 'signed', 'byte_order'} - metadata.keys()}"
 
     bits = metadata['bits']
     signed = metadata['signed']
@@ -65,18 +67,21 @@ def _read_raw(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     nx = metadata['nx']
 
     # Assign data type based on input
-    if (signed.lower() == 'unsigned'): dt1 = 'u'
-    
-    elif (signed.lower() == 'signed'): dt1 = 'i'
-    
-    elif (signed.lower() == 'real'): dt1 = 'f'
+    if (signed.lower() == 'unsigned'):
+        dt1 = 'u'
+
+    elif (signed.lower() == 'signed'):
+        dt1 = 'i'
+
+    elif (signed.lower() == 'real'):
+        dt1 = 'f'
 
     dt2 = bits // 8
 
-    #Assign byte order based on input
-    if(byte_order.lower()[:3] == 'lit'):
+    # Assign byte order based on input
+    if (byte_order.lower()[:3] == 'lit'):
         bt = '<'
-    elif(byte_order.lower()[:3] == 'big'):
+    elif (byte_order.lower()[:3] == 'big'):
         bt = '>'
     else:
         bt = '|'
@@ -87,6 +92,7 @@ def _read_raw(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     return np.fromfile(filepath, dtype=datatype).reshape([nz, ny, nx])
 
 # TODO: Review this function
+
 def _read_nc(filepath: pathlib.Path, **kwargs) -> np.ndarray:
     """
     A utility function to read in netcdf files
@@ -102,37 +108,37 @@ def _read_nc(filepath: pathlib.Path, **kwargs) -> np.ndarray:
 
     array_name = ""
 
-    #Search metadata variables for the image array name
+    # Search metadata variables for the image array name
     for var in ds.variables.values():
         str_var = str(var)
         var_parts = str_var.split("\n")
 
-        #Find the shape variable
+        # Find the shape variable
         for part in var_parts:
             if "current shape" in part:
                 find_numbers = part.split(" ")
                 dimension_count = 0
 
-                #Search for arrays with more than 1 dimension
+                # Search for arrays with more than 1 dimension
                 for num_part in find_numbers:
-                    if(num_part.isalpha() == False and num_part not in string.punctuation):
+                    if (num_part.isalpha() == False and num_part not in string.punctuation):
                         dimension_count += 1
 
-        #Extract the name from the correct array
+        # Extract the name from the correct array
         if dimension_count > 1:
             var_list1 = var_parts[1]
             find_name = var_list1.split(" ")
             i = 0
 
-            #Add the name to a string
-            while(find_name[1][i] not in string.punctuation):
+            # Add the name to a string
+            while (find_name[1][i] not in string.punctuation):
                 array_name += find_name[1][i]
                 i += 1
-        
-    #Load the image into an array
+
+    # Load the image into an array
 
     image_array = ds[array_name][:]
-    
+
     return image_array
 
 
@@ -181,7 +187,7 @@ def _not_implemented():
     raise NotImplementedError("No support for this datafile type... yet")
 
 
-def read_image(read_path: pathlib.Path, **kwargs) -> np.ndarray:
+def read_image(read_path: str, **kwargs) -> np.ndarray:
     """
     A general use function for reading in an image of the implemented filetypes
     Currently supports reading in tiff, raw, and mat.
@@ -193,6 +199,7 @@ def read_image(read_path: pathlib.Path, **kwargs) -> np.ndarray:
     Returns:
         np.ndarray: The image array
     """
+    read_path = pathlib.Path(read_path)
 
     filetypes = {'.tiff': _read_tiff,
                  '.tif': _read_tiff,
@@ -228,7 +235,6 @@ class Image:
     filepaths: list = None
     meta: list = None
 
-
     def __post_init__(self):
 
         if self._check_dataclass_inputs():
@@ -241,7 +247,6 @@ class Image:
             if self.scalar.ndim == 2:
                 self.scalar = self.scalar[np.newaxis, :, :]
             self.nz, self.nx, self.ny = self.scalar.shape
-
 
         # Check if only vector
         if self.scalar is None and self.vector is not None:
@@ -291,5 +296,3 @@ class Image:
         elif len(images) == 4:
             self.scalar = images[0]
             self.vector = images[1:]
-
-

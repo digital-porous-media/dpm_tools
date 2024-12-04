@@ -1,11 +1,6 @@
 import numpy as np
-try:
-    import dpm_srg
-    import dpm_srm
-
-except ImportError as e:
-    raise ImportError("Segmentation module requires additional dependencies. "
-                      "Install them using 'pip install dpm-tools[segment]'") from e
+import dpm_srg
+import dpm_srm
 
 
 def statistical_region_merging(image: np.ndarray, Q: float = 5.0, normalize: bool = True):

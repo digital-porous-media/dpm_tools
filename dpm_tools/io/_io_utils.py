@@ -5,6 +5,7 @@ import numpy as np
 import pathlib
 from typing import Any, Tuple
 import re
+import wget
 
 from ._read_data import read_image
 from ._write_data import write_image
@@ -184,3 +185,28 @@ def convert_filetype(filepath: pathlib.Path, convert_to: str, **kwargs) -> None:
     new_filepath = filepath.with_suffix(convert_to)
     write_image(save_path=new_filepath.parent, save_name=new_filepath.name,
                 image=original_image, filetype=convert_to)
+
+
+<< << << < HEAD
+== == == =
+
+
+def download_file(url: str, save_path: str = ".") -> None:
+    """
+    Download a file from the provided URL and save it to the specified save path.
+
+    Args:
+        url (str): URL of the file to download
+        save_path (pathlib.Path, optional): File path where to save the file to. Defaults to pathlib.Path(".").
+
+    Returns:
+        None
+    """
+
+    # savepath = pathlib.Path(save_path)
+    wget.download(url, out=save_path)
+
+    return
+
+
+>>>>>> > 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b

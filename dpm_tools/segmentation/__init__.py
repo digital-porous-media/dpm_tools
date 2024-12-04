@@ -17,8 +17,3 @@ These are optional dependencies, and the functions will only be available if dpm
 """
 
 from ._segment import statistical_region_merging, seeded_region_growing
-
-__all__ = [
-    "statistical_region_merging",
-    "seeded_region_growing",
-]
