@@ -1,6 +1,8 @@
 import numpy as np
 import cc3d
-from scipy.ndimage import binary_erosion, binary_dilation
+# from scipy.ndimage import binary_erosion, binary_dilation
+from edt import edt
+from skimage.morphology import binary_erosion, binary_dilation
 from skimage.morphology import ball
 from typing import Tuple, Any
 
@@ -73,25 +75,37 @@ def _morph_drain_config(image: np.ndarray, radius: float) -> Tuple[np.ndarray, f
     seg_image = image > 0.0
     pore_vol = np.count_nonzero(seg_image)
 
-    seg_image_padded = np.pad(seg_image.astype(np.uint8), pad_width=1, mode='constant', constant_values=1)
-    strel = ball(radius)
+    seg_image_padded = np.pad(seg_image.astype(
+        np.uint8), pad_width=1, mode='constant', constant_values=1)
+    # strel = ball(radius)
 
-    eroded_image = binary_erosion(seg_image_padded, structure=strel)[1:-1, 1:-1, 1:-1]
+    image_edt = edt(seg_image_padded)
+    eroded_image = (image_edt > radius)[1:-1, 1:-1, 1:-1]
+    # eroded_image = binary_erosion(seg_image_padded, strel)[
+    #     1:-1, 1:-1, 1:-1]
 
     eroded_connected_component_labels, num_features = cc3d.connected_components(eroded_image, connectivity=6,
                                                                                 return_N=True)
 
-    label_check = eroded_connected_component_labels[0, eroded_connected_component_labels[0, :] != 0]
+    label_check = eroded_connected_component_labels[0,
+                                                    eroded_connected_component_labels[0, :] != 0]
     label_check = np.unique(label_check)
 
-    eroded_labels = np.zeros_like(eroded_connected_component_labels, dtype=bool)
+    eroded_labels = np.zeros_like(
+        eroded_connected_component_labels, dtype=bool)
     for labels in label_check:
-        eroded_labels = np.logical_or(eroded_labels, eroded_connected_component_labels == labels)
+        eroded_labels = np.logical_or(
+            eroded_labels, eroded_connected_component_labels == labels)
     eroded_labels = eroded_labels.astype(np.uint8)
-    eroded_labels = np.pad(eroded_labels, pad_width=1, mode='constant', constant_values=0)
+    eroded_labels = np.pad(eroded_labels, pad_width=1,
+                           mode='constant', constant_values=0)
 
     # Step 3: perform dilation on the labelled pore space
-    eroded_labels_dilated = binary_dilation(eroded_labels.astype(bool), structure=strel)[1:-1, 1:-1, 1:-1]
+    inverted_image = ~eroded_labels
+    eroded_image_edt = edt(inverted_image)
+    eroded_labels_dilated = (eroded_image_edt <= radius)[1:-1, 1:-1, 1:-1]
+    # eroded_labels_dilated = binary_dilation(
+    #     eroded_labels.astype(bool), strel)[1:-1, 1:-1, 1:-1]
 
     eroded_labels_dilated = eroded_labels_dilated.astype(np.uint8)
     eroded_labels_dilated[np.logical_not(eroded_labels_dilated)] = 2
@@ -132,7 +146,8 @@ def _get_heterogeneity_centers_3d(image_shape: Tuple[int, ...], radius: int,
     rw_mx, col_mx, z_mx = mx.astype(int)
     # ----------------------------------------------------
     if grid:
-        centers = _get_heterogeneity_grid_points(image_shape, n_samples_per_radius)
+        centers = _get_heterogeneity_grid_points(
+            image_shape, n_samples_per_radius)
 
     else:
         # ------random centroids----------------------
@@ -181,6 +196,7 @@ def create_kernel(kernel_size, arrlib):
     kernel = arrlib.ones(kernel_size, dtype=np.float64)
     return kernel
 
+
 def pad_to_size(array, target_shape, pad_mode='reflect'):
     """
     Pad an array to the given target shape.
@@ -193,16 +209,22 @@ def pad_to_size(array, target_shape, pad_mode='reflect'):
     Return:
         np.ndarray: Padded array
     """
-    assert array.ndim == len(target_shape), "Array and target dimensions must match"
-     # Check that the target shape is larger than or equal to the array shape
+    assert array.ndim == len(
+        target_shape), "Array and target dimensions must match"
+    # Check that the target shape is larger than or equal to the array shape
     if any(ts < s for ts, s in zip(target_shape, array.shape)):
-        raise ValueError("Target shape must be greater than or equal to the array shape in all dimensions")
+        raise ValueError(
+            "Target shape must be greater than or equal to the array shape in all dimensions")
 
-    min_idx = [(target_shape[i] - array.shape[i]) // 2 for i in range(array.ndim)]
-    max_idx = [target_shape[i] - min_idx[i] - array.shape[i] for i in range(array.ndim)]
-    padding_width = tuple([(min_idx[i], max_idx[i]) for i in range(len(min_idx))])
+    min_idx = [(target_shape[i] - array.shape[i]) //
+               2 for i in range(array.ndim)]
+    max_idx = [target_shape[i] - min_idx[i] - array.shape[i]
+               for i in range(array.ndim)]
+    padding_width = tuple([(min_idx[i], max_idx[i])
+                          for i in range(len(min_idx))])
 
     return np.pad(array, pad_width=padding_width, mode=pad_mode)
+
 
 def _centered(arr, newshape, support_size, arrlib):
     # Return the center newshape portion of the array.
@@ -210,7 +232,6 @@ def _centered(arr, newshape, support_size, arrlib):
     currshape = arrlib.array(arr.shape)
     myslice = [slice(support_size[k], currshape[k]) for k in range(arr.ndim)]
     arr = arr[tuple(myslice)]
-
 
     # target_size = arrlib.array([newshape[i] + support_size[i] - 1 for i in range(len(support_size))])
     # print(newshape, currshape)
@@ -229,4 +250,3 @@ def _centered(arr, newshape, support_size, arrlib):
     # endind = startind + newshape
     myslice = [slice(startind[k], endind[k]) for k in range(len(endind))]
     return arr[tuple(myslice)]
-

@@ -384,7 +384,7 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
     mesh['scalars'] = data.scalar.flatten(order="F")
 
-    data.scalar[data.scalar == 0.0] = np.nan
+    # data.scalar[data.scalar == 0.0] = np.nan
 
     fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
 

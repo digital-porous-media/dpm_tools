@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Tuple
 import edt
+import matplotlib.pyplot as plt
 from ._minkowski_coeff import contributions_2d, contributions_3d
 from ._feature_utils import _morph_drain_config, _get_heterogeneity_centers_3d
 from ._minkowski_utils import get_configs_histogram_2d, get_configs_histogram_3d
