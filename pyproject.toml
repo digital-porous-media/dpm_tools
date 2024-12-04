@@ -65,11 +65,8 @@ dev = [
     ]
 
 docs = [
-<<<<<<< HEAD
-=======
     "trimesh",
     "scikit-image",
->>>>>>> 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
     "myst-nb",
     "pydata-sphinx-theme",
     "sphinx",
@@ -77,14 +74,6 @@ docs = [
     "sphinx-design",
     "sphinx-autodoc-typehints"]
 
-<<<<<<< HEAD
-segment = [
-    "dpm_srm",
-    "dpm_srg"
-]
-
-=======
->>>>>>> 3dfbfc1db602ad1d542da0ed78e2787f6f89c60b
 [project.urls]
 Homepage = "https://github.com/digital-porous-media/"
 Repository = "https://github.com/digital-porous-media/dpm_tools"
