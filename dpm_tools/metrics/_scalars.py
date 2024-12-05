@@ -119,9 +119,6 @@ def morph_drain(image: np.ndarray, target_saturation: float = 0.1,
         r_crit_new -= delta_r * r_crit_old
         radii.append(r_crit_new)
         config, sw_new = _morph_drain_config(image, r_crit_new)
-        if sw_old < sw_new:
-            radii.pop()
-            break
         sw.append(sw_new)
         sw_diff_new = abs(sw_new - target_saturation)
         print(r_crit_new, sw_new)
