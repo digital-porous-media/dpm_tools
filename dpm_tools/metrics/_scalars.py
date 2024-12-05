@@ -5,7 +5,6 @@ from typing import Tuple, List, Dict
 from scipy import stats
 import matplotlib.pyplot as plt
 import edt
-from typing import Tuple
 import numpy as np
 
 
@@ -106,7 +105,8 @@ def morph_drain(image: np.ndarray, target_saturation: float = 0.1,
     sw_diff_new = 1.
 
     img_edt = edt.edt(image)
-    r_crit_old = r_crit_new = min(initial_radius, img_edt.max())
+    r_crit_old = min(initial_radius, img_edt.max())
+    r_crit_new = min(initial_radius, img_edt.max())
 
     radii = []
     sw = []
@@ -119,6 +119,9 @@ def morph_drain(image: np.ndarray, target_saturation: float = 0.1,
         r_crit_new -= delta_r * r_crit_old
         radii.append(r_crit_new)
         config, sw_new = _morph_drain_config(image, r_crit_new)
+        if sw_old < sw_new:
+            radii.pop()
+            break
         sw.append(sw_new)
         sw_diff_new = abs(sw_new - target_saturation)
         print(r_crit_new, sw_new)
