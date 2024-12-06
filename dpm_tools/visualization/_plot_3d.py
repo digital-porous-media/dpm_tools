@@ -490,8 +490,8 @@ def extract_competent_subset(data: np.ndarray, cube_size: int = 100, batch: int 
 
     print(f'Original Porosity: {round(porosity * 100, 2)} %')
     print(f'Subset Porosity: {round(stats_array[2, best_index] * 100, 2)} %')
-    print(f'Competent Subset: [{best_subset_range}:{best_subset_range + cube_size}, \
-           {best_subset_range}:{best_subset_range + cube_size}, {best_subset_range}:{best_subset_range + cube_size}]')
+    print(f'Competent Subset: [{best_subset_range}:{best_subset_range + cube_size},'+
+          f'{best_subset_range}:{best_subset_range + cube_size}, {best_subset_range}:{best_subset_range + cube_size}]')
 
     best_subset_range = (int(best_subset_range),
                          int(best_subset_range + cube_size))
@@ -499,7 +499,7 @@ def extract_competent_subset(data: np.ndarray, cube_size: int = 100, batch: int 
     return best_subset_range, stats_array
 
 
-def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
+def plot_medial_axis(data, fig: pv.Plotter = None, pore_class=0, interactive=False,show_isosurface: list = None,
                      mesh_kwargs: dict = None, plotter_kwargs: dict = None, notebook=False) -> pv.Plotter:
     """
     Plots an interactive visual with a medial axis and a 3D isosurface of given data.
@@ -516,6 +516,13 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
     """
 
     # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
+    if str(type(data)) == "<class 'dpm_tools.io.read_data.Vector'>":
+        data = deepcopy(data.image)
+    elif str(type(data)) == "<class 'dpm_tools.io.read_data.Image'>":
+        data = deepcopy(data.scalar)
+    else:
+        data = deepcopy(data)
+
     if mesh_kwargs is None:
         mesh_kwargs = {'opacity': 0.45,
                        'smooth_shading': True,
@@ -526,10 +533,18 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
     if plotter_kwargs is None:
         plotter_kwargs = {}
 
+    pv.set_jupyter_backend('server')
     if fig is None:
         fig = _initialize_plotter(**plotter_kwargs)
 
-    medial_axis = skimage.morphology.skeletonize(data.scalar)
+    if pore_class==1:
+        inv_data_8bit = np.invert(data)
+        inv_data = skimage.exposure.rescale_intensity(inv_data_8bit,out_range=(0,1)).astype('int')
+        medial_axis = skimage.morphology.skeletonize(inv_data)
+    elif pore_class==0:
+        medial_axis = skimage.morphology.skeletonize(data)
+    else: 
+        raise ValueError('pore_class should either be 0 or 1.')
 
     pv_image_obj = _wrap_array(medial_axis)
 
@@ -537,6 +552,17 @@ def plot_medial_axis(data, fig: pv.Plotter = None, show_isosurface: list = None,
     fig.add_mesh(contours_ma, style='wireframe', color='r',
                  line_width=2, name='medial_axis')
 
-    fig = plot_isosurface(data, fig=fig, mesh_kwargs=mesh_kwargs)
+    pv_obj_sample = _wrap_array(np.pad(data, ((1, 1), (1, 1), (1, 1)), mode='constant', constant_values=1))
+    contours_sample = pv_obj_sample.contour(isosurfaces=[0.5])
 
-    return fig
+
+    def my_plane_func(normal, origin):
+        fig.add_mesh(contours_sample.clip_closed_surface(normal='-z', origin=origin),
+                    name='arrows',color = (200 / 255, 181 / 255, 152 / 255))
+
+    if interactive == True:
+        fig.add_plane_widget(my_plane_func, normal='z',origin=[0, 0, medial_axis.shape[2]+2])
+    else:
+        fig.add_plane_widget(my_plane_func, normal='z',origin=[0, 0, medial_axis.shape[2]/2])
+    fig.show()
+
