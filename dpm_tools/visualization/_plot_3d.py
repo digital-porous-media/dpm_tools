@@ -565,5 +565,6 @@ def plot_medial_axis(data, fig: pv.Plotter = None, pore_class=0, interactive=Fal
         fig.add_plane_widget(my_plane_func, normal='z',origin=[0, 0, medial_axis.shape[2]+2])
     else:
         fig.add_plane_widget(my_plane_func, normal='z',origin=[0, 0, medial_axis.shape[2]/2])
-    fig.show()
+    
+    return fig
 
