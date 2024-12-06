@@ -516,9 +516,9 @@ def plot_medial_axis(data, fig: pv.Plotter = None, pore_class=0, interactive=Fal
     """
 
     # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
-    if str(type(data)) == "<class 'dpm_tools.io.read_data.Vector'>":
+    if str(type(data)) == "<class 'dpm_tools.io._read_data.Vector'>":
         data = deepcopy(data.image)
-    elif str(type(data)) == "<class 'dpm_tools.io.read_data.Image'>":
+    elif str(type(data)) == "<class 'dpm_tools.io._read_data.Image'>":
         data = deepcopy(data.scalar)
     elif inspect.isclass(data):
         data = deepcopy(data.image)
