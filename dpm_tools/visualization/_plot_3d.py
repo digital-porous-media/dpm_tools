@@ -1,5 +1,6 @@
 import numpy as np
 import pyvista as pv
+from dpm_tools.io import Image
 from ._3d_vis_utils import _initialize_plotter, _wrap_array, _custom_cmap
 import warnings
 import skimage
@@ -516,9 +517,7 @@ def plot_medial_axis(data, fig: pv.Plotter = None, pore_class=0, interactive=Fal
     """
 
     # plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)
-    if str(type(data)) == "<class 'dpm_tools.io._read_data.Vector'>":
-        data = deepcopy(data.image)
-    elif str(type(data)) == "<class 'dpm_tools.io._read_data.Image'>":
+    if isinstance(data, Image):
         data = deepcopy(data.scalar)
     elif inspect.isclass(data):
         data = deepcopy(data.image)
