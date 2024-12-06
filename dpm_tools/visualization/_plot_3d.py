@@ -6,7 +6,7 @@ import skimage
 from copy import deepcopy
 import cc3d
 import scipy.stats
-
+import inspect
 
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
                       mesh_kwargs: dict = None, slider: bool = False) -> pv.Plotter:
@@ -520,6 +520,8 @@ def plot_medial_axis(data, fig: pv.Plotter = None, pore_class=0, interactive=Fal
         data = deepcopy(data.image)
     elif str(type(data)) == "<class 'dpm_tools.io.read_data.Image'>":
         data = deepcopy(data.scalar)
+    elif inspect.isclass(data):
+        data = deepcopy(data.image)
     else:
         data = deepcopy(data)
 
