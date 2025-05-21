@@ -15,7 +15,7 @@ Pore scale characterization metrics
     mis
     slicewise_edt
     slicewise_mis
-    chords
+    ellipse_area
     time_of_flight
     constriction_factor
     minkowski_functionals
@@ -26,7 +26,7 @@ Pore scale characterization metrics
     histogram_statistics
 """
 
-from ._maps import slicewise_edt, slicewise_mis, edt, sdt, mis, chords, time_of_flight, constriction_factor, minkowski_map
+from ._maps import slicewise_edt, slicewise_mis, edt, sdt, mis, ellipse_area, time_of_flight, constriction_factor, minkowski_map
 
 from ._feature_utils import _morph_drain_config, _set_linear_trend
 

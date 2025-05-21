@@ -8,18 +8,23 @@ import edt
 import numpy as np
 
 
-def minkowski_functionals(image: np.ndarray) -> Tuple:
+def minkowski_functionals(image: np.ndarray, pad=True) -> Tuple:
     """
     Compute the 2D or 3D Minkowski functionals from a Numpy array.
 
     Parameters:
         image: The binary image where the phase of interest is 1. Datatype should be 'uint8'
+        pad: If true, pad the image with phase zero. Default = True
     Returns:
         Tuple, float: For 2D images, returns a tuple of area, perimeter, and Euler characteristic. For 3D images, returns
         a tuple of volume, surface area, integral mean curvature, and Euler characeteristic.
     """
     if image.dtype != np.uint8:
         image = image.astype(np.uint8)
+    
+    if pad:
+        image = np.pad(image, 1, mode='constant', constant_values=0)
+
     if image.ndim == 2:
         return _minkowski_2d(image)
     elif image.ndim == 3:
@@ -37,7 +42,6 @@ def _minkowski_2d(image: np.ndarray) -> Tuple[float, float, float]:
     Returns:
         Tuple[float, float, float]: Area, perimeter, radius of curvature
     """
-    image = np.pad(image, ((1, 1), (1, 1)), mode='constant', constant_values=0)
 
     # Get the isotropic configurations (3D)
     nx, ny = image.shape
@@ -60,8 +64,6 @@ def _minkowski_3d(image: np.ndarray) -> Tuple[float, float, float, float]:
     Returns:
         Tuple[float, float, float, float]: Volume, surface area, mean curvature, Euler characteristic
     """
-    image = np.pad(image, ((1, 1), (1, 1), (1, 1)),
-                   mode='constant', constant_values=0)
 
     # Get the isotropic configurations (3D)
     nx, ny, nz = image.shape

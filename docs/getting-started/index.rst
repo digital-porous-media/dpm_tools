@@ -3,7 +3,7 @@ Getting Started
 
 Welcome to Digital Porous Media (DPM) Tools Documentation! DPM Tools is a collection of Python tools and workflows to help streamline analysis of digital porous media images. 
 
-See our group's online repository, `Digital Rocks Portal <https://www.digitalrocksportal.org/>`_ for an excellent source of data to use these tools with!
+See our group's online repository, `Digital Porous Media Portal <https://https://digitalporousmedia.org/>`_ for an excellent source of data to use these tools with!
 
 
 .. toctree ::
@@ -17,18 +17,7 @@ Installation
 ============
 The only prerequisite for installing DPM Tools is Python. We recommend you use the `Anaconda Distribution <https://www.anaconda.com/>`_.
 
-.. grid:: 2
-
-    .. grid-item-card:: Install via Conda
-       :class-title: dpm_tools-card-title
-
-       DPM Tools is available on `conda-forge
-       <https://anaconda.org/conda-forge/dpm-tools>`_.
-
-       .. code-block:: bash
-
-          conda install -c conda-forge dpm-tools
-
+.. grid::
 
     .. grid-item-card:: Install via Pip
        :columns: auto
@@ -61,11 +50,12 @@ We have provided a variety of notebook tutorials for you to get started using DP
 .. grid::
 
    .. grid-item-card:: Tutorial
-      :link: https://digital-porous-media.github.io/dpm_tools/html/tutorials
+      :link: https://digital-porous-media.github.io/dpm_tools/html/tutorials/index.html
       :class-title: dpm_tools-card-title
 
-      The best place to get started is our `tutorial <https://digital-porous-media.github.io/dpm_tools/html/tutorials>`_.
+      The best place to get started is our `tutorial <https://digital-porous-media.github.io/dpm_tools/html/tutorials/index.html>`_.
 
+.. _authors:
 
 Authors
 =======

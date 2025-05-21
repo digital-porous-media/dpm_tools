@@ -1,12 +1,12 @@
 # Digital Porous Media (DPM) Tools
 Welcome to DPM Tools! Our team at The University of Texas at Austin has put together a collection of Python tools and workflows to help streamline analysis of digital porous media images. 
 
-Our intent is for these tools to be used with [Digital Porous Media Portal](<https://www.digitalporousmedia.org/>) (formerly Digital Rocks Portal), an excellent source of data! The Portal has undergone significant redesign, and we are excited to unveil it with these integrated tools!
+Our intent is for these tools to be used with [Digital Porous Media Portal](<https://digitalporousmedia.org/>) (formerly Digital Rocks Portal), an excellent source of data! The Portal has undergone significant redesign, and we are excited to unveil it with these integrated tools!
 
 ## Capabilities
 The Digital Porous Media team is working hard on adding new features and making improvements to this toolbox. So far, DPM Tools is comprised of the following modules:
 
-- ```io```: Tools for obtaining, reading, and writing digital porous media images in a variety of file formats.
+- ```io```: Tools for reading and writing digital porous media images in a variety of file formats.
 - ```metrics```: Functions for quantifying geometric properties of images
 - ```segmentation```: Algorithms for classifying phases within an image
 - ```visualization```: Workflows for 3D visualization

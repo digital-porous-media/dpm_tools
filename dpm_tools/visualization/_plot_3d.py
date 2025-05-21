@@ -138,7 +138,7 @@ def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, pl
     return fig
 
 
-def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, mesh_kwargs: dict = None,
+def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, smooth_kwargs: dict = None, mesh_kwargs: dict = None,
                     plotter_kwargs: dict = None) -> pv.Plotter:
     """
     Plots 3D isosurfaces
@@ -147,7 +147,8 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
         data: A dataclass containing 3D labeled image data
         fig: Pyvista plotter object
         show_isosurface: List of isosurfaces to show. Default is single isosurface at average between maximum and minimum label values.
-        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.
+        smooth_kwargs: Pyvista smoothing keyword arguments from [pyvista.PolyDataFilters.smooth](https://docs.pyvista.org/api/core/_autosummary/pyvista.polydatafilters.smooth#pyvista.PolyDataFilters.smooth). Defaults to None = No surface smoothing.
+        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter. Defaults to None.
         plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.
     Returns:
         pv.Plotter: PyVista plotter object with added orthogonal slice mesh.
@@ -174,8 +175,10 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
                       f"Using the midpoint of the isosurface array instead ({np.amin(data.scalar)},\
                       {np.amax(data.scalar)}).\n",
                       stacklevel=2)
-
+    
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
+    if smooth_kwargs is not None:
+        contours.smooth(**smooth_kwargs)
 
     fig.add_mesh(contours, **mesh_kwargs)
 
@@ -394,7 +397,7 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
 
     # data.scalar[data.scalar == 0.0] = np.nan
 
-    fig.add_volume(mesh, opacity='foreground', **mesh_kwargs)
+    fig.add_volume(mesh, **mesh_kwargs)
 
     return fig
 

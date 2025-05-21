@@ -18,7 +18,7 @@ __all__ = [
     "sdt",
     "mis",
     "slicewise_mis",
-    "chords",
+    "ellipse_area",
     "time_of_flight",
     "constriction_factor",
     "minkowski_map"
@@ -111,7 +111,7 @@ def slicewise_mis(image, **kwargs) -> np.ndarray:
     return thickness
 
 
-def chords(image) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def ellipse_area(image) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Compute the ellipse area based on the chord lengths in slices orthogonal to direction of flow
     Assumes img = 1 for pore space, 0 for grain space

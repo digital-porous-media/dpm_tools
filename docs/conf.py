@@ -5,16 +5,20 @@
 # -- Path Info ---------------------------------------------------------------
 import os
 import sys
+import shutil
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../examples'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'DPM_Tools'
 copyright = '2024, Digital Porous Media Team'
 author = 'Digital Porous Media Team'
+
+shutil.copytree("../examples", "examples", dirs_exist_ok=True)
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -30,6 +34,11 @@ extensions = [
     'sphinx_copybutton',
     'sphinx_design',
     'myst_nb',
+]
+
+myst_enable_extensions = [
+    "amsmath",
+    "dollarmath",
 ]
 
 add_module_names = False  # dpm_tools.visualization -> visualization
@@ -74,6 +83,5 @@ html_theme_options = {
     "show_prev_next": False,
     "icon_links_label": "Quick Links",
     "use_edit_page_button": False,
-    "search_bar_position": "sidebar",
     "navbar_align": "left",
 }

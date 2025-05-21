@@ -17,33 +17,37 @@ Required dependencies
 ---------------------
 DPM Tools requires the following packages:
 
-- numpy
-- matplotlib
-- pyvista[all]
-- pandas
-- tifffile 
-- exifread
-- netcdf4
-- h5py
-- porespy
-- edt
-- scikit-fmm
-- connected-components-3d
-- pyfftw
-
-Optional dependencies
----------------------
-DPM Tools also includes some optional dependencies. For now, these are limited to the optional segmentation module, which include:
-
-+--------------------+-----------------------------------------+
-| Package            | Purpose                                 |
-+====================+=========================================+
-| ``dpm_srm``        | Statistical region merging segmentation |
-+--------------------+-----------------------------------------+
-| ``dpm_srg``        | Seeded region growing segmentation      |
-+--------------------+-----------------------------------------+
-
-Look out for more modules in the future!
++-------------------------+---------------------------------------------------------+
+| Dependency              | Purpose                                                 |
++=========================+=========================================================+
+| numpy                   | Core numerical computations and array operations.       |
++-------------------------+---------------------------------------------------------+
+| matplotlib              | Plotting and data visualization.                        |
++-------------------------+---------------------------------------------------------+
+| pyvista[all]            | 3D plotting and mesh analysis using VTK under the hood. |
++-------------------------+---------------------------------------------------------+
+| pandas                  | Data manipulation and tabular data handling.            |
++-------------------------+---------------------------------------------------------+
+| tifffile                | Reading and writing TIFF image files.                   |
++-------------------------+---------------------------------------------------------+
+| exifread                | Extracting metadata (EXIF) from image files.            |
++-------------------------+---------------------------------------------------------+
+| netcdf4                 | Reading and writing NetCDF files for scientific data.   |
++-------------------------+---------------------------------------------------------+
+| h5py                    | Interfacing with HDF5 datasets.                         |
++-------------------------+---------------------------------------------------------+
+| porespy                 | Image analysis for porous media.                        |
++-------------------------+---------------------------------------------------------+
+| edt                     | Euclidean distance transforms on binary images.         |
++-------------------------+---------------------------------------------------------+
+| connected-components-3d | 3D connected component labeling for binary volumes.     |
++-------------------------+---------------------------------------------------------+
+| pyfftw                  | Fast Fourier transforms using the FFTW library.         |
++-------------------------+---------------------------------------------------------+
+| dpm_srm                 | Statistical region merging segmentation.                |
++-------------------------+---------------------------------------------------------+
+| dpm_srg                 | Seeded region growing segmentation.                     |
++-------------------------+---------------------------------------------------------+
 
 
 Install stable releases
@@ -56,21 +60,13 @@ Stable releases can be installed from `PyPI <https://pypi.org/project/dpm-tools>
 
    pip install dpm_tools
 
-To install with the optional segmentation module, install using ``pip`` with::
 
-   pip install dpm_tools[segment]
+.. Installing with Conda:
+.. ----------------------
 
+.. Alternatively, DPM Tools can be installed with ``conda``
 
-Installing with Conda:
-----------------------
-
-Alternatively, DPM Tools can be installed with ``conda``::
-
-   conda install -c conda-forge dpm_tools
-
-To install with the optional segmentation module, install using ``conda`` with::
-
-   conda install -c conda-forge dpm_tools[segment]
+..    conda install -c conda-forge dpm_tools
 
 
 Installing the Development Branch from GitHub 
