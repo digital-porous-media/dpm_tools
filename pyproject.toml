@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dpm_tools"
-version = "0.0.4"
+version = "0.0.5"
 description = "A collection of tools and workflows to streamline the processing and visualization of porous media images."
 readme = "README.md"
 authors = [{ name = "Digital Porous Media", email = "bcchang@utexas.edu" }]

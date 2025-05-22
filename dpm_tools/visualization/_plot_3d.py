@@ -178,7 +178,7 @@ def plot_isosurface(data, fig: pv.Plotter = None, show_isosurface: list = None, 
     
     contours = pv_image_obj.contour(isosurfaces=show_isosurface)
     if smooth_kwargs is not None:
-        contours.smooth_taubin(**smooth_kwargs)
+        contours = contours.smooth_taubin(**smooth_kwargs)
 
     fig.add_mesh(contours, **mesh_kwargs)
 
