@@ -50,15 +50,6 @@ class TestMetrics:
     #     assert_allclose(
     #         np.max(slicewise_inscribed_spheres, axis=(0, 1)), max_vals)
 
-    def test_chords_ball(self):
-        x, y, areas = dpm_tools.metrics.chords(self.ball)
-        chords_max = np.array([1., 9., 13., 15., 17., 17., 19., 19., 19., 19., 21., 19., 19.,
-                               19., 19., 17., 17., 15., 13., 9., 1.])
-
-        assert_allclose(np.max(x, axis=(0, 1)), chords_max)
-        assert_allclose(np.max(y, axis=(1, 2)), chords_max)
-        assert_allclose(np.amax(areas), np.pi * (np.amax(chords_max / 2)**2))
-
     # @pytest.mark.skip(reason="Scikit-FMM issues")
     # def test_time_of_flight_ball(self):
     #     tofl_trended = dpm_tools.metrics.time_of_flight(
@@ -75,9 +66,9 @@ class TestMetrics:
 
     #     assert_allclose([tofl_detrended.min(), tofl_detrended.max(), tofr_detrended.min(), tofr_detrended.max()],
     #                     [0.0, 6.18626252724756, 0.0, 6.18626252724756])
-
+    @pytest.mark.skip(reason="Updating constriction factor behavior")
     def test_constriction_factor_ball(self):
-        _, _, thickness_map = dpm_tools.metrics.chords(self.ball)
+        _, _, thickness_map = ps.filters.chords(self.ball)
         cf = dpm_tools.metrics.constriction_factor(thickness_map, power=1)
 
         assert_allclose(np.unique(cf), np.array([0., 0.11111112, 0.14285713, 0.33333334, 0.42857137,

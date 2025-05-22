@@ -52,6 +52,14 @@ jobs:
         run: | 
           cd docs/
           make html
+      - name: Upload failed notebook logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-notebook-logs
+          path: |
+            docs/_build/html/reports/**/*.err.log
+            docs/_build/html/reports/*.err.log
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
