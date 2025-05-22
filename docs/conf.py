@@ -42,7 +42,7 @@ myst_enable_extensions = [
 ]
 
 myst_nb_execute_notebooks = "auto"
-nb_execution_excludepatterns = ["**/3D_visualization.ipynb"]
+nb_execution_excludepatterns = ["**/3D_visualization.ipynb", "**/competent_subset.ipynb"]
 
 add_module_names = False  # dpm_tools.visualization -> visualization
 autosummary_generate = True
