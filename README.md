@@ -1,3 +1,8 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16987906.svg)](https://doi.org/10.5281/zenodo.16987906)
+[![image](https://img.shields.io/pypi/v/dpm-tools.svg)](https://pypi.org/project/dpm-tools/)
+[![Tests](https://github.com/digital-porous-media/dpm_tools/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/digital-porous-media/dpm_tools/actions/workflows/tests.yml)
+[![Docs](https://github.com/digital-porous-media/dpm_tools/actions/workflows/docs.yml/badge.svg?branch=master)](https://github.com/digital-porous-media/dpm_tools/actions/workflows/docs.yml)
+
 # Digital Porous Media (DPM) Tools
 Welcome to DPM Tools! Our team at The University of Texas at Austin has put together a collection of Python modules for processing and visualizing porous media images. Integrated as workflows, the combination of all module functions provide end-to-end capabilities that streamline pre- and post- processing of porous media images. Individual and combined functions can be used to curate images for publication, prepare images for simulation and machine learning (ML) applications, and analyze simulation and ML results. 
 
