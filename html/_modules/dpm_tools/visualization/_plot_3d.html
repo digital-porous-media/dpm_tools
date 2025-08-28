@@ -1,0 +1,1029 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dpm_tools.visualization._plot_3d &#8212; DPM_Tools  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dpm_tools/visualization/_plot_3d';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DPM_Tools  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting-started/index.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../modules/index.html">
+    Modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/digital-porous-media/dpm_tools/issues">
+    Issue Tracker
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/digital-porous-media/dpm_tools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting-started/index.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../modules/index.html">
+    Modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/digital-porous-media/dpm_tools/issues">
+    Issue Tracker
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/digital-porous-media/dpm_tools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">dpm_tools.visualization._plot_3d</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for dpm_tools.visualization._plot_3d</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyvista</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dpm_tools.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._3d_vis_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_initialize_plotter</span><span class="p">,</span> <span class="n">_wrap_array</span><span class="p">,</span> <span class="n">_custom_cmap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skimage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cc3d</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+<div class="viewcode-block" id="orthogonal_slices">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.orthogonal_slices.html#dpm_tools.visualization.orthogonal_slices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">orthogonal_slices</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">DataSet</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_slices</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plotter_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">mesh_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slider</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots 3 orthogonal slices of a 3D image.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data: A np array containing 3D image data</span>
+<span class="sd">        fig: Pyvista plotter object</span>
+<span class="sd">        show_slices: List of slices in x, y, z to show. Default is middle slice in each direction.</span>
+<span class="sd">        plotter_kwargs: Additional keyword arguments to pass to the plotter.</span>
+<span class="sd">        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pv.Plotter: PyVista plotter object with added orthogonal slice mesh.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">show_slices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">show_slices</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">nx</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">ny</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">nz</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Overriding the above line because it prevents orthogonal slices from showing for some reason.</span>
+    <span class="k">if</span> <span class="n">plotter_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plotter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Test to make sure user only supplied 3 lengths</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">show_slices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Please only specify x-, y-, and z-slices to show&quot;</span>
+    <span class="n">x_slice</span><span class="p">,</span> <span class="n">y_slice</span><span class="p">,</span> <span class="n">z_slice</span> <span class="o">=</span> <span class="n">show_slices</span>
+
+    <span class="c1"># Tests to make sure input slices are within image dimensions</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x_slice</span> <span class="o">&lt;</span> <span class="n">data</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="s2">&quot;X-slice value outside image dimensions&quot;</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">y_slice</span> <span class="o">&lt;</span> <span class="n">data</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="s2">&quot;Y-slice value outside image dimensions&quot;</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">z_slice</span> <span class="o">&lt;</span> <span class="n">data</span><span class="o">.</span><span class="n">nz</span><span class="p">,</span> <span class="s2">&quot;Z-slice value outside image dimensions&quot;</span>
+
+    <span class="c1"># Initialize plotter object</span>
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">(</span><span class="o">**</span><span class="n">plotter_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Swapping axes for pyvista compatibility</span>
+    <span class="n">ax_swap_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Wrap NumPy array to pyvista object</span>
+    <span class="n">pv_image_obj</span> <span class="o">=</span> <span class="n">_wrap_array</span><span class="p">(</span><span class="n">ax_swap_arr</span><span class="p">)</span>
+
+    <span class="c1"># Adding the slider</span>
+    <span class="k">if</span> <span class="n">slider</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">MyCustomRoutine</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">mesh</span>  <span class="c1"># Expected PyVista mesh type</span>
+                <span class="c1"># default parameters</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="p">}</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="n">pv_image_obj</span> <span class="o">=</span> <span class="n">_wrap_array</span><span class="p">(</span><span class="n">ax_swap_arr</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">pv_image_obj</span><span class="o">.</span><span class="n">slice_orthogonal</span><span class="p">(</span>
+                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">contour</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;timestep_mesh&#39;</span><span class="p">,</span>
+                             <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">,</span> <span class="n">show_scalar_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">copy_from</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="n">starting_mesh</span> <span class="o">=</span> <span class="n">pv_image_obj</span><span class="o">.</span><span class="n">slice_orthogonal</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">z</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">contour</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">MyCustomRoutine</span><span class="p">(</span><span class="n">starting_mesh</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">starting_mesh</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;timestep_mesh&#39;</span><span class="p">,</span>
+                     <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">,</span> <span class="n">show_scalar_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_scalar_bar</span><span class="p">(</span>
+            <span class="n">position_x</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">position_y</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_slider_widget</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">engine</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span>
+                              <span class="n">rng</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">nz</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                              <span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                              <span class="n">pointa</span><span class="o">=</span><span class="p">(</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                              <span class="n">pointb</span><span class="o">=</span><span class="p">(</span><span class="mf">0.31</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Z-slice&#39;</span><span class="p">,</span>
+                              <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;%0.f&quot;</span><span class="p">,</span>
+                              <span class="n">style</span><span class="o">=</span><span class="s1">&#39;modern&#39;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_slider_widget</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">engine</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span>
+                              <span class="n">rng</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                              <span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                              <span class="n">pointa</span><span class="o">=</span><span class="p">(</span><span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                              <span class="n">pointb</span><span class="o">=</span><span class="p">(</span><span class="mf">0.64</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;X-slice&#39;</span><span class="p">,</span>
+                              <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;%0.f&quot;</span><span class="p">,</span>
+                              <span class="n">style</span><span class="o">=</span><span class="s1">&#39;modern&#39;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_slider_widget</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">engine</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span>
+                              <span class="n">rng</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                              <span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                              <span class="n">pointa</span><span class="o">=</span><span class="p">(</span><span class="mf">0.67</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                              <span class="n">pointb</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Y-slice&#39;</span><span class="p">,</span>
+                              <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;%0.f&quot;</span><span class="p">,</span>
+                              <span class="n">style</span><span class="o">=</span><span class="s1">&#39;modern&#39;</span><span class="p">)</span>
+        <span class="c1"># Only one slider case:</span>
+        <span class="c1"># def slices_slider(value):</span>
+        <span class="c1">#     z_slider = int(value)</span>
+        <span class="c1">#     pv_image_obj = _wrap_array(ax_swap_arr)</span>
+        <span class="c1">#     slices = pv_image_obj.slice_orthogonal(x=50, y=50, z=z_slider,contour=True)</span>
+        <span class="c1">#     fig.add_mesh(slices,name=&#39;timestep_mesh&#39;)</span>
+        <span class="c1">#     return</span>
+        <span class="c1"># fig.add_slider_widget(slices_slider, [1, data.nz-1], title=&#39;Z-slice&#39;,fmt=&quot;%0.f&quot;)</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># Extract 3 orthogonal slices</span>
+        <span class="n">slices</span> <span class="o">=</span> <span class="n">pv_image_obj</span><span class="o">.</span><span class="n">slice_orthogonal</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_slice</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_slice</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z_slice</span><span class="p">)</span>
+
+        <span class="c1"># Add the slices as meshes to the PyVista plotter object</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">slices</span><span class="p">,</span> <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">)</span>
+
+    <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span>
+        <span class="n">viewport</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">line_width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">cone_radius</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+        <span class="n">shaft_length</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">tip_length</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">ambient</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">label_size</span><span class="o">=</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_isosurface">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.plot_isosurface.html#dpm_tools.visualization.plot_isosurface">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_isosurface</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_isosurface</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">smooth_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mesh_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">plotter_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots 3D isosurfaces</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data: A dataclass containing 3D labeled image data</span>
+<span class="sd">        fig: Pyvista plotter object</span>
+<span class="sd">        show_isosurface: List of isosurfaces to show. Default is single isosurface at average between maximum and minimum label values.</span>
+<span class="sd">        smooth_kwargs: Pyvista smoothing keyword arguments from [pyvista.PolyDataFilters.smooth](https://docs.pyvista.org/api/core/_autosummary/pyvista.polydatafilters.smooth#pyvista.PolyDataFilters.smooth). Defaults to None = No surface smoothing.</span>
+<span class="sd">        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter. Defaults to None.</span>
+<span class="sd">        plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pv.Plotter: PyVista plotter object with added orthogonal slice mesh.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.45</span><span class="p">,</span>
+                       <span class="s1">&#39;smooth_shading&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="s1">&#39;diffuse&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>
+                       <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">77</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">195</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span> <span class="o">/</span> <span class="mi">255</span><span class="p">),</span>
+                       <span class="s1">&#39;ambient&#39;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">plotter_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plotter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">(</span><span class="o">**</span><span class="n">plotter_kwargs</span><span class="p">)</span>
+
+    <span class="n">pv_image_obj</span> <span class="o">=</span> <span class="n">_wrap_array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_isosurface</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">show_isosurface</span> <span class="o">=</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">No value provided for </span><span class="se">\&#39;</span><span class="s2">show_isosurfaces</span><span class="se">\&#39;</span><span class="s2"> keyword. &quot;</span> <span class="o">+</span>
+                      <span class="sa">f</span><span class="s2">&quot;Using the midpoint of the isosurface array instead (</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="se">\</span>
+<span class="s2">                      </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="p">)</span><span class="si">}</span><span class="s2">).</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+                      <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">contours</span> <span class="o">=</span> <span class="n">pv_image_obj</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">isosurfaces</span><span class="o">=</span><span class="n">show_isosurface</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">smooth_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">contours</span> <span class="o">=</span> <span class="n">contours</span><span class="o">.</span><span class="n">smooth_taubin</span><span class="p">(</span><span class="o">**</span><span class="n">smooth_kwargs</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="bounding_box">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.bounding_box.html#dpm_tools.visualization.bounding_box">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bounding_box</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mesh_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plotter_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a bounding box mesh to the Plotter. Assumes the isosurface is at 255.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data: A dataclass containing 3D labeled image data</span>
+<span class="sd">        fig: Pyvista plotter object</span>
+<span class="sd">        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pv.Plotter: Pyvista plotter object with wall contours around entire image added as a mesh</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">plotter_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plotter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">(</span><span class="o">**</span><span class="n">plotter_kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                       <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)}</span>
+
+    <span class="n">wall_bin</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">wall_bin</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
+    <span class="n">vtk_wall</span> <span class="o">=</span> <span class="n">_wrap_array</span><span class="p">(</span><span class="n">wall_bin</span><span class="p">)</span>
+    <span class="n">wall_contours</span> <span class="o">=</span> <span class="n">vtk_wall</span><span class="o">.</span><span class="n">contour</span><span class="p">([</span><span class="mi">255</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">wall_contours</span><span class="p">,</span> <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_glyph">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.plot_glyph.html#dpm_tools.visualization.plot_glyph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_glyph</span><span class="p">(</span><span class="n">vector_data</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">glyph</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">PolyData</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">glyph_space</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+               <span class="n">glyph_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mesh_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plotter_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot glyphs to the Plotter such as arrows, spheres, etc. for vector fields</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        vector_data: A dataclass containing 3D vector data in 3 component directions</span>
+<span class="sd">        fig: Pyvista plotter object</span>
+<span class="sd">        glyph: PyVista polydata object to add to the plotter. Defaults to arrow glyph</span>
+<span class="sd">        glyph_space: Spacing between glyphs. Defaults to 1</span>
+<span class="sd">        glyph_kwargs: Additional keyword arguments to customize the glyph</span>
+<span class="sd">        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.</span>
+<span class="sd">        plotter_kwargs: Additional keyword arguments to pass to the plotter.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pv.Plotter: Plotter object with glyphs added as a mesh</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">glyph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">glyph</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Arrow</span><span class="p">()</span>
+
+    <span class="n">array</span> <span class="o">=</span> <span class="n">vector_data</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[::</span><span class="n">glyph_space</span><span class="p">,</span>
+                                  <span class="p">::</span><span class="n">glyph_space</span><span class="p">,</span>
+                                  <span class="p">::</span><span class="n">glyph_space</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vector_data</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+    <span class="n">array2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">scale_factor</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="k">if</span> <span class="n">glyph_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">glyph_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="n">array2</span><span class="p">,</span>
+                        <span class="s1">&#39;orient&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s1">&#39;tolerance&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+                        <span class="s1">&#39;geom&#39;</span><span class="p">:</span> <span class="n">glyph</span><span class="p">,</span>
+                        <span class="s1">&#39;factor&#39;</span><span class="p">:</span> <span class="n">scale_factor</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">vector_data</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">glyph_kwargs</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">vector_data</span><span class="o">.</span><span class="n">vector</span><span class="p">[</span><span class="n">i</span><span class="p">][::</span><span class="n">glyph_space</span><span class="p">,</span>
+                                                        <span class="p">::</span><span class="n">glyph_space</span><span class="p">,</span>
+                                                        <span class="p">::</span><span class="n">glyph_space</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vector_data</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+
+    <span class="c1"># plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[:</span><span class="n">vector_data</span><span class="o">.</span><span class="n">nx</span><span class="p">:</span><span class="n">glyph_space</span><span class="p">,</span>
+                       <span class="p">:</span><span class="n">vector_data</span><span class="o">.</span><span class="n">ny</span><span class="p">:</span><span class="n">glyph_space</span><span class="p">,</span>
+                       <span class="p">:</span><span class="n">vector_data</span><span class="o">.</span><span class="n">nz</span><span class="p">:</span><span class="n">glyph_space</span><span class="p">]</span>
+
+    <span class="c1"># Pseudo mesh for scale bar of the figure</span>
+    <span class="n">glyph_kwargs2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="n">array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vector_data</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+                     <span class="s1">&#39;orient&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="s1">&#39;tolerance&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+                     <span class="s1">&#39;geom&#39;</span><span class="p">:</span> <span class="n">glyph</span><span class="p">,</span>
+                     <span class="s1">&#39;factor&#39;</span><span class="p">:</span> <span class="n">scale_factor</span><span class="p">}</span>
+    <span class="n">glyph_kwargs2</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">vector_data</span><span class="o">.</span><span class="n">vector</span><span class="p">[</span><span class="n">i</span><span class="p">][::</span><span class="n">glyph_space</span><span class="p">,</span> <span class="p">::</span><span class="n">glyph_space</span><span class="p">,</span>
+                                                     <span class="p">::</span><span class="n">glyph_space</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vector_data</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+
+    <span class="n">fig2</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">()</span>
+    <span class="n">mesh2</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">StructuredGrid</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">mesh2</span><span class="p">[</span><span class="s1">&#39;scalars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vector_data</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+    <span class="n">mesh2</span><span class="p">[</span><span class="s1">&#39;vectors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">glyph_kwargs2</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+                                        <span class="n">glyph_kwargs2</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+                                        <span class="n">glyph_kwargs2</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
+    <span class="p">[</span><span class="n">glyph_kwargs2</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pop_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">pop_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="s1">&#39;orient&#39;</span><span class="p">]]</span>
+    <span class="n">glyphs2</span> <span class="o">=</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">glyph</span><span class="p">(</span>
+        <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;vectors&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;scalars&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">glyph_kwargs2</span><span class="p">)</span>
+    <span class="n">fig2</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">glyphs2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">plotter_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plotter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Initialize a new plotter object</span>
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">(</span><span class="o">**</span><span class="n">plotter_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Create a structured grid mesh</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">StructuredGrid</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">mesh</span><span class="p">[</span><span class="s1">&#39;scalars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array2</span>
+    <span class="n">mesh</span><span class="p">[</span><span class="s1">&#39;vectors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">glyph_kwargs</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+                                       <span class="n">glyph_kwargs</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+                                       <span class="n">glyph_kwargs</span><span class="p">[</span><span class="s1">&#39;orient&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
+    <span class="p">[</span><span class="n">glyph_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pop_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">pop_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="s1">&#39;orient&#39;</span><span class="p">]]</span>
+    <span class="n">glyphs</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">glyph</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;vectors&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;scalars&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">glyph_kwargs</span><span class="p">)</span>
+    <span class="n">sargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mapper</span><span class="o">=</span><span class="n">fig2</span><span class="o">.</span><span class="n">mapper</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">position_x</span><span class="o">=</span><span class="mf">0.10</span><span class="p">,</span> <span class="n">position_y</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                 <span class="n">font_family</span><span class="o">=</span><span class="s1">&#39;arial&#39;</span><span class="p">,</span> <span class="n">title_font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">label_font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.2e</span><span class="s2">&quot;</span><span class="p">,</span>
+                 <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Magnitude&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">glyphs</span><span class="p">,</span> <span class="n">scalar_bar_args</span><span class="o">=</span><span class="n">sargs</span><span class="p">,</span> <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_streamlines">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.plot_streamlines.html#dpm_tools.visualization.plot_streamlines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_streamlines</span><span class="p">(</span><span class="n">vector_data</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tube_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">streamline_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mesh_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plotter_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot streamlines to the Plotter object</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        vector_data: A dataclass containing 3D vector data in 3 component directions</span>
+<span class="sd">        fig: Pyvista plotter object</span>
+<span class="sd">        tube_radius: Radius of streamline tube. Defaults to 0.75/224 * vector_data.nz</span>
+<span class="sd">        streamline_kwargs: PyVista keyword arguments to customize the streamline</span>
+<span class="sd">        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.</span>
+<span class="sd">        plotter_kwargs: Additional keyword arguments to pass to the plotter.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pv.Plotter: Plotter object with streamlines added as a mesh</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">plotter_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plotter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Initialize a new plotter object if none are provided</span>
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">(</span><span class="o">**</span><span class="n">plotter_kwargs</span><span class="p">)</span>
+
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">ImageData</span><span class="p">(</span><span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="n">vector_data</span><span class="o">.</span><span class="n">nz</span><span class="p">,</span> <span class="n">vector_data</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">vector_data</span><span class="o">.</span><span class="n">nx</span><span class="p">),</span>
+                        <span class="n">spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+                        <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">vectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">vector_data</span><span class="o">.</span><span class="n">vector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">),</span>
+                        <span class="n">vector_data</span><span class="o">.</span><span class="n">vector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">),</span>
+                        <span class="n">vector_data</span><span class="o">.</span><span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">mesh</span><span class="p">[</span><span class="s1">&#39;Magnitude&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vectors</span>
+
+    <span class="k">if</span> <span class="n">streamline_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">streamline_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_points&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">vector_data</span><span class="o">.</span><span class="n">nz</span><span class="o">**</span><span class="mf">1.25</span><span class="p">),</span>
+                             <span class="s1">&#39;source_radius&#39;</span><span class="p">:</span> <span class="n">vector_data</span><span class="o">.</span><span class="n">nz</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                             <span class="s1">&#39;terminal_speed&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                             <span class="s1">&#39;initial_step_length&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}</span>
+
+    <span class="n">stream</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">streamlines</span><span class="p">(</span><span class="s1">&#39;Magnitude&#39;</span><span class="p">,</span> <span class="n">return_source</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="n">streamline_kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tube_radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tube_radius</span> <span class="o">=</span> <span class="mf">0.75</span> <span class="o">/</span> <span class="mi">224</span> <span class="o">*</span> <span class="n">vector_data</span><span class="o">.</span><span class="n">nz</span>
+
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">my_cmap</span><span class="p">,</span> <span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span> <span class="o">=</span> <span class="n">_custom_cmap</span><span class="p">(</span><span class="n">mesh</span><span class="p">[</span><span class="s1">&#39;Magnitude&#39;</span><span class="p">],</span> <span class="s1">&#39;gnuplot&#39;</span><span class="p">)</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;colormap&#39;</span><span class="p">:</span> <span class="n">my_cmap</span><span class="p">,</span>
+                       <span class="s1">&#39;clim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span><span class="p">]}</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">tube</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">tube_radius</span><span class="p">),</span> <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="plot_scalar_volume">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.plot_scalar_volume.html#dpm_tools.visualization.plot_scalar_volume">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_scalar_volume</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mesh_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">plotter_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot voxelized surface to the Plotter object</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data: A dataclass containing 3D labeled image data</span>
+<span class="sd">        fig: Pyvista plotter object</span>
+<span class="sd">        show_isosurface: PyVista keyword arguments to customize the isosurface</span>
+<span class="sd">        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.</span>
+<span class="sd">        plotter_kwargs: Additional keyword arguments to pass to the plotter.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pv.Plotter: Plotter object with voxelized surface added as a volume</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">plotter_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plotter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">(</span><span class="o">**</span><span class="n">plotter_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Create a bounded volume</span>
+    <span class="c1"># wall_bin = 255 * np.ones((data.scalar.shape[0]+2, data.scalar.shape[1]+2, data.scalar.shape[2]+2))</span>
+    <span class="c1"># wall_bin[1:-1, 1:-1, 1:-1] = data.scalar.copy()</span>
+
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">ImageData</span><span class="p">(</span><span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">nz</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">nx</span><span class="p">),</span>
+                        <span class="n">spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+                        <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+    <span class="n">mesh</span><span class="p">[</span><span class="s1">&#39;scalars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">)</span>
+
+    <span class="c1"># data.scalar[data.scalar == 0.0] = np.nan</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_volume</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="o">**</span><span class="n">mesh_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+
+<div class="viewcode-block" id="extract_competent_subset">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.extract_competent_subset.html#dpm_tools.visualization.extract_competent_subset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_competent_subset</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cube_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">pore_class</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Finds the best cubic subset for visaulizing the segmented dataset.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data: 3D numpy array, vector class from DPM Tools, Image class from DPM Tools.</span>
+<span class="sd">        cube_size: Size of the visalization cube, default is 100 (100x100x100).</span>
+<span class="sd">        batch: Batch size over which to calculate the stats, default is 100.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Cubic subset that maximizes the connected porosity</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;dpm_tools.io.read_data.Vector&#39;&gt;&quot;</span><span class="p">:</span>
+        <span class="n">scalar_data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;dpm_tools.io.read_data.Image&#39;&gt;&quot;</span><span class="p">:</span>
+        <span class="n">scalar_data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scalar_data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pore_class</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">scalar_data</span><span class="p">[</span><span class="n">scalar_data</span> <span class="o">==</span> <span class="n">pore_class</span><span class="p">]</span> <span class="o">=</span> <span class="mi">199</span>
+        <span class="n">scalar_data</span><span class="p">[</span><span class="n">scalar_data</span> <span class="o">!=</span> <span class="mi">199</span><span class="p">]</span> <span class="o">=</span> <span class="n">pore_class</span>
+        <span class="n">scalar_data</span><span class="p">[</span><span class="n">scalar_data</span> <span class="o">==</span> <span class="mi">199</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">size</span> <span class="o">=</span> <span class="n">scalar_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">scalar_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">scalar_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">porosity</span> <span class="o">=</span> <span class="p">(</span><span class="n">scalar_data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">size</span>
+
+    <span class="n">sample_size</span> <span class="o">=</span> <span class="n">cube_size</span>
+
+    <span class="c1"># Inner cube increment</span>
+    <span class="n">inc</span> <span class="o">=</span> <span class="n">sample_size</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">sample_size</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c1"># One dimension of the given vector sample cube.</span>
+    <span class="n">max_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scalar_data</span><span class="p">)</span>
+
+    <span class="n">batch_for_stats</span> <span class="o">=</span> <span class="n">max_dim</span> <span class="o">-</span> <span class="n">sample_size</span>  <span class="c1"># Max possible batch number</span>
+
+    <span class="c1"># Or overwrite:</span>
+    <span class="n">batch_for_stats</span> <span class="o">=</span> <span class="n">batch</span>
+
+    <span class="n">stats_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">batch_for_stats</span><span class="p">))</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">batch_for_stats</span><span class="p">:</span>
+        <span class="n">mini</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">max_dim</span> <span class="o">-</span> <span class="n">sample_size</span><span class="p">)</span>
+        <span class="n">maxi</span> <span class="o">=</span> <span class="n">mini</span> <span class="o">+</span> <span class="n">sample_size</span>
+
+        <span class="n">scalar_boot</span> <span class="o">=</span> <span class="n">scalar_data</span><span class="p">[</span><span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">,</span> <span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">,</span> <span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">]</span>
+        <span class="n">scalar_boot_inner</span> <span class="o">=</span> <span class="n">scalar_data</span><span class="p">[</span><span class="n">mini</span> <span class="o">+</span> <span class="n">inc</span><span class="p">:</span><span class="n">maxi</span> <span class="o">-</span> <span class="n">inc</span><span class="p">,</span>
+                                        <span class="n">mini</span> <span class="o">+</span> <span class="n">inc</span><span class="p">:</span><span class="n">maxi</span> <span class="o">-</span> <span class="n">inc</span><span class="p">,</span>
+                                        <span class="n">mini</span> <span class="o">+</span> <span class="n">inc</span><span class="p">:</span><span class="n">maxi</span> <span class="o">-</span> <span class="n">inc</span><span class="p">]</span>
+
+        <span class="n">labels_out_outside</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">cc3d</span><span class="o">.</span><span class="n">largest_k</span><span class="p">(</span>
+            <span class="n">scalar_boot</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">connectivity</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">return_N</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">index_outside</span><span class="p">,</span> <span class="n">counts_outside</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+            <span class="n">labels_out_outside</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">counts_outside_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">counts_outside</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+        <span class="n">labels_out_inside</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">cc3d</span><span class="o">.</span><span class="n">largest_k</span><span class="p">(</span>
+            <span class="n">scalar_boot_inner</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">connectivity</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">return_N</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">index_inside</span><span class="p">,</span> <span class="n">counts_inside</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+            <span class="n">labels_out_inside</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">counts_inside_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">counts_inside</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+        <span class="n">porosity_selected</span> <span class="o">=</span> <span class="p">(</span><span class="n">scalar_boot</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">sample_size</span><span class="o">**</span><span class="mi">3</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">porosity_selected</span> <span class="o">&lt;=</span> <span class="n">porosity</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">porosity_selected</span> <span class="o">&gt;=</span> <span class="n">porosity</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">):</span>
+            <span class="n">stats_array</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts_outside_sum</span>
+            <span class="n">stats_array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts_inside_sum</span>
+            <span class="n">stats_array</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">porosity_selected</span>
+            <span class="n">stats_array</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mini</span>
+            <span class="n">stats_array</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">hmean</span><span class="p">([</span><span class="n">stats_array</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span>
+                                                  <span class="n">stats_array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]])</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+    <span class="n">best_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">stats_array</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">best_subset_range</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stats_array</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="n">best_index</span><span class="p">])</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Original Porosity: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">porosity</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> %&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Subset Porosity: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">stats_array</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">best_index</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> %&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Competent Subset: [</span><span class="si">{</span><span class="n">best_subset_range</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">best_subset_range</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cube_size</span><span class="si">}</span><span class="s1">,&#39;</span><span class="o">+</span>
+          <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">best_subset_range</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">best_subset_range</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cube_size</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">best_subset_range</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">best_subset_range</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cube_size</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">)</span>
+
+    <span class="n">best_subset_range</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">best_subset_range</span><span class="p">),</span>
+                         <span class="nb">int</span><span class="p">(</span><span class="n">best_subset_range</span> <span class="o">+</span> <span class="n">cube_size</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">best_subset_range</span><span class="p">,</span> <span class="n">stats_array</span></div>
+
+
+
+<div class="viewcode-block" id="plot_medial_axis">
+<a class="viewcode-back" href="../../../modules/generated/dpm_tools.visualization.plot_medial_axis.html#dpm_tools.visualization.plot_medial_axis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_medial_axis</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pore_class</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">interactive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">show_isosurface</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">mesh_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plotter_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">notebook</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots an interactive visual with a medial axis and a 3D isosurface of given data.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data: A dataclass containing 3D labeled image data</span>
+<span class="sd">        fig: Pyvista plotter object</span>
+<span class="sd">        show_isosurface: List of isosurfaces to show. Default is single isosurface at average between maximum and minimum label values.</span>
+<span class="sd">        notebook: True for rendring in Jupyter notebook. Defaults to False.</span>
+<span class="sd">        mesh_kwargs: Pyvista mesh keyword arguments to pass to the plotter.</span>
+<span class="sd">        plotter_kwargs: Additional keyword arguments to pass to the plotter. Defaults to None.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pv.Plotter: PyVista plotter object with added orthogonal slice mesh.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># plotter_kwargs, mesh_kwargs = _initialize_kwargs(plotter_kwargs, mesh_kwargs)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">scalar</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mesh_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="mf">0.45</span><span class="p">,</span>
+                       <span class="s1">&#39;smooth_shading&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="s1">&#39;diffuse&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>
+                       <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">77</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">195</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span> <span class="o">/</span> <span class="mi">255</span><span class="p">),</span>
+                       <span class="s1">&#39;ambient&#39;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">plotter_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plotter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">pv</span><span class="o">.</span><span class="n">set_jupyter_backend</span><span class="p">(</span><span class="s1">&#39;server&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">_initialize_plotter</span><span class="p">(</span><span class="o">**</span><span class="n">plotter_kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pore_class</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">inv_data_8bit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">inv_data</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">inv_data_8bit</span><span class="p">,</span><span class="n">out_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+        <span class="n">medial_axis</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">inv_data</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pore_class</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">medial_axis</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;pore_class should either be 0 or 1.&#39;</span><span class="p">)</span>
+
+    <span class="n">pv_image_obj</span> <span class="o">=</span> <span class="n">_wrap_array</span><span class="p">(</span><span class="n">medial_axis</span><span class="p">)</span>
+
+    <span class="n">contours_ma</span> <span class="o">=</span> <span class="n">pv_image_obj</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">isosurfaces</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">contours_ma</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;wireframe&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+                 <span class="n">line_width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;medial_axis&#39;</span><span class="p">)</span>
+
+    <span class="n">pv_obj_sample</span> <span class="o">=</span> <span class="n">_wrap_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">contours_sample</span> <span class="o">=</span> <span class="n">pv_obj_sample</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">isosurfaces</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">])</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">my_plane_func</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">contours_sample</span><span class="o">.</span><span class="n">clip_closed_surface</span><span class="p">(</span><span class="n">normal</span><span class="o">=</span><span class="s1">&#39;-z&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="n">origin</span><span class="p">),</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;arrows&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">200</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">181</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">152</span> <span class="o">/</span> <span class="mi">255</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">interactive</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_plane_widget</span><span class="p">(</span><span class="n">my_plane_func</span><span class="p">,</span> <span class="n">normal</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">medial_axis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_plane_widget</span><span class="p">(</span><span class="n">my_plane_func</span><span class="p">,</span> <span class="n">normal</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">medial_axis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Digital Porous Media Team.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
