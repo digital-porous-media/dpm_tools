@@ -1,0 +1,94 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Digital Porous Media Tools
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Bernard
+    family-names: Chang
+    email: bcchang@utexas.edu
+    affiliation: The University of Texas at Austin
+    orcid: 'https://orcid.org/0000-0002-7809-0443'
+  - given-names: Cinar
+    family-names: Turhan
+    affiliation: The University of Texas at Austin
+    orcid: 'https://orcid.org/0000-0003-2533-7016'
+  - given-names: Frieda
+    family-names: Farias
+  - given-names: Masa
+    family-names: Prodanovic
+    affiliation: The University of Texas at Austin
+    email: masha@utexas.edu
+    orcid: 'https://orcid.org/0000-0002-1335-1374'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.16987906
+repository-code: >-
+  https://github.com/digital-porous-media/dpm_tools/tree/master
+url: 'https://digital-porous-media.github.io/dpm_tools/html/'
+abstract: >-
+  DPM Tools is a collection of modules for processing and
+  visualization of porous media images. Integrated as
+  workflows, the combination of all module functions provide
+  end-to-end capabilities that streamline pre- and post-
+  processing of porous media images. Individual and combined
+  functions can be used to curate images for publication,
+  prepare images for simulation and machine learning (ML)
+  applications, and analyze simulation and ML results.
+
+
+  By design, DPM Tools integrate functions from open Python
+  packages to implement common digital porous media as
+  workflows.
+
+
+  DPM Tools is implemented within the Digital Porous Media
+  Portal (formerly Digital Rocks Portal) and as a standalone
+  image processing workflow that users can download.
+
+
+  Current Modules: 
+
+
+  Input/Output (IO): Tools for reading and writing digital
+  porous media images from raw, tiff, hdf5, netCDF and
+  matlab files. The tools can edit and convert the files.
+
+
+  Metrics: includes several functions for quantifying
+  geometric properties of images.
+
+
+  Segmentation: algorithms for classifying phases within an
+  image.
+
+
+  Visualization: workflows for 3D visualization with
+  PyVista.
+
+
+  Further documentation and descriptions of how to use the
+  different modules are available in the related links of
+  this document and in the landing page where the software
+  is published in Zenodo. Our team is continuously
+  maintaining the software and adding new modules.
+
+
+  This release of DPM Tools is packaged with all necessary
+  dependencies. There is no need to install these packages
+  manually.
+keywords:
+  - digital porous media
+  - digital rock physics
+  - image analysis
+  - segmentation
+  - geometric characterization
+  - 3d visualization
+license: MIT
+commit: 35cacd6bcfb9db7744a56208899669d460f6491a
+version: 1.0.1
+date-released: '2025-08-28'
