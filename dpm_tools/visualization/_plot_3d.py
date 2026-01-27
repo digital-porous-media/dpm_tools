@@ -8,6 +8,7 @@ from copy import deepcopy
 import cc3d
 import scipy.stats
 import inspect
+from tqdm.notebook import tqdm
 
 def orthogonal_slices(data, fig: pv.DataSet = None, show_slices: list = None, plotter_kwargs: dict = None,
                       mesh_kwargs: dict = None, slider: bool = False) -> pv.Plotter:
@@ -402,104 +403,312 @@ def plot_scalar_volume(data, fig: pv.Plotter = None, mesh_kwargs: dict = None,
     return fig
 
 
-def extract_competent_subset(data: np.ndarray, cube_size: int = 100, batch: int = 100, pore_class: int = 0) -> np.ndarray:
+def extract_competent_subset(data: np.ndarray, 
+                             cube_size: int = 100, 
+                             batch: int = 100, 
+                             pore_class: int = 0, 
+                             class_to_optimize: int = 0,
+                             for_3d_printing: bool = False,
+                             max_overhang_angle = 20,
+                             exhaustive_search: bool = False,
+                             debug: bool = False,
+                             show_progress: bool = True) -> np.ndarray:
     '''
-    Finds the best cubic subset for visaulizing the segmented dataset.
-
+    Finds the best cubic subset for visualizing the segmented dataset.
     Parameters:
         data: 3D numpy array, vector class from DPM Tools, Image class from DPM Tools.
-        cube_size: Size of the visalization cube, default is 100 (100x100x100).
+        cube_size: Size of the visualization cube, default is 100 (100x100x100).
         batch: Batch size over which to calculate the stats, default is 100.
-
+        pore_class: The class representing pores in the original data, default is 0.
+        class_to_optimize: The class to optimize connectivity for (0 or 1), default is 0.
+        for_3d_printing: If True, evaluate printability metrics, default is False.
+        max_overhang_angle: Maximum overhang angle for 3D printing evaluation, default is 20.
+        exhaustive_search: If True, search entire 3D volume independently. If False, search diagonally (faster), default is False.
+        debug: If True, print detailed debugging information, default is False.
+        show_progress: If True, display tqdm progress bar, default is True.
     Returns:
-        np.ndarray: Cubic subset that maximizes the connected porosity
+        tuple: (best_subset_range, stats_array) where best_subset_range maximizes connected component of class_to_optimize
     '''
-
     if str(type(data)) == "<class 'dpm_tools.io.read_data.Vector'>":
         scalar_data = deepcopy(data.image)
     elif str(type(data)) == "<class 'dpm_tools.io.read_data.Image'>":
         scalar_data = deepcopy(data)
     else:
         scalar_data = deepcopy(data)
-
-    if pore_class != 1:
-        scalar_data[scalar_data == pore_class] = 199
-        scalar_data[scalar_data != 199] = pore_class
-        scalar_data[scalar_data == 199] = 1
-
-    size = scalar_data.shape[0] * scalar_data.shape[1] * scalar_data.shape[2]
-    porosity = (scalar_data == 1).sum() / size
-
+    
+    if debug:
+        print(f"Input data shape: {scalar_data.shape}, unique values: {np.unique(scalar_data)}")
+        print(f"pore_class={pore_class}, class_to_optimize={class_to_optimize}")
+    
+    # Store original for porosity calculation
+    original_data = scalar_data.copy()
+    
+    # Step 1: Convert class_to_optimize to 1, the other class to 0
+    scalar_data = (scalar_data == class_to_optimize).astype(np.uint8)
+    
+    if debug:
+        print(f"After conversion, class {class_to_optimize} is now 1")
+        print(f"Fraction of 1s: {scalar_data.sum() / scalar_data.size:.3f}")
+    
+    size = original_data.shape[0] * original_data.shape[1] * original_data.shape[2]
+    
+    # Calculate porosity based on pore_class in original data
+    porosity = (original_data == pore_class).sum() / size
+    
+    if debug:
+        print(f"Pore fraction (class {pore_class}): {porosity:.3f}")
+    
     sample_size = cube_size
-
-    # Inner cube increment
-    inc = sample_size - int(sample_size * 0.5)
-
-    # One dimension of the given vector sample cube.
-    max_dim = len(scalar_data)
-
-    batch_for_stats = max_dim - sample_size  # Max possible batch number
-
-    # Or overwrite:
+    # Inner cube increment - use 25% from each edge
+    inc = int(sample_size * 0.25)
+    
+    if debug:
+        print(f"Outer cube: {sample_size}^3, Inner cube: {sample_size - 2*inc}^3")
+        print(f"Search mode: {'Exhaustive 3D' if exhaustive_search else 'Diagonal (faster)'}")
+    
+    if exhaustive_search:
+        max_dim_x = scalar_data.shape[0]
+        max_dim_y = scalar_data.shape[1]
+        max_dim_z = scalar_data.shape[2]
+    else:
+        max_dim = len(scalar_data)
+    
+    # Warn if dataset is very large
+    if debug:
+        if exhaustive_search:
+            dataset_voxels = max_dim_x * max_dim_y * max_dim_z
+            if dataset_voxels > 1000**3:
+                print(f"Warning: Large dataset ({max_dim_x}x{max_dim_y}x{max_dim_z}). This may take several minutes on CPU.")
+    
     batch_for_stats = batch
-
-    stats_array = np.zeros(shape=(5, batch_for_stats))
-
-    i = 0
-    while i < batch_for_stats:
-        mini = np.random.randint(low=0, high=max_dim - sample_size)
-        maxi = mini + sample_size
-
-        scalar_boot = scalar_data[mini:maxi, mini:maxi, mini:maxi]
-        scalar_boot_inner = scalar_data[mini + inc:maxi - inc,
-                                        mini + inc:maxi - inc,
-                                        mini + inc:maxi - inc]
-
-        labels_out_outside, N = cc3d.largest_k(
-            scalar_boot, k=1,
-            connectivity=26, delta=0,
-            return_N=True,
-        )
-
-        index_outside, counts_outside = np.unique(
-            labels_out_outside, return_counts=True)
-        counts_outside_sum = np.sum(counts_outside[1:])
-
-        labels_out_inside, N = cc3d.largest_k(
-            scalar_boot_inner, k=1,
-            connectivity=26, delta=0,
-            return_N=True,
-        )
-
-        index_inside, counts_inside = np.unique(
-            labels_out_inside, return_counts=True)
-        counts_inside_sum = np.sum(counts_inside[1:])
-
-        porosity_selected = (scalar_boot == 1).sum() / sample_size**3
-
-        if (porosity_selected <= porosity * 1.2) & (porosity_selected >= porosity * 0.8):
-            stats_array[0, i] = counts_outside_sum
-            stats_array[1, i] = counts_inside_sum
-            stats_array[2, i] = porosity_selected
-            stats_array[3, i] = mini
-            stats_array[4, i] = scipy.stats.hmean([stats_array[0, i],
-                                                  stats_array[1, i]])
-            i += 1
-
+    if for_3d_printing:
+        if exhaustive_search:
+            stats_array = np.zeros(shape=(8, batch_for_stats))
         else:
+            stats_array = np.zeros(shape=(7, batch_for_stats))
+    else:
+        if exhaustive_search:
+            stats_array = np.zeros(shape=(6, batch_for_stats))
+        else:
+            stats_array = np.zeros(shape=(5, batch_for_stats))
+    
+    i = 0
+    attempts = 0
+    max_attempts = batch * 100
+    
+    # Debug counters
+    fail_no_inner = 0
+    fail_no_components = 0
+    fail_no_center = 0
+    fail_porosity = 0
+    
+    if debug:
+        print(f"Starting search for {batch_for_stats} valid cubes...")
+    
+    # Create progress bar
+    if show_progress:
+        pbar = tqdm(total=batch_for_stats, 
+                   desc="Finding valid subsets",
+                   unit="subset",
+                   bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]')
+    
+    while i < batch_for_stats and attempts < max_attempts:
+        attempts += 1
+        
+        if debug and attempts % 1000 == 0:
+            print(f"Attempt {attempts}, found {i} valid cubes")
+            print(f"  Failures: no_inner={fail_no_inner}, no_comp={fail_no_components}, no_center={fail_no_center}, porosity={fail_porosity}")
+        
+        if exhaustive_search:
+            mini_x = np.random.randint(low=0, high=max_dim_x - sample_size)
+            mini_y = np.random.randint(low=0, high=max_dim_y - sample_size)
+            mini_z = np.random.randint(low=0, high=max_dim_z - sample_size)
+            maxi_x = mini_x + sample_size
+            maxi_y = mini_y + sample_size
+            maxi_z = mini_z + sample_size
+        else:
+            mini = np.random.randint(low=0, high=max_dim - sample_size)
+            maxi = mini + sample_size
+            mini_x = mini_y = mini_z = mini
+            maxi_x = maxi_y = maxi_z = maxi
+        
+        # Extract cube from the converted data (where class_to_optimize is now 1)
+        scalar_boot = scalar_data[mini_x:maxi_x, mini_y:maxi_y, mini_z:maxi_z]
+        
+        # Also get the original cube for porosity checking
+        scalar_boot_original = original_data[mini_x:maxi_x, mini_y:maxi_y, mini_z:maxi_z]
+
+        # Check if there's any of class 1 in inner region
+        inner_sum = scalar_boot[inc:-inc, inc:-inc, inc:-inc].sum()
+        if inner_sum == 0:
+            fail_no_inner += 1
             continue
+        
+        # Get largest connected component using cc3d.largest_k
+        labels_outer, N = cc3d.largest_k(
+            scalar_boot,
+            k=1,
+            connectivity=26,
+            delta=0,
+            return_N=True,
+        )
+        
+        if N == 0:  # No components found
+            fail_no_components += 1
+            continue
+        
+        # Find the actual largest component label by counting
+        unique_labels, counts = np.unique(labels_outer, return_counts=True)
+        
+        # Remove background (label 0)
+        non_zero_mask = unique_labels > 0
+        if non_zero_mask.sum() == 0:
+            fail_no_components += 1
+            continue
+        
+        unique_labels = unique_labels[non_zero_mask]
+        counts = counts[non_zero_mask]
+        
+        # Get the label with the largest count
+        largest_label = unique_labels[np.argmax(counts)]
+        
+        # Create mask for largest component
+        lcc_mask = (labels_outer == largest_label)
+        
+        # Check if this component reaches the inner cube
+        inner_lcc = lcc_mask[inc:-inc, inc:-inc, inc:-inc]
+        inner_count = inner_lcc.sum()
+        
+        if inner_count == 0:  # Component doesn't reach center
+            fail_no_center += 1
+            continue
+        
+        outer_count = lcc_mask.sum()
+        
+        # Calculate porosity of the pore_class in this cube (from original data)
+        porosity_selected = (scalar_boot_original == pore_class).sum() / sample_size**3
+        
+        # Check if this cube's porosity is within 20% of overall porosity
+        if (porosity_selected <= porosity * 1.2) & (porosity_selected >= porosity * 0.8):
+            stats_array[0, i] = outer_count
+            stats_array[1, i] = inner_count
+            stats_array[2, i] = porosity_selected
+            stats_array[3, i] = mini_x
+            if exhaustive_search:
+                stats_array[4, i] = mini_y
+                stats_array[5, i] = mini_z
+            
+            if for_3d_printing:
+                volume = np.pad(scalar_boot, ((1, 1), (1, 1), (1, 1)), mode='constant', constant_values=1).copy()
+                # -----------------------------
+                # Marching cubes (voxel-true surface)
+                # -----------------------------
+                verts, faces, _, _ = skimage.measure.marching_cubes(volume,level=0.5)
+            
+                # Convert faces to PyVista format
+                faces_pv = np.hstack([np.full((faces.shape[0], 1), 3), faces])
+                pv_mesh = pv.PolyData(verts, faces_pv)
 
-    best_index = np.argmax(stats_array[4, :])
-    best_subset_range = int(stats_array[3, best_index])
+                # # -----------------------------
+                # # Simplify mesh (OPTIONAL)
+                # # -----------------------------
+                # if simplify is not None:
+                #     if not (0.0 < simplify < 1.0):
+                #         raise ValueError("simplify must be between 0 and 1")
+                #     pv_mesh = pv_mesh.decimate_pro(simplify, preserve_topology=True)
+            
+                # -----------------------------
+                # Recompute normals AFTER simplification
+                # -----------------------------
+                pv_mesh.compute_normals(cell_normals=True,point_normals=False,inplace=True)
+                face_normals = pv_mesh.cell_normals
+            
+                # -----------------------------
+                # Overhang detection
+                # -----------------------------
+                build_dir = np.array([0.0, 0.0, 1.0])
+                cos_theta = face_normals @ build_dir
+                angles = np.degrees(np.arccos(np.clip(cos_theta, -1.0, 1.0)))
+            
+                overhang_faces = angles > (90.0 + max_overhang_angle)
+            
+                face_areas = pv_mesh.compute_cell_sizes(length=False, area=True, volume=False)["Area"]
+                percent_overhang_area = (100.0 * face_areas[overhang_faces].sum() / face_areas.sum())
 
-    print(f'Original Porosity: {round(porosity * 100, 2)} %')
+                if percent_overhang_area > 30:
+                    continue
+                connectivity_score = scipy.stats.hmean([outer_count, inner_count])
+                printability_penalty = percent_overhang_area / 100.0
+
+                gamma = 4.0  # 2 = mild, 4 = brutal
+                score = connectivity_score * (1.0 - printability_penalty) ** gamma
+
+                # score = connectivity_score * (1.0 - printability_penalty)
+                                                
+                stats_array[6, i] = percent_overhang_area
+                stats_array[7, i] = score
+            
+            i += 1
+            
+            # Update progress bar
+            if show_progress:
+                pbar.update(1)
+                pbar.set_postfix({'attempts': attempts, 'ratio': f'{i/attempts:.2%}'})
+
+        
+            if debug and (i <= 5 or i % 10 == 0):
+                print(f"Found {i}/{batch_for_stats} - outer: {outer_count}, inner: {inner_count}, porosity: {porosity_selected:.3f}")
+        else:
+            fail_porosity += 1
+    
+    # Close progress bar
+    if show_progress:
+        pbar.close()
+    
+    if debug:
+        print(f"\nSearch complete after {attempts} attempts")
+        print(f"Final failures: no_inner={fail_no_inner}, no_comp={fail_no_components}, no_center={fail_no_center}, porosity={fail_porosity}")
+    
+    if i == 0:
+        raise ValueError(f"Could not find any valid cubes after {attempts} attempts.")
+    
+    if for_3d_printing:
+        if exhaustive_search:
+            best_index = np.argmax(stats_array[7, :i])
+            print(f"Overhang surface area: {stats_array[6, best_index]:.2f}%")
+        else:
+            best_index = np.argmax(stats_array[6, :i])
+            print(f"Overhang surface area: {stats_array[5, best_index]:.2f}%")
+    else:
+        if exhaustive_search:
+            # For exhaustive non-3D printing, compute harmonic mean here
+            hmean_scores = scipy.stats.hmean([stats_array[0, :i], stats_array[1, :i]], axis=0)
+            best_index = np.argmax(hmean_scores)
+        else:
+            best_index = np.argmax(stats_array[4, :i])
+    
+    best_x = int(stats_array[3, best_index])
+    if exhaustive_search:
+        best_y = int(stats_array[4, best_index])
+        best_z = int(stats_array[5, best_index])
+    else:
+        best_y = best_x
+        best_z = best_x
+    
+    # Always print these final results
+    print(f'Original Porosity (class {pore_class}): {round(porosity * 100, 2)} %')
     print(f'Subset Porosity: {round(stats_array[2, best_index] * 100, 2)} %')
-    print(f'Competent Subset: [{best_subset_range}:{best_subset_range + cube_size},'+
-          f'{best_subset_range}:{best_subset_range + cube_size}, {best_subset_range}:{best_subset_range + cube_size}]')
-
-    best_subset_range = (int(best_subset_range),
-                         int(best_subset_range + cube_size))
-
+    print(f'Optimized for class {class_to_optimize} connectivity')
+    print(f'Competent Subset: [{best_x}:{best_x + cube_size},'+
+          f'{best_y}:{best_y + cube_size}, {best_z}:{best_z + cube_size}]')
+    
+    if exhaustive_search:
+        best_subset_range = ((int(best_x), int(best_x + cube_size)),
+                             (int(best_y), int(best_y + cube_size)),
+                             (int(best_z), int(best_z + cube_size)))
+    else:
+        best_subset_range = (int(best_x), int(best_x + cube_size))
+    
     return best_subset_range, stats_array
 
 
