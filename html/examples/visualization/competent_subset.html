@@ -1,0 +1,998 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Finding Competent Subsets for Visualization and Simulation &#8212; DPM_Tools  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/visualization/competent_subset';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="3D Visualization" href="3D_visualization.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DPM_Tools  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started/index.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../modules/index.html">
+    Modules
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/digital-porous-media/dpm_tools/issues">
+    Issue Tracker
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/digital-porous-media/dpm_tools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started/index.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../modules/index.html">
+    Modules
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../tutorials/index.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/digital-porous-media/dpm_tools/issues">
+    Issue Tracker
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/digital-porous-media/dpm_tools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/general/index.html">Quick Start</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quick_start.html"><strong>Quick Start Guide</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/metrics/index.html">Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorials/metrics/scalars.html">Scalar Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/scalars/heterogeneity-classifier.html">Heterogeneity Classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/scalars/minkowski-functionals.html">Minkowski Functionals</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorials/metrics/maps.html">Map Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/maps/distance_transforms.html">Distance Transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/maps/ellipse_area.html">Ellipse Area</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/maps/maximum_inscribed_sphere.html">Maximum Inscribed Spheres</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/maps/minkowski_map.html">Minkowski Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/maps/morphological_drainage.html">Morphological Drainage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../metrics/maps/time_of_flight.html">Time of Flight</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/segmentation/index.html">Segmentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../segmentation/seeded_region_growing.html">Seeded Region Growing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../segmentation/statistical_region_merging.html">Statistical Region Merging</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../tutorials/visualization/index.html">Visualization</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="3D_visualization.html">3D Visualization</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Finding Competent Subsets for Visualization and Simulation</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../tutorials/index.html" class="nav-link">Tutorials</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../tutorials/visualization/index.html" class="nav-link">Visualization</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Finding Competent Subsets for Visualization and Simulation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="finding-competent-subsets-for-visualization-and-simulation">
+<h1>Finding Competent Subsets for Visualization and Simulation<a class="headerlink" href="#finding-competent-subsets-for-visualization-and-simulation" title="Link to this heading">#</a></h1>
+<p>This notebook demonstrates the workflow for finding a competent subset for visualization.</p>
+<section id="import-packages">
+<h2>Import packages<a class="headerlink" href="#import-packages" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dpm_tools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dpm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyvista</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skimage</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cc3d</span>
+<span class="n">pv</span><span class="o">.</span><span class="n">set_jupyter_backend</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="demonstration-image">
+<h2>Demonstration Image<a class="headerlink" href="#demonstration-image" title="Link to this heading">#</a></h2>
+<p>We demonstrate the workflow using a beadpack and a Mt. Gambier limestone example.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../../docs/_static&#39;</span><span class="p">)</span>
+<span class="n">beadpack</span><span class="p">,</span> <span class="n">gambier</span> <span class="o">=</span> <span class="p">[</span><span class="n">dpm</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">image_path</span> <span class="o">/</span> <span class="p">(</span><span class="n">tif_img</span> <span class="o">+</span> <span class="s1">&#39;.tif&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">tif_img</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;beadpack&#39;</span><span class="p">,</span> <span class="s1">&#39;mtgambier&#39;</span><span class="p">]]</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">beadpack</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Glass Bead Pack&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="n">im2</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gambier</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Mt. Gambier Limestone&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/539a97acd1006c1d7f0dd02e33e6c33ec0abfab7fe6ad55878d8128f91bf488a.png" src="../../_images/539a97acd1006c1d7f0dd02e33e6c33ec0abfab7fe6ad55878d8128f91bf488a.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">subset_range</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">plotter_obj</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">lighting</span><span class="o">=</span><span class="s1">&#39;three lights&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set background colors</span>
+    <span class="n">plotter_obj</span><span class="o">.</span><span class="n">set_background</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set font colors and sizes</span>
+    <span class="n">pv</span><span class="o">.</span><span class="n">global_theme</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span>
+    <span class="n">pv</span><span class="o">.</span><span class="n">global_theme</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">pv</span><span class="o">.</span><span class="n">global_theme</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">label_size</span> <span class="o">=</span> <span class="mi">14</span>
+    
+    <span class="n">pv</span><span class="o">.</span><span class="n">set_jupyter_backend</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">subset</span> <span class="ow">and</span> <span class="n">subset_range</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>  <span class="c1"># Case for tuple of tuples</span>
+            <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">subset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">subset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span> <span class="o">=</span> <span class="n">subset_range</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">x_min</span><span class="p">:</span><span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="p">:</span><span class="n">y_max</span><span class="p">,</span> <span class="n">z_min</span><span class="p">:</span><span class="n">z_max</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Case for single tuple</span>
+            <span class="n">mini</span><span class="p">,</span> <span class="n">maxi</span> <span class="o">=</span> <span class="n">subset_range</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">,</span> <span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">,</span> <span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">]</span>
+
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">dpm</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">scalar</span><span class="o">=</span><span class="n">sample</span><span class="p">)</span>
+    
+    <span class="n">plotter_obj</span> <span class="o">=</span> <span class="n">dpm</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">plot_isosurface</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">plotter_obj</span><span class="p">,</span> <span class="n">show_isosurface</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> 
+                    <span class="n">mesh_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;opacity&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> 
+                                <span class="s2">&quot;color&quot;</span><span class="p">:(</span><span class="mi">200</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">181</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">152</span> <span class="o">/</span> <span class="mi">255</span><span class="p">),</span> 
+                                <span class="s2">&quot;diffuse&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span> 
+                                <span class="s2">&quot;ambient&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">})</span>
+    
+    <span class="n">plotter_obj</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="initial-visualization">
+<h3>Initial Visualization<a class="headerlink" href="#initial-visualization" title="Link to this heading">#</a></h3>
+<p>One obvious option is to arbitrarily select a subset from somewhere in the image.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+<span class="n">plot_sample</span><span class="p">(</span><span class="n">beadpack</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">subset_range</span><span class="o">=</span><span class="n">subset_range</span><span class="p">)</span>
+<span class="n">plot_sample</span><span class="p">(</span><span class="n">gambier</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">subset_range</span><span class="o">=</span><span class="n">subset_range</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/e9246059815d43e9634464900fb8ec3d087149d43284cbf599932cb38fab9274.png" src="../../_images/e9246059815d43e9634464900fb8ec3d087149d43284cbf599932cb38fab9274.png" />
+<img alt="../../_images/e224e38002afc039a3c8b064aa1cbe6df3d8246dc644456c912df8f917ee0d5c.png" src="../../_images/e224e38002afc039a3c8b064aa1cbe6df3d8246dc644456c912df8f917ee0d5c.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Porosity of the selected subset of Gambier Limestone</span>
+<span class="n">gambier_128</span> <span class="o">=</span> <span class="n">gambier</span><span class="p">[</span><span class="mi">128</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">:</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">:</span><span class="mi">256</span><span class="p">]</span>
+<span class="n">porosity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gambier_128</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">128</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">porosity</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;%&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>45.2 %
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="extract-competent-subset">
+<h2>Extract Competent Subset<a class="headerlink" href="#extract-competent-subset" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">dpm_tools.visualization.extract_competent_subset()</span></code> function identifies the best cubic subset for visualizing a segmented dataset, with optional 3D printing optimization.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p>data: A 3D numpy array, or an instance of Vector or Image class from DPM Tools.</p></li>
+<li><p>cube_size: The size of the visualization cube. Default is 100 (100x100x100).</p></li>
+<li><p>batch: The batch size over which to calculate the statistics. Default is 100.</p></li>
+<li><p>pore_class: The class representing pores in the original data, used for porosity matching. Default is 0.</p></li>
+<li><p>class_to_optimize: The class to optimize connectivity for (0 or 1). Default is 0.</p></li>
+<li><p>for_3d_printing: If True, evaluates printability metrics including overhang analysis. Default is False.</p></li>
+<li><p>max_overhang_angle: Maximum overhang angle (in degrees) for 3D printing evaluation. Default is 20.</p></li>
+<li><p>exhaustive_search: If True, searches the entire 3D volume independently. If False, searches diagonally (faster). Default is False.</p></li>
+<li><p>debug: If True, prints detailed debugging information including failure statistics. Default is False.</p></li>
+<li><p>show_progress: If True, displays a tqdm progress bar. Default is True.</p></li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>The function processes the input data to find a cubic subset that maximizes connectivity of the target class while maintaining representative porosity. It performs the following steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Data Preparation:</strong></p>
+<ul class="simple">
+<li><p>Converts the target class (class_to_optimize) to binary format for connectivity analysis.</p></li>
+<li><p>Stores the original data for porosity calculations.</p></li>
+</ul>
+</li>
+<li><p><strong>Porosity Calculation:</strong></p>
+<ul class="simple">
+<li><p>Computes the overall porosity based on the pore_class in the original dataset.</p></li>
+</ul>
+</li>
+<li><p><strong>Search Configuration:</strong></p>
+<ul class="simple">
+<li><p>Sets up the search mode: diagonal (faster, searches along main diagonal) or exhaustive (searches entire 3D volume).</p></li>
+<li><p>Defines the outer cube size and inner cube boundaries (75% of cube_size, using 25% margin from each edge).</p></li>
+<li><p>Initializes statistics arrays based on search mode and 3D printing flag.</p></li>
+</ul>
+</li>
+<li><p><strong>Intelligent Subset Search:</strong></p>
+<ul class="simple">
+<li><p>Randomly samples cubic subsets with progress tracking.</p></li>
+<li><p>For each candidate subset:</p>
+<ul>
+<li><p>Verifies the target class exists in the inner region.</p></li>
+<li><p>Performs connected component analysis to find the largest connected component.</p></li>
+<li><p>Validates that the largest component reaches the inner cube (ensuring connectivity throughout).</p></li>
+<li><p>Checks that subset porosity is within ±20% of the overall dataset porosity.</p></li>
+<li><p><strong>If 3D printing mode is enabled:</strong></p>
+<ul>
+<li><p>Generates a 3D mesh using marching cubes algorithm.</p></li>
+<li><p>Computes surface normals and analyzes overhang angles.</p></li>
+<li><p>Calculates printability score based on connectivity and overhang penalty.</p></li>
+<li><p>Rejects subsets with &gt;30% overhang surface area.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Tracks failure modes (no inner material, no components, no center connectivity, porosity mismatch) for debugging.</p></li>
+</ul>
+</li>
+<li><p><strong>Best Subset Identification:</strong></p>
+<ul class="simple">
+<li><p>Selects the best subset based on:</p>
+<ul>
+<li><p><strong>Standard mode:</strong> Harmonic mean of outer and inner connected component sizes.</p></li>
+<li><p><strong>3D printing mode:</strong> Combined score of connectivity and printability (minimizing overhangs).</p></li>
+</ul>
+</li>
+<li><p>Prints porosity statistics, optimized class, and the competent subset range.</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Returns:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">best_subset_range</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Diagonal mode:</strong> A tuple <code class="docutils literal notranslate"><span class="pre">(min,</span> <span class="pre">max)</span></code> representing the range for all three dimensions.</p></li>
+<li><p><strong>Exhaustive mode:</strong> A tuple of three tuples <code class="docutils literal notranslate"><span class="pre">((x_min,</span> <span class="pre">x_max),</span> <span class="pre">(y_min,</span> <span class="pre">y_max),</span> <span class="pre">(z_min,</span> <span class="pre">z_max))</span></code> for independent dimensional ranges.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">stats_array</span></code>: A numpy array containing statistics of all valid subsets found during the search (outer counts, inner counts, porosity, positions, and optional printing metrics).</p>
+<p><strong>Usage Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Standard diagonal search optimizing pore connectivity</span>
+<span class="n">subset</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">extract_competent_subset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cube_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> 
+                                         <span class="n">pore_class</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">class_to_optimize</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">sample_subset</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">subset</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">subset</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">subset</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">subset</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">subset</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">subset</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="c1"># Exhaustive 3D search for solid phase connectivity</span>
+<span class="n">subset</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">extract_competent_subset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cube_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                                         <span class="n">pore_class</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">class_to_optimize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                         <span class="n">exhaustive_search</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sample_subset</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">subset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">subset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> 
+                    <span class="n">subset</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">subset</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> 
+                    <span class="n">subset</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">subset</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="c1"># 3D printing optimization with overhang constraints</span>
+<span class="n">subset</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">extract_competent_subset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cube_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                                         <span class="n">pore_class</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">class_to_optimize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                         <span class="n">for_3d_printing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">max_overhang_angle</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">beadpack_subset</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dpm</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">extract_competent_subset</span><span class="p">(</span><span class="n">beadpack</span><span class="p">,</span> <span class="n">cube_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">pore_class</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">class_to_optimize</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "5d18cee9d98c4fcbb7f59ef3150ab868", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Original Porosity (class 1): 37.89 %
+Subset Porosity: 38.41 %
+Optimized for class 1 connectivity
+Competent Subset: [117:245,117:245, 117:245]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gambier_subset</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dpm</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">extract_competent_subset</span><span class="p">(</span><span class="n">gambier</span><span class="p">,</span> <span class="n">cube_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">pore_class</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">class_to_optimize</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exhaustive_search</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Input data shape: (256, 256, 256), unique values: [0 1]
+pore_class=1, class_to_optimize=1
+After conversion, class 1 is now 1
+Fraction of 1s: 0.436
+Pore fraction (class 1): 0.436
+Outer cube: 128^3, Inner cube: 64^3
+Search mode: Exhaustive 3D
+Starting search for 100 valid cubes...
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "90c4a0328e4f4b49bb68b18f9226c8ac", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Found 1/100 - outer: 1046239, inner: 168636, porosity: 0.502
+Found 2/100 - outer: 1033010, inner: 190994, porosity: 0.499
+Found 3/100 - outer: 1064633, inner: 140684, porosity: 0.514
+Found 4/100 - outer: 1041584, inner: 158571, porosity: 0.503
+Found 5/100 - outer: 951594, inner: 109123, porosity: 0.456
+Found 10/100 - outer: 1052974, inner: 144325, porosity: 0.509
+Found 20/100 - outer: 988578, inner: 147608, porosity: 0.499
+Found 30/100 - outer: 975290, inner: 155178, porosity: 0.481
+Found 40/100 - outer: 1037041, inner: 173283, porosity: 0.499
+Found 50/100 - outer: 934409, inner: 141773, porosity: 0.454
+Found 60/100 - outer: 954605, inner: 94420, porosity: 0.457
+Found 70/100 - outer: 1020466, inner: 153046, porosity: 0.498
+Found 80/100 - outer: 982427, inner: 117430, porosity: 0.474
+Found 90/100 - outer: 1079272, inner: 167702, porosity: 0.518
+Found 100/100 - outer: 1060373, inner: 135868, porosity: 0.507
+
+Search complete after 120 attempts
+Final failures: no_inner=0, no_comp=0, no_center=0, porosity=20
+Original Porosity (class 1): 43.6 %
+Subset Porosity: 49.86 %
+Optimized for class 1 connectivity
+Competent Subset: [88:216,112:240, 98:226]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="final-visualizations">
+<h2>Final Visualizations<a class="headerlink" href="#final-visualizations" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_sample</span><span class="p">(</span><span class="n">beadpack</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">subset_range</span><span class="o">=</span><span class="n">beadpack_subset</span><span class="p">)</span>
+
+<span class="n">plot_sample</span><span class="p">(</span><span class="n">gambier</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">subset_range</span><span class="o">=</span><span class="n">gambier_subset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/e801cdf2dc66e62616c9ff4ef74f19d6d722c24e7da74e6b2959b7276b0871a5.png" src="../../_images/e801cdf2dc66e62616c9ff4ef74f19d6d722c24e7da74e6b2959b7276b0871a5.png" />
+<img alt="../../_images/9351d8710831eaad3934594f1267fc3c9dbecc6044d6cd26a79022a08bcdd168.png" src="../../_images/9351d8710831eaad3934594f1267fc3c9dbecc6044d6cd26a79022a08bcdd168.png" />
+</div>
+</div>
+</section>
+<section id="d-printing-case">
+<h2>3D Printing Case<a class="headerlink" href="#d-printing-case" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">dpm</span><span class="o">.</span><span class="n">visualization</span><span class="o">.</span><span class="n">extract_competent_subset</span><span class="p">(</span><span class="n">gambier</span><span class="p">,</span> <span class="n">cube_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> 
+                                     <span class="n">pore_class</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">class_to_optimize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+                                     <span class="n">for_3d_printing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">exhaustive_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">max_overhang_angle</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">x_range</span><span class="p">,</span> <span class="n">y_range</span><span class="p">,</span> <span class="n">z_range</span> <span class="o">=</span> <span class="n">subset</span>
+<span class="n">gambier_subset</span> <span class="o">=</span> <span class="n">gambier</span><span class="p">[</span><span class="n">x_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">x_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> 
+                       <span class="n">y_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">y_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> 
+                       <span class="n">z_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">z_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "88e8932474d64be697928f3c070aa48a", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Overhang surface area: 29.54%
+Original Porosity (class 0): 56.4 %
+Subset Porosity: 45.12 %
+Optimized for class 1 connectivity
+Competent Subset: [53:153,40:140, 68:168]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">denoised</span> <span class="o">=</span> <span class="n">cc3d</span><span class="o">.</span><span class="n">dust</span><span class="p">(</span>
+  <span class="n">gambier_subset</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> 
+  <span class="n">connectivity</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">plot_sample</span><span class="p">(</span><span class="n">denoised</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/1db872d93a9c43a6765d7051bab3c7c9a7900df9155d1805802fca30fb4931c1.png" src="../../_images/1db872d93a9c43a6765d7051bab3c7c9a7900df9155d1805802fca30fb4931c1.png" />
+</div>
+</div>
+</section>
+<section id="visualizing-the-overhangs">
+<h2>Visualizing the Overhangs<a class="headerlink" href="#visualizing-the-overhangs" title="Link to this heading">#</a></h2>
+<p>We include a helper function here for this.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">visualize_overhangs</span><span class="p">(</span>
+    <span class="n">sample_subset</span><span class="p">,</span>
+    <span class="n">max_overhang_angle</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">simplify</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>              <span class="c1"># e.g. 0.7 removes ~70% of faces</span>
+    <span class="n">subset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">subset_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect and visualize overhangs in a 3D binary voxel array.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample_subset : np.ndarray</span>
+<span class="sd">        3D binary array (1 = solid, 0 = void)</span>
+<span class="sd">    max_overhang_angle : float</span>
+<span class="sd">        Max printable overhang angle (degrees from vertical)</span>
+<span class="sd">    simplify : float or None</span>
+<span class="sd">        Fraction of faces to remove (PyVista decimation).</span>
+<span class="sd">        Example: 0.7 removes ~70% of faces.</span>
+<span class="sd">    subset : bool</span>
+<span class="sd">        Whether to crop the volume</span>
+<span class="sd">    subset_range : tuple</span>
+<span class="sd">        Cropping range. Can be:</span>
+<span class="sd">        - Diagonal mode: (min, max) - same range for all dimensions</span>
+<span class="sd">        - Exhaustive mode: ((x_min, x_max), (y_min, y_max), (z_min, z_max))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Crop volume</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">subset</span><span class="p">:</span>
+        <span class="c1"># Check if diagonal mode (simple tuple) or exhaustive mode (nested tuples)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="c1"># Exhaustive mode: ((x_min, x_max), (y_min, y_max), (z_min, z_max))</span>
+            <span class="n">x_range</span><span class="p">,</span> <span class="n">y_range</span><span class="p">,</span> <span class="n">z_range</span> <span class="o">=</span> <span class="n">subset_range</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="n">sample_subset</span><span class="p">[</span><span class="n">x_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">x_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> 
+                                  <span class="n">y_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">y_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> 
+                                  <span class="n">z_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">z_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Diagonal mode: (min, max)</span>
+            <span class="n">mini</span><span class="p">,</span> <span class="n">maxi</span> <span class="o">=</span> <span class="n">subset_range</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="n">sample_subset</span><span class="p">[</span><span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">,</span> <span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">,</span> <span class="n">mini</span><span class="p">:</span><span class="n">maxi</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="n">sample_subset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="c1"># volume = 1 - volume.astype(float)</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Marching cubes (voxel-true surface)</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span>
+        <span class="n">volume</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Convert faces to PyVista format</span>
+    <span class="n">faces_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">faces</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">pv_mesh</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">PolyData</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces_pv</span><span class="p">)</span>
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Simplify mesh (OPTIONAL)</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="k">if</span> <span class="n">simplify</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">simplify</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;simplify must be between 0 and 1&quot;</span><span class="p">)</span>
+        <span class="n">pv_mesh</span> <span class="o">=</span> <span class="n">pv_mesh</span><span class="o">.</span><span class="n">decimate_pro</span><span class="p">(</span><span class="n">simplify</span><span class="p">,</span> <span class="n">preserve_topology</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Recompute normals AFTER simplification</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">pv_mesh</span><span class="o">.</span><span class="n">compute_normals</span><span class="p">(</span>
+        <span class="n">cell_normals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">point_normals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">face_normals</span> <span class="o">=</span> <span class="n">pv_mesh</span><span class="o">.</span><span class="n">cell_normals</span>
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Overhang detection</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">build_dir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">face_normals</span> <span class="o">@</span> <span class="n">build_dir</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="p">)</span>
+    
+    <span class="n">overhang_faces</span> <span class="o">=</span> <span class="n">angles</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mf">90.0</span> <span class="o">+</span> <span class="n">max_overhang_angle</span><span class="p">)</span>
+    <span class="n">face_areas</span> <span class="o">=</span> <span class="n">pv_mesh</span><span class="o">.</span><span class="n">compute_cell_sizes</span><span class="p">(</span>
+        <span class="n">length</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)[</span><span class="s2">&quot;Area&quot;</span><span class="p">]</span>
+    
+    <span class="n">percent_overhang_area</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mf">100.0</span> <span class="o">*</span> <span class="n">face_areas</span><span class="p">[</span><span class="n">overhang_faces</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">face_areas</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Overhang surface area: </span><span class="si">{</span><span class="n">percent_overhang_area</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Face coloring</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">face_colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">pv_mesh</span><span class="o">.</span><span class="n">n_faces</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">face_colors</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">152</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>       <span class="c1"># normal surface</span>
+    <span class="n">face_colors</span><span class="p">[</span><span class="n">overhang_faces</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">220</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">255</span><span class="p">]</span>  <span class="c1"># overhangs</span>
+    <span class="n">pv_mesh</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="s2">&quot;Colors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">face_colors</span>
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1"># Visualization</span>
+    <span class="c1"># -----------------------------</span>
+    <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">lighting</span><span class="o">=</span><span class="s2">&quot;three lights&quot;</span><span class="p">)</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">set_background</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+    <span class="n">pv</span><span class="o">.</span><span class="n">global_theme</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>
+    <span class="n">pv</span><span class="o">.</span><span class="n">global_theme</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">pv</span><span class="o">.</span><span class="n">global_theme</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">label_size</span> <span class="o">=</span> <span class="mi">14</span>
+    
+    <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span>
+        <span class="n">pv_mesh</span><span class="p">,</span>
+        <span class="n">scalars</span><span class="o">=</span><span class="s2">&quot;Colors&quot;</span><span class="p">,</span>
+        <span class="n">rgb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">show_edges</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    
+    <span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Overhangs &gt; </span><span class="si">{</span><span class="n">max_overhang_angle</span><span class="si">}</span><span class="s2">°  |  simplify=</span><span class="si">{</span><span class="n">simplify</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">font_size</span><span class="o">=</span><span class="mi">14</span>
+    <span class="p">)</span>
+    
+    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">visualize_overhangs</span><span class="p">(</span>
+    <span class="n">denoised</span><span class="p">,</span>
+    <span class="n">simplify</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_overhang_angle</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">subset</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Overhang surface area: 28.96%
+</pre></div>
+</div>
+<img alt="../../_images/ffc06010c1b516bd8b0c63049d6b8519875fb4b1ff68f926aae223ec7fbe5c55.png" src="../../_images/ffc06010c1b516bd8b0c63049d6b8519875fb4b1ff68f926aae223ec7fbe5c55.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-packages">Import packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration-image">Demonstration Image</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-visualization">Initial Visualization</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-competent-subset">Extract Competent Subset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-visualizations">Final Visualizations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-printing-case">3D Printing Case</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-overhangs">Visualizing the Overhangs</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Digital Porous Media Team.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
